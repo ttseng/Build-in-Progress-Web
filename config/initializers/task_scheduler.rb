@@ -7,9 +7,8 @@ scheduler = Rufus::Scheduler.new
 	  scheduler.every '50m' do
 	     require "net/http"
 	     require "uri"
-	     url = 'http://bip-android-test.herokuapp.com'
+	     url = ENV["PRODUCTION_HOST_URL"]
 	     Net::HTTP.get_response(URI.parse(url))
-	     puts 'pinging bip-android-test'
 	  end
 	end
 	

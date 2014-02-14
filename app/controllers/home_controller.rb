@@ -24,7 +24,6 @@ class HomeController < ApplicationController
       	end
       end
     end 
-
   end
 
   def hide_announcement

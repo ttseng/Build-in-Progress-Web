@@ -1,5 +1,4 @@
 class UserMailer < ActionMailer::Base
-
   default from: ENV["GMAIL_USERNAME"]
 
   def welcome_email(user)
