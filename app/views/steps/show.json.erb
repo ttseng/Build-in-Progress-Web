@@ -1,0 +1,21 @@
+<% if !@step.project.is_remix? %>
+{ 
+	"success":true, 
+	"info":"ok", 
+	"data":
+		{ "step":
+			<%= JSON.pretty_generate(@step.as_json(only: [:name, :description, :id, :last], methods: [:published_on_formatted, :authors, :remix?], include: {images: {only: [:image_path, :position, :id], include: {video: {only: [:embed_url, :video_path]}} } } )).html_safe %>
+	} 
+}
+
+<% else %>
+{ 
+	"success":true, 
+	"info":"ok", 
+	"data":
+		{ "step":
+			<%= JSON.pretty_generate(@step.as_json(only: [:name, :description, :id, :last], methods: [:published_on_formatted, :authors, :remix?], include: {images: {only: [:position, :id], :methods => [:remix_image_path, :remix_video_path] } } )).html_safe %>
+	} 
+}
+
+<% end %>

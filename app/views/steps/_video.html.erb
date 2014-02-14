@@ -1,0 +1,177 @@
+<%= semantic_form_for Video.new,
+    :html => {:id => "videoEmbedModal", :class => "modal hide fade embedModal", :multipart => true}, 
+    :remote => true do |video_form| %>
+
+    <%= video_form.input :project_id, :as => :hidden, :label => false, :input_html => {:value => @project.id} %>
+       <% if @step.new_record? %>
+           <%= video_form.input :step_id, :as => :hidden, :label => false, :input_html => {:value => -1} %>
+           <%= video_form.input :saved, :as => :hidden, :label => false, :input_html => {:value => false} %>
+       <% else %>
+           <%= video_form.input :step_id, :as => :hidden, :label => false, :input_html => {:value => @step.id} %>
+           <%= video_form.input :saved, :as => :hidden, :label => false, :input_html => {:value => true} %>
+       <% end %>
+       <%= video_form.input :user_id, :as => :hidden, :label=> false, :input_html => {:value => current_user.id} %>
+  
+  <div class="modal-header">
+    <h3>Add a Video</h3>
+  </div>
+
+<div class="modal-body">
+
+  <div class="tabbable">
+    <ul class="nav nav-tabs" id="add_video_tabs">
+      <li class="active">
+        <a href="#embed_video">Embed Video</a>
+      </li>
+      <li>
+        <a href="#upload_video">Upload Video</a>
+      </li>
+
+    </ul>
+
+    <div class="tab-content" style="margin-top: 10px;">
+      
+      <% # add embedded video tab %>
+      <div class="tab-pane active" id="embed_video">
+        <%= video_form.label "Video URL", :class=> "label" %><span style="font-size:smaller; margin-left:10px">We currently support Youtube and Vimeo</span>
+        <%= video_form.text_area :embed_url, 
+            :placeholder => "Example: http://www.youtube.com/watch?v=bVj85o5hA_Q", :rows=>"2", :cols=>"50" %>
+
+      <div class="supportedVideo">
+        <i class="fa fa-youtube" style="font-size: 25px"></i> <%= image_tag "icons/Vimeo.png", :class=>"vimeo_icon" %><br>
+      </div>
+
+      <div class="embedPreview">
+        <h3>Video Preview</h3>
+      </div>
+    </div>
+
+
+    <% # upload video tab %>
+    <div class="tab-pane" id="upload_video">
+      <div class="supportedVideoFormats">
+        We support .mp4, .mov, and .avi video files.  File must be less than 50 MB.
+      </div>
+      <div id="uploadVideoField">
+        <div id="uploadVideoWrapper" title="Add Video">
+          <button class="btn btn-primary uploadVideoButton">
+            Upload Video
+          </button>
+          <%= video_form.file_field :video_path, :class=>"video_file_upload_field", :onchange=> "return validateFileExtension(this)", name: "video[video_path]" %>
+        </div>
+      </div>
+      <div id="videoUploadProgress">
+        <div id="videoFileName"></div>
+           <script id="video-upload" type="text/x-tmpl">
+          <div class="upload">
+            <div class="progress"><div class="bar" style="width: 0%"></div></div>
+          </div>
+           </script>
+      </div>
+    </div>
+    
+
+  </div>
+</div>
+</div>
+
+<div class="modal-footer">
+  <%= video_form.actions do %>
+  <%= video_form.action :cancel, :label => "Close", :as => :link,
+  :button_html => {:class => "btn modal_close_btn", :href => "#", 
+  :data => {:target => "#videoEmbedModal", :toggle => "modal"}} %>
+
+  <%= video_form.action :submit, :label => "Save", :as => :button,
+  :button_html => {:class => "btn btn-primary", :id => "video_submit", :disable_with => "Saving..." }%>
+  <% end %>
+  <div class="transcoding">transcoding...</div>
+  <div class="loadingIcon"></div>
+</div>
+
+<% end %>
+
+<script type="text/javascript">
+
+function validateFileExtension(fld){
+    if(!/(\.mov|\.mp4|\.avi)$/i.test(fld.value)) {
+        alert("Invalid video file type.  Please upload a .mp4, .mov, or .avi file.");      
+        field = $('#video_video_path');
+        field.replaceWith(field=field.clone(true));
+         $('#video_submit').attr("disabled", true);
+        return false;   
+    }   
+    return true; 
+}
+
+$(document).ready(function(){
+  
+  $('.loadingIcon').hide(); // hide video loading animation
+  $('#video_submit').attr('disabled', true); // disable submission button
+
+  $("#videoEmbedModal").on('shown', function(){
+    // trigger focus
+    $("#embedCode").focus();
+  });
+
+  var showPreviewTimeout = null;
+
+  function showPreview(){
+    var video_url = $("#video_embed_url").val();
+    console.log("video_url: " + video_url);
+
+    if(video_url == ""){
+       $('#video_submit').attr("disabled", true);
+       $('form.video .embedPreview').hide();
+    }
+    else{
+      $('form.video .embedPreview').show();
+      $("form.video .embedPreview").html("<h5>Loading preview...</h5>");
+
+        $.getJSON("/videos/embed_url.json", {video_url: video_url}, function(data){
+          console.log("data: " + data);
+          console.log("data.embed_code: " + data.embed_code);
+        if (data.embed_code){
+          $("form.video .embedPreview").html(data.embed_code);
+          // enable the submit button
+          $('#video_submit').attr('disabled', false);
+        } else {
+            $('#video_submit').attr("disabled", true);
+            $("form.video .embedPreview").html("<h3>Please enter a valid Youtube of Vimeo video URL</h3>");
+        }
+      });
+    }
+  }
+
+  /* ideally would express this as a binding, have the update happen
+  automatically */
+  $("#video_embed_url").on('blur keyup', function(){
+      window.clearTimeout(showPreviewTimeout);
+      showPreviewTimeout = window.setTimeout(showPreview, 1000);    
+  });
+
+  $('#videoEmbedModal').submit(function(){
+    $('.loadingIcon').show();
+  });
+
+  $('.modal_close_btn').click(function(){
+    $('form.video .embedPreview').hide();
+  });
+
+  $("#videoEmbedModal").bind('ajax:success', function(){
+    console.log("successful video upload");
+    $('#videoEmbedModal').modal('hide');
+    resetVideoModal();
+  }).bind('ajax:error', function(e, xhr, status, error){
+    var response = $.parseJSON(xhr.responseText);
+    // do something fancier here
+    alert(JSON.stringify(response));
+  });
+
+  // active chosen tab
+  $('#add_video_tabs a').click(function(e){
+    e.preventDefault();
+    $(this).tab('show');
+  });
+
+});
+</script>

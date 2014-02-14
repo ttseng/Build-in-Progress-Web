@@ -1,0 +1,11 @@
+<% # generate author byline for remixed steps based on the original authors %>
+<% # original_authors => array of user ids that were authors of the original step %>
+<% if !original_authors.kind_of?(Array) %>
+	<% original_authors = Array.new << original_authors %>
+<% end %>
+<% num_users = original_authors.length %>
+
+<% original_authors.each_with_index do |user_id, index| %>
+	<% username = User.find(user_id).username %>
+    <% if num_users > 2 && index == num_users-1 %> , and <% end %><%= link_to username, user_path(User.find(user_id)), :class=> "author_link" %><% if num_users == 2 && index == 0 %> and <% elsif num_users > 2 && index != num_users-2 && index != num_users-1 %>, <% end %>
+<% end %>

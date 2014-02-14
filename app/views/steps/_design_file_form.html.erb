@@ -1,0 +1,3 @@
+<%= f.fields_for :design_files, multiple: true, :html=> {:multipart => true} do |design_file_form| %>
+    <%= render 'design_file_fields', f: design_file_form %>
+<% end %></br>

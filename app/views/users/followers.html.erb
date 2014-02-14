@@ -1,0 +1,37 @@
+<div class="fullRow" style="width:940px">
+
+  <%= render :partial => "user_info" %>
+  <%= render :partial => "follow_info" %>
+
+
+	<div class="userFollowSideArea">
+	    <h4 class="followTitle"><%= @user.username %>'s Followers</h4>
+	    <hr>
+	     <div class="userAllFollows">
+		  <% if @user.followers_count == 0 %>
+		    <div class="no_follows" style="text-align: center">
+		      <%= @user.username%> doesn't have any followers...yet!            
+		    </div>
+		  <% end %>
+		  <% @followers.each do |user| %>
+		  	<%= render :partial => 'users', :locals=> {:user => user, :source => "user"} %>
+		  <% end %>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	$('.unfollowButton').hover(
+	function() {
+	    $( this ).addClass( "btn-danger" );
+	    $( this ).removeClass( "btn-info" );
+	   	$( this ).text( "Unfollow" );
+	  }, function() {
+	    $( this ).addClass( "btn-info" );
+	    $( this ).removeClass( "btn-danger" );
+	    $( this ).text( "Following" );
+	  }
+	);
+
+</script>

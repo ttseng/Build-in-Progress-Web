@@ -1,0 +1,17 @@
+<%=content_tag_for(:div, image) do %>
+<div class="stepImage">
+  <% if image.image_path? %>
+  	<%= image_tag(image.image_path_url(:preview), :data => {:parent => step_id, :position=> index}) %>
+  <% else %>
+  	<%= image_tag(image.s3_filepath, :data => {:parent => step_id, :position=> index}) %>
+  <% end %>
+  
+  <% if image.has_video? %>
+  	<% # draw small video icon over image %>
+    <i class="fa fa-play-circle videoIcon"></i>
+   <% elsif image.has_sound? %>
+   	<% # draw small audio icon over image %>
+    <i class="fa fa-volume-up  soundIcon"></i>
+  <% end %>
+</div>
+<% end %>

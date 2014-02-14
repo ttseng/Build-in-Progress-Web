@@ -1,0 +1,33 @@
+<% # Add User as Author to Project Public Activity %>
+
+<% source = params[:source] %>
+<% project = activity.trackable %>
+
+<% if project %>
+	<% if source == "navbar" %>
+		<%= link_to project_path(project, :notification_id=>activity.id) do %>
+			<icon class="fa fa-plus"></icon>
+			<p class="notification-image">
+				<%= render :partial=>"images/navbar_image", :locals=> {:activity => activity} %>
+			</p>
+			<p class="notification-text">
+				<span class="notification-bold"><%= activity.owner.username %></span> added <% if activity.recipient == current_user %>you<% else %><span class="notification-bold"><%= link_to activity.recipient.username, user_path(activity.recipient) %></span><% end %> as an collaborator on <span class="notification-bold"><%= activity.trackable.title %> </span>
+			</p>
+			<br>
+			<p class="notification-date" style="display:inline-block"><%= time_ago_in_words(activity.created_at) %> ago</p>
+		<% end %>
+	<% else %>
+		<icon class="fa fa-plus"></icon>
+		<p class ="notification-image">
+			<% if activity.owner.avatar.present? %>
+				<%= link_to image_tag(activity.owner.avatar_url(:thumb), :class=>"img-polaroid"), user_path(activity.owner) %>
+			<% else %>
+				<%= link_to image_tag("default_avatar.png", :class=>"img-polaroid"), user_path(activity.owner) %>
+			<% end %>
+		</p>
+		<p class="notification-heading">
+			<%= link_to activity.owner.username, user_path(activity.owner) %> added <% if activity.recipient == current_user %>you<% else %><%= link_to activity.recipient.username, user_path(activity.recipient) %><%end%> as a collaborator on <%= link_to activity.trackable.title, project_path(activity.trackable, :notification_id=>activity.id) %> 	
+		</p>
+		<span class="notification-date"><%= time_ago_in_words(activity.created_at) %> ago</span>
+	<% end %>
+<% end %>

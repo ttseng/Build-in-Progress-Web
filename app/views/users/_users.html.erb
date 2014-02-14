@@ -1,0 +1,16 @@
+<div class ="userFollowDisplay row span4" >
+	<div class="userFollowAvatar span2">  
+	    <% if user.avatar.length > 0 %>
+	        <%= link_to image_tag(user.avatar_url(:thumb), :class=>"avatar img-polaroid"), user_path(user) %>
+	    <% else %>
+	        <%= link_to image_tag("default_avatar.png", :class=>"avatar img-polaroid"), user_path(user) %>
+	    <% end %>
+	</div>
+	<div class="followerText span2">
+		<div class="name"><h5><%=link_to user.username, user, :class=>"name", :title=>user.username %></h5></div>
+		<div class="clear"></div>
+		<div id="follow_form<%= user.id %>" class="users_follow_form">
+			<%= render :partial => 'users_follow_form', :locals=> {:user => user, :header => false} %>
+		</div>
+	</div>
+</div>

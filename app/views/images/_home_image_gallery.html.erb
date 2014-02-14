@@ -1,0 +1,84 @@
+<div class="mainPhoto carousel home_carousel slide featureSlides" id="carousel-featureSlides">
+    <div class="carousel-inner featureSlides"></div>
+    <%# carousel controls %>
+       <a class="carousel-control left" href="#carousel-featureSlides" data-slide="prev">&lsaquo;</a>
+       <a class="carousel-control right" href="#carousel-featureSlides" data-slide="next">&rsaquo;</a>
+</div>
+
+<div class="rightGallery">
+  <div class="thumbGallery featureSlides featureSlidesThumb" id="images" data-update-url="<%= sort_images_url %>"></div>
+</div>
+
+<div class="clear"></div>
+
+<% all_images = [] %>
+
+<% @featuredProjects.each do |featuredProject| %>
+  <% if featuredProject.homepage_image %>
+    <% all_images.push(featuredProject.homepage_image) %>
+  <% end %>
+<% end %>
+
+<% all_images.each_with_index do |image, index| %>
+  <% description = "" %>  
+  <% if image.project.description %>
+    <% description = image.project.description %>
+  <% elsif image.project.steps.order(:position).first.description %>
+    <% description = image.project.steps.order(:position).first.description %>
+  <% end %>
+
+  <% active = "" %> <%# stores whether or not image is active or first in carousel %>
+  <% if index==0 %>
+    <% active = "active" %>
+  <% end %>
+
+    <% # add image to carousel %>
+    <% byline = render :partial => "projects/author_byline", :locals => {:project => image.project, :source=>"home"} %>
+
+    <script type="text/javascript">
+       $('.carousel-inner.featureSlides').append('<div class="item <%=active%>" id="<%=image.id %>"><a href="<%=project_path(image.project)%>" rel="gallery featureSlides" data-fancybox-type="image"><%=image_tag(image.image_path_url, :width => "100%", :class=> image.id)%></a><div class="carousel-caption"><%=link_to image.project.title, project_path(image.project) %> by <%= sanitize(byline.gsub(/(?:\n\r?|\r\n?)/, "")) %></br></br><% if description && !description.blank? %> <%= sanitize(truncate(description.gsub(/(?:\n\r?|\r\n?)/, "<br />").gsub(/'/){ %q(\') }.html_safe, :length => 250)) %> <% end -%> </div></div>'); 
+     </script>
+
+    <% # add thumbnail images %>
+    <script>
+    $('.thumbGallery.featureSlides').append("<%= j render :partial=> 'images/home_thumb_image', :locals=> {:image=>image, :step_id=>image.id, :index=> index} %>");         
+    </script>
+
+<% end %>
+
+<script>
+$(document).ready(function(){
+  // $('img[data-position=0]').removeClass('grayscale');
+  $('img[data-position=0]').parent().parent().addClass('highlight');
+
+  // adjust the top of images that are larger than the featurecarousel height
+  $('.carousel img').each(function(){
+    var theImage = new Image();
+    var imageId = $(this).attr('class');
+    theImage.src = $(this).attr('src');
+    theImage.onload = function(){
+       var image_height = theImage.height;
+       if( image_height > $('.featureSlides').height()){
+          var image_top = image_height/4*(-1);
+          $('.'+imageId).css('top',image_top);
+       }
+    }
+  });
+
+    $('.carousel').on('slid', function() {
+    var id = $('.item.active').attr('id');
+    $('.image').removeClass('highlight');
+    $('#image_'+id).addClass('highlight');
+  });
+
+  $('.featureSlidesThumb .image').click(function() {
+    $('.carousel').carousel(parseInt($('img', this).attr('data-position')));
+  });
+
+  $('.featureSlidesThumb .image').click(function() {
+    $('.carousel').carousel(parseInt($('img', this).attr('data-position')));
+  });
+
+
+});
+</script>

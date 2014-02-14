@@ -1,0 +1,65 @@
+function resetCategoriesForm() {
+  if (<%= @project.categories.include?(Category.where(:name => 'Arts & Crafts').first) %>){
+    $(".arts_and_crafts_checkbox input").prop("checked", true);
+    $(".arts_and_crafts_icon_div").show();
+  }
+  else{
+    $(".arts_and_crafts_checkbox input").prop("checked", false);
+    $(".arts_and_crafts_icon_div").hide();
+  }
+
+  if (<%= @project.categories.include?(Category.where(:name => 'Clothing').first) %>){
+    $(".clothing_checkbox input").prop("checked", true);
+    $(".clothing_icon_div").show();
+  }
+  else{
+    $(".clothing_checkbox input").prop("checked", false);
+    $(".clothing_icon_div").hide();
+  }
+
+  if (<%= @project.categories.include?(Category.where(:name => 'Cooking').first) %>){
+    $(".cooking_checkbox input").prop("checked", true);
+    $(".cooking_icon_div").show();
+  }
+  else{
+    $(".cooking_checkbox input").prop("checked", false);
+    $(".cooking_icon_div").hide();
+  }
+
+  if (<%= @project.categories.include?(Category.where(:name => 'Electronics').first) %>){
+    $(".electronics_checkbox input").prop("checked", true);
+    $(".electronics_icon_div").show();
+  }
+  else{
+    $(".electronics_checkbox input").prop("checked", false);
+    $(".electronics_icon_div").hide();
+  }
+
+  if (<%= @project.categories.include?(Category.where(:name => 'Mechanical').first) %>){
+    $(".mechanical_checkbox input").prop("checked", true);
+    $(".mechanical_icon_div").show();
+  }
+  else{
+    $(".mechanical_checkbox input").prop("checked", false);
+    $(".mechanical_icon_div").hide();
+  }
+
+  if (<%= @project.categories.include?(Category.where(:name => 'Other').first) %>){
+    $(".other_checkbox input").prop("checked", true);
+    $(".other_icon_div").show();
+  }
+  else{
+    $(".other_checkbox input").prop("checked", false);
+    $(".other_icon_div").hide();
+  }
+}
+
+resetCategoriesForm();
+
+$('#editCategoriesModal').modal('hide');
+
+$('#editCategoriesModal').on('hidden', function(){
+  console.log('closed modal');
+});
+
+//$('.category_icon icon').tooltip();

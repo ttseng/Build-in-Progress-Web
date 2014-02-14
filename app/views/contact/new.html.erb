@@ -1,0 +1,106 @@
+<div class="fullRow" style="margin-top:60px; width:940px">
+	<div class="centeredContainer">
+		<h3> Contact </h3>
+		
+		<div class="contactText">
+			
+			<%= form_for @message, :url => contact_path do |form| %>
+
+			<%= form.select(:type, [['Select a topic'], ['Report a bug'],['Suggest a new feature'], ['General comments']]) %>
+			
+			<fieldset class="fields" style="display:none">
+			    
+			    <div class="field">
+			      <%= form.label :email %>
+			      <%= form.text_field :email, :style=>"width: 500px", :maxlength=>"40" %>
+			    </div>
+			    <div class="field">
+			      <%= form.label :subject %>
+			      <%= form.text_field :subject, :style=>"width: 500px", :maxlength=>"60" %>
+			    </div>
+			    
+			    <div class="field">
+			      <%= form.label :body %>
+			      <%= form.text_area :body, :style=>"width: 500px; height: 150px", :maxlength=>"500" %>
+			    </div>
+			  
+			  <fieldset class="actions">
+			    <%= form.submit "Send", :class=> "btn btn-primary send_button" %>
+			  </fieldset>
+			 </fieldset>
+			<% end %>
+
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	var valid_email = false;
+	var valid_subject = false;
+	var valid_body = false;
+
+	$(document).ready(function(){
+		// hide form fields if coming from an error page
+		var selection = $('select option:selected').text();
+		if(selection !="Select a topic"){
+			$('.fields').show();
+		}
+
+		checkSignUpValid();
+	});
+
+	function disableSend(){
+		$('.send_button').attr('disabled', 'disabled');
+	}
+
+	function enableSend(){
+		$('.send_button').removeAttr('disabled');
+	}
+
+	function checkSignUpValid(){
+		if(valid_email && valid_subject && valid_body){
+			enableSend();
+		}else{
+			disableSend();
+		}
+	}
+
+	$('#message_body').bind("propertychange keyup input paste", function(event){
+		if($(this).val()!=""){
+			valid_body = true;
+		}else{
+			valid_body = false;
+		}
+		checkSignUpValid();
+	});
+
+	$('#message_subject').bind("propertychange keyup input paste", function(event){
+		if($(this).val()!=""){
+			valid_subject = true;
+		}else{
+			valid_subject = false;
+		}
+		checkSignUpValid();
+	});
+
+	$('#message_email').bind("propertychange keyup input paste", function(event){
+		if($(this).val()!="" && $(this).val().indexOf('@')!=-1){
+			valid_email = true;
+		}else{
+			valid_email = false;
+		}
+		checkSignUpValid();
+	});
+
+	$('select').change(function(){
+		var selection = $('select option:selected').text();
+		// console.log(selection);
+		if(selection!="Select a topic"){
+			$('.fields').show();
+		}else{
+			$('.fields').hide();
+		}
+	});
+
+
+</script>

@@ -1,0 +1,42 @@
+<% # Follow User Public Activity %>
+
+<% source = params[:source] %>
+<% followed_user = activity.trackable %>
+
+<% if followed_user %>
+	<% if source == "navbar" %>
+		<%= link_to user_path(activity.owner, :notification_id=>activity.id) do %>
+			<icon class="fa fa-user"></icon>
+			<p class="notification-image">
+				<%= render :partial=>"images/navbar_image", :locals=> {:activity => activity} %>
+			</p>
+			<p class="notification-text">
+				<% if current_user != followed_user %>
+					<span class="notification-bold"><%= activity.owner.username if activity.owner %></span> followed <span class="notification-bold"><%= followed_user.username %> </span>
+				<% else %>
+					<span class="notification-bold"><%= activity.owner.username if activity.owner %></span> followed <span class="notification-bold">you </span>
+				<% end %>
+
+			</p>
+			<br>
+			<p class="notification-date" style="display:inline-block"><%= time_ago_in_words(activity.created_at) %> ago</p>
+		<% end %>
+	<% else %>
+		<icon class="fa fa-user"></icon>
+		<p class ="notification-image">
+			<% if activity.owner.avatar.present? %>
+				<%= link_to image_tag(activity.owner.avatar_url(:thumb), :class=>"img-polaroid"), user_path(activity.owner) %>
+			<% else %>
+				<%= link_to image_tag("default_avatar.png", :class=>"img-polaroid"), user_path(activity.owner) %>
+			<% end %>
+		</p>
+		<p class="notification-heading">
+			<% if current_user != followed_user %>
+				<%= link_to activity.owner.username, user_path(activity.owner) if activity.owner %> followed <%= link_to followed_user.username, user_path(followed_user, :notification_id=>activity.id) %> 
+			<% else %>
+				<%= link_to activity.owner.username, user_path(activity.owner) if activity.owner %> followed you
+			<% end %>
+		</p>
+		<span class="notification-date"><%= time_ago_in_words(activity.created_at) %> ago</span>
+	<% end %>
+<% end %>

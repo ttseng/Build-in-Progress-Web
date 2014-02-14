@@ -1,0 +1,38 @@
+$(function(){
+	console.log(" ");
+	console.log("parentStepID: " + <%=@parentStepID%>);
+	var branch = <%=@branch%>
+	console.log("branch: " + branch);
+
+	var stepWidth = 150;
+	
+	if(<%=@branch%>==1){
+		console.log("adding row to table")
+		//add row to table
+		$('#stepTable').append('<div class="descriptionBranch" id="previewStepDescription" style="visibility:hidden" >add new branch</div><div class="newBranchNode"><%=link_to "", new_project_step_path(@project, :parent_id => @parentStepID), :class=> "newBranchStep" %></div>');
+	}
+	else{
+		//add row to table
+		$('#stepTable').append('<div class="branchedStep"><div class="descriptionBranch" id="previewStepDescription" style="visibility:hidden" >add new branch</div><div class="newBranchNode"><%=link_to "", new_project_step_path(@project, :parent_id => @parentStepID), :class=> "newBranchStep" %></div></div>');
+	}
+
+	var leftMargin = parseInt(stepWidth)*parseInt(branch-1)+1;
+	console.log("leftMargin: " + leftMargin);
+	$('.newBranchNode').css("margin-left", leftMargin);
+
+	$('#previewStepDescription').css("margin-left", leftMargin-130);
+
+	
+	
+	// toggle text of "previewStep"
+	$('.newBranchNode').hover(function(){
+		// mouse in
+		$('#previewStepDescription').css("visibility", "visible");
+		$('#previewStepDescription').css("color", "#000");
+	},
+	function(){
+		// mouse out
+		$('#previewStepDescription').css("visibility", "hidden");
+	});	
+
+});

@@ -1,0 +1,188 @@
+<div class="fullRow" style="margin-top:60px">
+	<div class="fullRow">
+
+		<div class="signUpPage">
+
+			<h2>Sign up</h2>
+
+			<%= semantic_form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+		
+			  <%= devise_error_messages! %>
+
+			  <div class="formField"><%= f.label :username, :class=> "label" %><br />
+			  <%= f.text_field :username, :class=> "signup_username", :maxlength=>"15"%></div>
+			  <div class="usernameValidation validation">Username is already taken</div>
+
+			  <div class="formField"><%= f.label :email, :class=> "label" %><br />
+			  <%= f.email_field :email%></div>
+			  <div class="emailValidation validation">Email is already taken</div>
+
+			  <div class="formField"><%= f.label :password, :class=>"label" %><br />
+			  <%= f.password_field :password, :class=> "signup_password" %></div>
+			  <div class="passwordValidation validation">Password must be at least 8 characters</div>
+
+			  <div class="formField"><%= f.label :password_confirmation, :class=>"label" %><br />
+			  <%= f.password_field :password_confirmation %></div>
+			  <div class="passwordConfirmationValidation validation">Passwords do not match</div>
+
+			  <div><%= f.submit "Sign up", :class=>"btn btn-primary signup_button" %></div>
+			<% end %>
+
+			<%= render "devise/shared/links" %>
+
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	function disableSignUp(){
+		$('.signup_button').attr('disabled', 'disabled');
+	}
+
+	function enableSignUp(){
+		$('.signup_button').removeAttr('disabled');
+	}
+
+	// check that none of the validation messages are shown at that the user has filled out all 
+	// parts of the form
+	function checkSignUpValid(){
+		if($('.usernameValidation').css('display')=="none" && 
+		   $('.emailValidation').css('display')=="none" &&
+		   $('.passwordValidation').css('display')=="none" &&
+		   $('.passwordConfirmationValidation').css('display')=="none" &&
+		   $('.signup_username').val().length>0 &&
+		   $('#user_email').val().length>0 &&
+		   $('.signup_password').val().length>0 &&
+		   $('#user_password_confirmation').val().length>0){
+			enableSignUp();
+		}
+		else{
+			disableSignUp();
+		}
+		
+	}
+
+	function passwordMatch(firstpassword, secondpassword){
+		if(secondpassword != firstpassword){
+    		$(".passwordConfirmationValidation").css("display", "inline-table");
+    		$(".passwordConfirmationValidation").attr("display", "inline-table");
+    		disableSignUp();
+    	}else{
+    		$(".passwordConfirmationValidation").css("display", "none");
+    		checkSignUpValid();
+    	}
+	}
+
+$(document).ready(function(){
+
+	checkSignUpValid();
+
+	var password;
+	var password_confirmation;
+
+  $(".signup_username").blur(function(){
+  	username=$(this).val();
+  	if(username!=""){
+
+      // check if the username has sapces
+      if(username.indexOf(" ") >=0){
+        $('.usernameValidation').html("Username cannot contain spaces");
+        $('.usernameValidation').css("display", "inline-table");
+        $('.usernameValidation').attr("display", "inline-table");
+      }
+
+      // check if the username has already been taken
+      else{
+  	  	$.ajax({
+    			url:"<%=validate_username_users_path%>",
+    			type:'GET',
+    			data: {username: username},
+    			success: function(data,status,xhr){
+      			if(data==false){
+      				// username already exists, show error message
+              $('.usernameValidation').html("Username is already taken");
+      				$('.usernameValidation').css("display", "inline-table");
+  					  $('.usernameValidation').attr("display", "inline-table");
+  					disableSignUp();
+      			}
+      			else{
+      				$('.usernameValidation').css("display", "none");
+      				checkSignUpValid();
+      			}
+      		}
+    		});
+      }
+	}
+  });
+
+    $("#user_email").blur(function(){
+    	 user_email = $(this).val();
+  		if(user_email!="" && user_email.indexOf('@')!=-1){
+  		$.ajax({
+  			url:"<%=validate_email_users_path%>",
+  			type:'GET',
+  			data: {email: user_email},
+  			success: function(data,status,xhr){
+    			if(data==false){
+    				// email already exists, show error message
+    				$('.emailValidation').html("Email is already taken");
+    				$('.emailValidation').css("display", "inline-table");
+					$('.emailValidation').attr("display", "inline-table");
+					disableSignUp();
+    			}
+    			else{
+    				$('.emailValidation').css("display", "none");
+    				checkSignUpValid();
+    			}
+    		}
+  		});
+	} else{
+		$('.emailValidation').html("Invalid email address");
+		$('.emailValidation').css("display", "inline-table");
+		$('.emailValidation').attr("display", "inline-table");
+		disableSignUp();
+	}
+  });
+
+    $('.signup_password').blur(function(){
+    	password = $(this).val();
+
+    		if(password.length<8 && password!="" ){
+    			$('.passwordValidation').css("display", "inline-table");
+    			$('.passwordValidation').attr("display", "inline-table");
+    			disableSignUp();
+    		} else{
+    			$('.passwordValidation').css("display", "none");
+    			if($('#user_password_confirmation').val().length == 0){
+    				$(".passwordConfirmationValidation").css("display", "inline-table");
+    				$(".passwordConfirmationValidation").attr("display", "inline-table");
+    			}
+    			checkSignUpValid();
+    		}
+    });
+
+    $('.signup_password').bind("propertychange keyup input paste", function(event){
+    	password = $(this).val();
+    	if(password.length>0){
+    		passwordMatch(password_confirmation, password);
+    	}
+    });
+
+    $('#user_password_confirmation').blur(function(){
+    	password_confirmation = $(this).val();
+    	passwordMatch(password_confirmation, password);
+    });
+
+    $('#user_password_confirmation').bind("propertychange keyup input paste", function(event){
+    	password_confirmation = $(this).val();
+    	if(password_confirmation.length > 0){
+    		passwordMatch(password_confirmation, password);
+    	}
+    });
+
+});
+
+</script>
+
+

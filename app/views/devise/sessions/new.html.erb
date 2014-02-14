@@ -1,0 +1,32 @@
+<div class="fullRow" style="margin-top:60px">
+	<div class="fullRow">
+
+		<div class="signinPage">
+
+<h2>Sign in</h2>
+
+<%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+  <div class="formField"><%= f.label :username, :class=>"label"%><br />
+  <%= f.text_field :username, :autofocus => true %></div>
+
+  <div class="formField"><%= f.label :password, :class=> "label"%><br />
+  <%= f.password_field :password %></div>
+
+  <% if devise_mapping.rememberable? -%>
+    <div><%= f.check_box :remember_me, :class=>"rememberMeCheck" %> <%= f.label :remember_me, :class=> "rememberMeLabel" %></div>
+  <% end -%>
+
+  <div><%= f.submit "Sign in", :class=> "btn btn-primary" %></div>
+<% end %>
+
+<%= render "devise/shared/links" %>
+
+</div>
+</div>
+</div>
+
+<script>
+$(document).ready(function(){
+  $('#main').css("margin-top", "40px");
+});
+</script>

@@ -1,0 +1,78 @@
+<div class="fullRow" style="margin-top:60px">
+  <div class="fullRow">
+
+    <div class="editAccountPage">
+      <h2>Edit Account Settings</h2>
+      <hr style="margin:2px">
+
+      <div class="tabbable">
+        <ul class="nav nav-tabs" id="account_settings_tabs">
+          <li class="active">
+            <a href="#email_tab">Edit Email </a>
+          </li>
+          <li>
+            <a href="#password_tab">Edit Password</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="email_tab">
+              <div class="label">Current email</div>
+              <%= current_user.email %>
+            <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
+              <%= devise_error_messages! %>
+
+              <div class="formField"><%= f.label "New email", :class=>"label " %><br />
+              <%= f.email_field :email, value: "" %></div>
+
+              <div class="formField"><%= f.label :current_password, :class=>"label " %><br />
+              <%= f.password_field :current_password %></div>
+
+              <%= hidden_field_tag "update_email", true %>
+
+               <div class="editAccountButtons">
+                <%= f.submit "Update", :class=>"btn btn-small btn-primary submitButton" %>
+              </div>
+            <% end %>
+          </div>
+          <div class="tab-pane" id="password_tab">
+            <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
+                <%= devise_error_messages! %>
+
+              <div class="formField"><%= f.label :current_password, :class=>"label  " %> <br />
+              <%= f.password_field :current_password %></div>
+
+              <div class="formField"><%= f.label "New password", :class=>"label " %> <br />
+              <%= f.password_field :password, :autocomplete => "off" %></div>
+
+              <div class="formField"><%= f.label "New password confirmation", :class=>"label " %><br />
+              <%= f.password_field :password_confirmation %></div>
+
+              <div class="editAccountButtons">
+                <%= f.submit "Update", :class=>"btn btn-small btn-primary submitButton" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <hr style="margin:0px;">
+      <h5>Delete Account</h5>
+
+      <p><%= button_to "Delete Account", registration_path(resource_name), :data => { :confirm => "Are you sure?" }, :method => :delete, :class=> "btn btn-small" %></p>
+
+      </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  // activate chosen tab
+  $('#account_settings_tabs a').click(function(e){
+    console.log('switching tab');
+    console.log($(this).html());
+    e.preventDefault();
+    $(this).tab('show');
+  });
+});
+</script>

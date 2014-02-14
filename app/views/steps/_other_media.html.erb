@@ -1,0 +1,171 @@
+<!-- soundcloud API stuff -->
+<script src="//connect.soundcloud.com/sdk.js"></script>
+<script>
+var sc_client_id = "468abf0ced361eaca87f3566c4c4855e";
+  SC.initialize({
+    client_id: sc_client_id
+  });
+</script>
+
+<%= semantic_form_for Sound.new,
+    :html => {:id => "otherMediaEmbedModal", :class => "modal hide fade embedModal"},
+    :remote => true do |sound_form| %>
+  
+<div class="modal-header">
+  <h3>Add Other Media</h3>
+</div>
+
+<div class="modal-body">
+
+  <div class="tabbable">
+    <ul class="nav nav-tabs" id="add_other_media_tabs">
+      <li class="active">
+        <a href="#embed_video">Soundcloud</a>
+      </li>
+    </ul>
+
+    <div class="tab-content" style="margin-top: 10px;">
+      <% # add embedded video tab %>
+      <div class="tab-pane active" id="embed_soundcloud">
+        <%= sound_form.input :project_id, :as => :hidden, :label => false, :input_html => {:value => @project.id} %>
+        <%= sound_form.input :thumbnail_url, :as => :hidden, :label => false %>
+        <%= hidden_field_tag :soundcloud_id %>
+        <% if @step.new_record? %>
+            <%= sound_form.input :step_id, :as => :hidden, :label => false, :input_html => {:value => -1} %>
+            <%= sound_form.input :saved, :as => :hidden, :label => false, :input_html => {:value => false} %>
+
+        <% else %>
+            <%= sound_form.input :step_id, :as => :hidden, :label => false, :input_html => {:value => @step.id} %>
+            <%= sound_form.input :saved, :as => :hidden, :label => false, :input_html => {:value => true} %>
+        <% end %>
+        <%= sound_form.input :user_id, :as=> :hidden, :label => false, :input_html => {:value => current_user.id} %>
+
+        <%= sound_form.label "Soundcloud URL", :class=> "label" %><br>
+        <%= sound_form.text_area :embed_url, 
+            :placeholder => "Example: https://soundcloud.com/buzzfeed/super-mario-bros-cleared-stage", :rows=>"2", :cols=>"50" %>
+
+      <div class="supportedOtherMedia">
+        <i class="fa fa-soundcloud" style="font-size: 25px"></i> <%= image_tag "icons/soundcloud_icon.jpg", :class=>"soundcloud_icon" %><br>
+      </div>
+
+      <div class="embedPreview">
+        <h3>Soundcloud Preview</h3>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal-footer">
+  <%= sound_form.actions do %>
+  <%= sound_form.action :cancel, :label => "Close", :as => :link,
+  :button_html => {:class => "btn modal_close_btn", :href => "#", 
+  :data => {:target => "#otherMediaEmbedModal", :toggle => "modal"}} %>
+
+  <%= sound_form.action :submit, :label => "Save", :as => :button,
+  :button_html => {:class => "btn btn-primary", :id => "soundcloud_submit", :disable_with => "Saving..."}, :disable_with => "Saving..." %>
+  <% end %>
+  <div class="loadingIcon"></div>
+</div>
+
+<% end %>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  
+  // hide video loading icon
+  $('.loadingIcon').hide();
+
+  $('#soundcloud_submit').attr("disabled", 'disabled');
+
+  $("#otherMediaEmbedModal").on('shown', function(){
+    // trigger focus
+    $("#embedCode").focus();
+  });
+
+  var showPreviewTimeout = null;
+
+ function showPreview(){
+    var soundcloud_url = $("#sound_embed_url").val();
+    console.log("soundcloud_url: " + soundcloud_url);
+
+    if(soundcloud_url == ""){
+       $('#soundcloud_submit').attr("disabled", 'disabled');
+       $("form.sound .embedPreview").hide();
+    }
+    else{
+      $('form.sound .embedPreview').show();
+      $("form.sound .embedPreview").html("<h3>Loading preview...</h3>");
+
+      // fetch the embed code for the player
+      SC.oEmbed(soundcloud_url, {auto_play: false}, function(oembed){
+        if(oembed!=null){
+          $("form.sound .embedPreview").html(oembed['html']);
+          console.log("oembed['html']: " + oembed['html']);
+          // enable the submit button
+          $('#soundcloud_submit').removeAttr('disabled');
+        }else{
+          $('#soundcloud_submit').attr("disabled", 'disabled');
+          $("form.sound .embedPreview").html("<h3>Please enter a valid Soundcloud URL</h3>");
+        }
+      });
+
+      var soundcloud_id;
+
+      // fetch the track ID
+      $.get(
+         'http://api.soundcloud.com/resolve.json?url=' + soundcloud_url + '&client_id='+sc_client_id+'', function (result){
+          soundcloud_id = result['id'];
+          console.log("soundcloud_id: " + soundcloud_id);
+          $('#soundcloud_id').val(soundcloud_id);
+          // fetch the image associated with the track
+            $.get('http://api.soundcloud.com/tracks/'+soundcloud_id+'.json?client_id='+sc_client_id+'', {limit: 1}, function(track){
+              console.log('track', track);
+              if(track!=null){
+                // console.log("track artwork_url before: " + track['artwork_url']);
+                if(track['artwork_url']!=null){
+                  // set form params for artwork
+                  $('#sound_thumbnail_url').val(track['artwork_url']);
+                }else{
+                  $('#sound_thumbnail_url').val("https://w.soundcloud.com/player/assets/images/default/cloudx200-72176be9.png");
+                }
+                // console.log("track artwork_url after: " + track['artwork_url']);
+              }
+            });
+         });
+    }
+  }
+
+  /* ideally would express this as a binding, have the update happen
+  automatically */
+  $("#sound_embed_url").on('blur keyup', function(){
+      window.clearTimeout(showPreviewTimeout);
+      showPreviewTimeout = window.setTimeout(showPreview, 1000);    
+  });
+
+  $('#otherMediaEmbedModal').submit(function(){
+    $('.videoLoadingIcon').show();
+  });
+
+  $('.modal_close_btn').click(function(){
+    $('form.sound .embedPreview').hide();
+    resetOtherMediaModal();
+  })
+
+  $("#otherMediaEmbedModal").bind('ajax:success', function(){
+    $('#otherMediaEmbedModal').modal('hide');
+    resetOtherMediaModal();
+  }).bind('ajax:error', function(e, xhr, status, error){
+    var response = $.parseJSON(xhr.responseText);
+    // do something fancier here
+    alert(JSON.stringify(response));
+  });
+
+  // active chosen tab
+  $('#add_other_media_tabs a').click(function(e){
+    e.preventDefault();
+    $(this).tab('show');
+  });
+
+});
+</script>

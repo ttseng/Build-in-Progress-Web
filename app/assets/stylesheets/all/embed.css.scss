@@ -1,0 +1,50 @@
+.embedDiv{
+	width: 550px;
+	padding-left:10px;
+
+	a:hover{
+		color: #FFFABB;
+	}
+}
+
+.embedTitle{
+	font-family:'Sketch Rockwell';
+	font-size:25px;
+	box-sizing: border-box;         /* Opera/IE 8+ */
+	border-bottom-left-radius:10px;
+    border-bottom-right-radius:10px;
+    -webkit-box-shadow: 2px 2px 2px 2px #919191;
+	box-shadow: 1px 1px 1px 1px #919191;
+	padding: 15px;
+	background-color: #666;
+	color: #FFF;
+	z-index:90;
+
+	a{
+		color: #fff;
+	}
+}
+
+
+.embedLink{
+	p{
+		font-size:14px;
+		margin-top:10px;
+		height:50px;
+		vertical-align:middle;
+		display: table-cell;
+	}
+	a{
+		color: #08C;
+		font-weight:bold;
+	}
+	a:hover{
+		color: #000;
+	}
+}
+
+.logo{
+	width: 50px;
+	float:left;
+	margin-right:10px;
+}

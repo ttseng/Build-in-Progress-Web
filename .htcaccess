@@ -1,0 +1,11 @@
+AddType video/mp4 .mp4 .m4v
+AddType video/mpeg .mpeg .mpg
+AddType video/quicktime .mov
+AddType video/ogg .ogv
+AddType video/webm .webm
+AddType audio/mp4 .m4a .m4b .m4r
+AddType audio/mpeg .mp3
+AddType audio/playlist .m3u
+AddType audio/x-scpls .pls
+AddType audio/ogg .ogg
+AddType audio/wav .wav

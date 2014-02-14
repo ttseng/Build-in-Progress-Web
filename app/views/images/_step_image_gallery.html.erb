@@ -1,0 +1,153 @@
+<% if (source=="edit" ) || (source=="new") || 
+      (source=="index"  && step.images.count != 0) || 
+      (source=="index"  && !@project.last_step_with_images.blank?) %>   
+
+    <div class="detailViewPhoto <%=step.id%>">
+
+    <% if (source == "index") %>
+      <div class="mainPhoto carousel slide <%=step.id%>" id="carousel-<%=step.id%>" style="margin-left: -20px">
+    <% else %>
+      <div class="mainPhoto carousel slide <%=step.id%>" id="carousel-<%=step.id%>">
+    <% end %>
+    
+    <% if step.images.count == 1 %>
+      <script type="text/javascript">
+        $('.mainPhoto.<%=step.id%>').addClass('singleImage');
+      </script>
+    <% end %>
+      <div class="carousel-inner <%=step.id%>"></div>
+      <%# carousel controls %>
+         <a class="carousel-control left" href="#carousel-<%=step.id%>" data-slide="prev" style="display:none">&lsaquo;</a>
+         <a class="carousel-control right" href="#carousel-<%=step.id%>" data-slide="next" style="display:none">&rsaquo;</a>
+    </div>
+
+    <% if source=="index" %>
+      <% if step.images.count > 1 %>
+        <div class="thumbGallery <%=step.id%>"></div>
+      <% end %>
+    <% else %>
+      <div class="rightGallery">
+        <div class="wrapper">
+          <div class="thumbGallery <%=step.id%>" id="images" data-update-url="<%= sort_images_url %>"></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+<% end %>
+
+<% image_step_id = step.id %>
+
+<% step.images.where(:project_id => @project.id).order("position").each_with_index do |image, index| %>
+  <% # add a check to make sure new images (with step_id -1) don't appear if they're not associated with the project %>
+    <% remix = false %>
+
+    <% active = "" %> <%# stores whether or not image is active or first in carousel %>
+    <% if index==0 %>
+      <% active = "active" %>
+    <% end %>
+    
+    <% image_record = image %>
+
+    <% # check if the image is from a remix %>
+    <% if image.is_remix_image? && !image.original_image.blank? %>
+      <%# draw the original asset %>
+      <% remix = true %>
+      <% image = image.original_image %>
+    <% end %>
+
+    <% if image.has_video? %>
+      <% if !image.video.embed_url.blank? %>
+        <% # add iframe video to carousel %>
+          <script>
+            var video_embed_code = carousel_video_iframe("<%=image.video.embed_url%>", "<%=image_step_id%>", "<%= image_record.id %>", "<%=active%>");
+             $('.carousel-inner.<%=image_step_id%>').append(video_embed_code); 
+             // add mask to prevent video from continuing if cycling through carousel
+             $('.carousel-inner.<%=image_step_id%> .item').last().prepend('<div class="video_mask"></div>'); 
+          </script>
+      <% else %>
+        <% # add html5 video player%>   
+          <script type="text/javascript">
+          var video_embed_code = carousel_video_player("<%=image.video.video_path%>", "<%=image.video.video_path_url(:webm)%>", "<%=image_step_id%>", "<%= image_record.id%>", "<%=active%>");
+          $('.carousel-inner.<%=image_step_id%>').append(video_embed_code); 
+          </script>
+      <% end %>
+    <% elsif image.has_sound? %>
+    <% # add iframe sound to carousel %>
+      <script type="text/javascript">
+        var sound_embed_code = carousel_soundcloud_iframe("<%=image.sound.embed_url%>", "<%=image_step_id%>", "<%= image_record.id%>", "<%=active%>");
+        $('.carousel-inner.<%=image_step_id%>').append(sound_embed_code);
+      </script>
+    <% else %>
+      <% if image.image_path? %>
+      <% # add already uploaded image to carousel %>
+          <script type="text/javascript">
+             $('.carousel-inner.<%=image_step_id%>').append('<div class="item <%=active%>"><a class="fancybox" href="<%=image.image_path_url%>" rel="gallery <%=image_step_id%>" data-fancybox-type="image"> <%=image_tag(image.image_path_url(:preview), :width => "100%", :class=> image_record.id)%></a></div>');    
+           </script>
+      <% else %>
+        <% # add placeholder s3 direct upload image %>
+          <script type="text/javascript">
+             $('.carousel-inner.<%=image_step_id%>').append('<div class="item <%=active%>"><a class="fancybox" href="<%=image.s3_filepath%>" rel="gallery <%=image_step_id%>" data-fancybox-type="image"> <%=image_tag(image.s3_filepath, :width => "100%", :class=> image_record.id)%></a></div>');    
+           </script>
+      <% end %>
+    <% end %>
+
+    <% # add thumbnail images %>
+    <% if source == "index" %>
+        <script>
+        // only draw the thumbnail gallery if there's more than one image in the step
+        if("<%=step.images.count%>" >1){    
+          $('.thumbGallery.<%=image_step_id%>').append("<%= j render :partial=> 'images/index_image', :locals=> {:image=>image, :step_id=> image_step_id, :index=> index} %>");
+        }          
+        </script>
+    <% else %>
+        <% # coming from edit page, render partial %>
+        <% if remix %>
+          <%= render :partial => 'images/edit_image', :locals=> {:image=> image_record, :remix => remix, :step_id=> image_step_id, :index=> index} %> 
+        <% else %>
+          <%= render :partial => 'images/edit_image', :locals=> {:image=> image, :remix => remix, :step_id=> image_step_id, :index=> index} %> 
+        <% end %>
+    <% end %>
+<% end %>
+
+<% # add a blankPhoto to all edit pages if it doesn't already exist %>
+<% if source=="edit" || source == "new"%>
+  <script>
+
+  if($('.detailView.<%=step.id%> .blankPhoto').length==0){
+    // console.log("adding blank photo");
+    // console.log("step.id: <%=step.id%>")
+    $('.detailViewPhoto.<%=step.id%>').append('<div id="blankPhoto"></div>');
+  } 
+  if($('#carousel-<%=step.id%> .item').length > 0){
+      $('#blankPhoto').hide();
+  }
+  </script>
+<% end %>
+
+<% # add attribution to all remix images %>
+<% step.images.order(:position).each do |image| %>
+  <% if image.is_remix_image? && !image.original_image.blank? %>
+   <% original_project = image.original_image.project %>
+  <script type="text/javascript">
+    var image_id = parseInt("<%= image.id %>");
+    var project_overview = false;
+    remix_caption(image_id, project_overview, "<%=project_path(original_project)%>", "<%=original_project.title%>", "<%=user_path(original_project.users.first)%>", "<%=image.author%>");
+  </script>
+  <% end %>
+<% end %>
+
+<% # reveal carousel controls on mainPhoto hover %>
+<script type="text/javascript">
+  $('.stepDetailView .mainPhoto').hover(function(){
+    if($(this).find('.item').length > 1){
+      $(this).find('.carousel-control').fadeIn();
+    }
+    }, function(){
+       if($(this).find('.item').length > 1){
+          $(this).find('.carousel-control').fadeOut();
+      }
+    });
+
+  $('.thumbGallery .image').last().css('margin-bottom', '0px');
+</script>

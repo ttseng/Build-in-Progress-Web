@@ -1,0 +1,7 @@
+$('#ExpCollections').append('<%= j render :partial => "collections/explore_collection", :collection => @collections, as: :collection %>');
+<% if @collections.next_page %>
+	$('.pagination').replaceWith('<%= j will_paginate @collections, :param_name => "collections_page", previous_label: h("Previous"), next_label: h("Next"), :page_links=> false %>');
+<% else %>
+	$('.pagination').remove();
+	$('.loadingGIF').remove()
+<% end %>

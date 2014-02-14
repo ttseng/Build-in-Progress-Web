@@ -1,0 +1,351 @@
+.tab-pane{
+	.empty{
+		text-align: center;
+		margin-top:15px;
+	}
+}
+
+.userProfile{
+	width:250px;
+	min-height: 450px;
+	max-height:685px;
+	margin-top:20px;
+	float:left;
+	// box-shadow: 1px 1px 3px #888888;
+	padding: 20px 20px 0px 20px;
+	border-radius:5px;
+	background: #fff;
+	border: 1px solid #CCC;
+
+	#userAvatar{
+		width:185px;
+		height:185px;
+		margin-bottom:20px;
+	}
+	#username{
+		margin: 10px 0px;
+	}
+
+	#about_me{
+		margin: 10px 0px;
+	}
+}
+
+.profile_category_icon {
+	font-size: 2em;
+	padding: 0px 5px;
+	display:inline-block;
+	max-height: 30px;
+	img{
+		max-width: 30px;
+	}
+}
+
+.category_count {
+	margin-left: 7px;
+	margin-top: 2px;
+}
+
+.projectSideArea {
+	width: 615px;
+	min-height:470px;
+	max-height: 665px;
+	margin-top:20px;
+	float:right;
+	overflow-y:scroll;
+	padding: 0 10px;
+
+	.nav {
+		margin-left: 25px;
+		border-bottom:0px;
+	}
+
+	.nav-tabs > li > a {
+		width: 152px;
+		text-align: center;
+		font-weight: bold;
+		border: 1px solid #ccc;
+		background-color: #ddd;
+	}
+
+	.nav-tabs > li.active > a,
+    .nav-tabs > li.active > a:hover,
+    .nav-tabs > li.active > a:focus {
+		background-color: #a7e2f4;
+
+     }
+
+	.tab-content {
+		margin-top: -20px;
+		overflow-x:hidden;
+	}
+
+	.addProjectButton, .addCollectionButton {
+		margin-left: 27px;
+		float: left;
+	}
+
+	.userProjects, .userFavorites, .userCollections {
+		width:600px;
+		float:left;
+		margin-right:15px;
+		position:relative;
+		padding-bottom:10px;
+
+		.userProjectsContainer, .userFavoritesContainer, .userCollectionsContainer {
+			width:570px;
+			padding: 20px;
+			margin-left: auto;
+			margin-right: auto;
+			margin-top: -10px;
+		}
+
+		.delete{
+			display: inline;
+			position:absolute;
+			top: 90px;
+			left:115px;
+			padding: 5px;
+			i{
+				padding: 3px 10px 5px 10px;
+			}
+		}
+
+		.no_favorites, .no_projects, .no_collections {
+			text-align: center;
+			padding: 5px 20px;
+		}
+	}
+	.userFavorites, {
+		margin-top: 20px;
+	}
+	.userFavorite, .userComment, .userRemix, .collectionProjects {
+		float:left;
+		height:24px;
+		color: #fff;
+	}
+	.collectionProjects {
+		margin-left: 8px;
+	}
+	.userComment{
+		left:37px;
+	}
+	.userRemix{
+		left:74px;
+	}
+	.userFavorite .fa-star, .userComment .fa-comment, .userRemix .fa-code-fork{
+		font-size:17px;
+	}
+	.userFavorite .fa-star{
+		color:  #DFDF00;
+		padding-left:5px;
+	}
+	.userComment .fa-comment{
+		padding-left:9px;
+		color: #A9E2F3;
+	}
+	.userRemix .fa-code-fork{
+		padding-left:9px;
+		color: #B2D234;
+		font-weight:bold;
+	}
+
+	.userFavorite .count, .userComment .count, .userRemix .count{
+		font-size:small;
+		color:#000;
+	}
+
+	.userFavorite .count{
+		padding-left:4px;
+	}
+	.userComment .count{
+		padding-left:0px;
+	}
+
+	.count{
+		font-weight:normal;
+	}
+
+}
+
+.followSideArea {
+	width: 516px;
+	height: 60px;
+	float:left;
+	margin-top:20px;
+	margin-bottom: -10px;
+	margin-left: 48px;
+	overflow-y:scroll;
+	border: 1px solid #ccc;
+	border-radius:5px;
+	background-color: white;
+	padding: 0 10px;
+}
+
+.userFollowSideArea {
+	width: 516px;
+	height: 378px;
+	margin-top:20px;
+	margin-bottom: -10px;
+	margin-left: 48px;
+	float:left;
+	border: 1px solid #ccc;
+	border-radius:5px;
+	background-color: white;
+	padding: 10px 10px;
+
+	hr {
+		margin-bottom: 0px;
+	}
+}
+
+.allProjects{
+	position:relative;
+	margin-bottom:20px;
+
+	.addProjectButton, .addCollectionButton {
+	  margin-top:-1px;
+	  float:right;
+	  margin-right:0px !important;
+	}
+
+	.pagination{
+		bottom: -25px;
+		right:35px;
+		border-radius: 6px;
+	}
+}
+
+// Devise registration styling
+.validation{
+	width:218px;
+	background: #C96969;
+	border-bottom-left-radius:5px;
+	border-bottom-right-radius:5px;
+	margin-top:-10px;
+	padding-left:10px;
+	padding-bottom:3px;
+	color: #fff;
+	display:none;
+}
+
+.followTable {
+	margin-left: 25px;
+	margin-top: 10px;
+}
+
+#following, #followers, #follow {
+	width: 150px;
+}
+
+.followButton, .unfollowButton {
+	float: right;
+	margin-right: -22px;
+	margin-top: -1px;
+	width: 73px;
+}
+
+.userFollowDisplay {
+	width: 254px;
+	margin-top: 30px;
+}
+
+.userFollowAvatar {
+	width: 65px;
+}
+
+.followerText {
+	margin-top: -10px;
+	width: 130px;
+
+	h5 a {
+		color: gray;
+	}
+
+	h5 a:hover {
+		color: #666;
+	}
+}
+
+.users_follow_form {
+	float: left;
+	margin-top: 20px;
+}
+
+.no_follows {
+	margin-top: 50px;
+}
+
+#following, #followers {
+	p {
+		font-variant:small-caps;
+		color: gray;
+	}
+}
+
+#following:hover, #followers:hover {
+	p, a, h4 {
+		color: rgb(59, 174, 220);
+	}
+}
+
+#followers {
+	padding-left: 12px;
+}
+
+.followTitle {
+	text-align: center;
+	margin-top: 10px;
+	margin-bottom: -10px;
+}
+
+#following_count, #followers_count {
+	margin-bottom: 0px;
+}
+
+#following_count, #following_count_sub {
+	margin-left: 8px;
+}
+
+#followers_count, #followers_count_sub {
+	margin-left: 31px;
+}
+
+#follower_last_seen {
+	font-size: 0.9em;
+}
+
+.userAllFollows {
+	height: 320px;
+	overflow-y:scroll;
+}
+
+.projectViewAllTitleBar{
+	margin-top: 35px;
+}
+
+.projectViewAll {
+	float: left;
+	width: 940px;
+	.allProjects {
+		width: 940px;
+	}
+}
+
+.projectViewAllHeading {
+	float: left;
+	font-family: 'Open Sans';
+	margin-left: 25px;
+	margin-bottom: 30px;
+}
+
+.projectViewAllAvatar {
+	width: 60px;
+	float: left;
+	margin-left: -30px;
+}
+
+.viewAll {
+	left: 26px !important;
+	right: auto !important;
+}

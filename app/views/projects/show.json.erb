@@ -1,0 +1,8 @@
+{ 
+	"success":true, 
+	"info":"ok", 
+	"data":
+		{"project":
+			<%= JSON.pretty_generate(@project.as_json(only: [:title, :description])).html_safe %>			
+		} 
+}

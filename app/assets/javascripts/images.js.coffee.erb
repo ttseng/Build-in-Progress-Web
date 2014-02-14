@@ -1,0 +1,8 @@
+jQuery -> 	
+ $('#s3-image-uploader').S3Uploader
+ 	additional_data: {project_id: window.project_id, step_id: window.step_id, user_id: window.user_id} 
+ 	progress_bar_target: $('.js-progress-bars')
+ 	before_add: check_valid_filetype
+ 	remove_completed_progress_bar: false
+ 	allow_multiple_files: false
+ 	

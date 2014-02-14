@@ -1,0 +1,176 @@
+<div class="detailView" id="step_<%=step.id%>">
+    
+    <% if step.images.count > 0 %>
+      <%= render :partial => 'images/step_image_gallery', :locals => {:step=> step, :source=>"index"} %>
+    <% end %>
+
+    <div class="detailViewStepName">
+      <p class="name">
+      <%= link_to step.name, project_step_path(@project, step) %>
+      </p>
+    </div>
+
+    <% if @authorLoggedIn %>
+      <div class="btn btn-small btn-info editButton" id="edit_<%=step.id%>" data-position="<%=step.position%>">Edit</div>
+    <% end %>  
+    <% if step.images.count == 0 %>
+      <script type="text/javascript">
+        $('.editButton:last').css('top', '7px');
+      </script>
+    <% end %>
+
+      <div class="detailViewText">
+        <% if step.description.blank? && @project.users.include?(current_user)%>
+            <p class = "emptyStepDescription">
+              Click "Edit" to add a description to your step!
+            </p>
+        <% else %>
+          <p style="font-weight:normal;"><%=auto_link("#{step.description}").html_safe%></p>
+        <% end %>
+      </div>
+      <% if step.question && step.question.description.length>0 %>
+        <div class="adviceContainer questionContainer" id="question_<%=step.question.id%>">
+            <% if !step.question.answered  && step.users.include?(current_user) %>
+                <span class="answered_checkbox_container">
+                    <input type="checkbox" class="answered_checkbox" style="margin-top:-2px"></input> Answered?
+                </span>
+              <% end %>
+              <% if !step.question.answered %>
+                <div class="ribbonHeader">
+                  <icon class="fa fa-question" style="font-size: 15px"></icon>
+                </div>
+              <% end %>
+              
+              <% if !step.question.answered %>
+                <div class="ribbonTitle question">
+              <% else %>
+                <div class="ribbonTitle question answered">
+              <% end %>
+                Question
+              </div>
+              <div class="clear"></div>
+              <div class="ribbonContent">
+                <%= auto_link(step.question.description) %>
+              </div>
+        </div>
+        <% if step.question.answered %>
+          <script type="text/javascript">
+            $('#question_<%=step.question.id%>').addClass('answered');
+          </script>
+          <% if step.question.decision %>
+            <div class="decisionContainer questionContainer">
+              <div class="ribbonTitle decision">
+                What I decided
+              </div>
+              <div class="clear"></div>
+              <div class="ribbonContent">
+                <%= auto_link(step.question.decision.description) %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <% if step.design_files.length > 0 %>
+      <div class="detailViewDesignFiles">
+        <div class="ribbonHeader design">
+          <icon class="fa fa-paperclip"></icon>
+        </div>
+        <div class="ribbonTitle design">
+          Design Files
+        </div>
+        <div class="clear"></div>
+        <div class="ribbonContent">
+          <% step.design_files.each_with_index do |design_file, index| %>
+            <%= link_to File.basename(design_file.design_file_path.to_s), design_file.design_file_path.to_s if design_file %><%= "," unless index == step.design_files.count - 1%>
+          <% end %>
+        </div>
+      </div>
+      <% end %>
+      <div class="detailViewStepDate"><icon class="fa fa-time"></icon><%= step.published_on.strftime "%A, %B %-d at %-I:%M %p" %></div>
+
+    <% if @project.is_remix? && step.original_authors %>
+          <div class="detailViewStepAuthors remix">Created by <%= render :partial => "steps/remix_step_author_byline", :locals => {:original_authors => step.original_authors} %>
+          </div>
+    <% end %>
+
+    <% if (@project.users.count > 1 && step.users.count > 0 && !@project.is_remix?) || (@project.is_remix? && step.new_authors.length > 0) %>
+      <div class = "detailViewStepAuthors">
+        <% if @project.is_remix? && step.original_authors%>Edited by <% else %>Created by <%end %><%step.new_authors.each_with_index do |user,index| %><%= link_to user.username, user_path(user) %><%if step.new_authors.count == 2 && index == 0%> and <% elsif index != step.new_authors.count-1 && index == step.new_authors.count-2 %>, and <% elsif index != step.new_authors.count-1 %>, <% end %><% end %>
+      </div>
+    <% end %>
+
+
+    <% if user_signed_in? && @project.users.include?(current_user) %>
+        <%=link_to raw('<i class="btn btn-danger fa fa-trash-o deleteStepButton"></i>'), project_step_path(@project, step), :method => :delete, :confirm=>  "Are you sure you want to delete this step?", :title=> "Delete Step"%>
+    <% end %>
+    
+     <div class="userComments">
+      <div class="accordion" id="comments_<%=step.id%>">
+        <h5> Comments (<%=step.comment_threads.count%>) <icon class="fa fa-comment"></icon></h5>
+        <div class="comment">  
+          <% if user_signed_in?%>
+          <div class="userIcon">
+            <% if current_user.avatar_url != nil %>
+              <%= image_tag(current_user.avatar_url(:thumb), :class=>"commentAvatar img-polaroid")%>
+            <% else %>
+               <%= image_tag("default_avatar.png", :class=>"commentAvatar img-polaroid") %>
+            <% end %>
+          </div class="addComment">
+             <%= semantic_form_for([@project, step, step.comment_threads.build]) do |f| %>
+              <div class="field">
+                <%= f.text_area :body %>
+              </div>
+          <div class="submit">
+            <%= f.actions do %>
+              <%= f.action :submit, :label=>"Comment", :button_html => {:class=> "btn btn-small btn-primary commentSubmit", :disable_with => "Comment"} %>
+            <% end %>
+          </div>
+          <% end %>
+          <% else %>
+            <p> Please <span style="font-weight: bold" data-toggle="modal" data-target="#signInModal">sign in</span> to leave comments </p>
+          <% end %>
+   
+           <div class="clear"></div>
+        <div class="stepComments">
+          <% if step.comment_threads.count >0 %>
+            <% step.comment_threads.each do |stepComment| %>
+              <% if stepComment.body.length>0 %>
+                <%= render :partial => 'comments', :locals => {:comment=> stepComment, :step=>step} %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+        </div>
+      </div>
+
+  </div>
+
+  <script type="text/javascript">
+    var editButton; // used to hold the object of the edit button that is clicked
+
+    $('form.comment').submit(function(){
+      var comment = $(this).children('.field').find('textarea').val();
+      if(comment.length == 0){
+        alert('Cannot post an empty comment');
+        return false;
+      }else{
+        $(this).find('.commentSubmit').attr('disabled', true);
+      }
+    }); 
+
+    $('.answered_checkbox').on('click', function(){
+        if($('.answered_checkbox').is(':checked')){
+          var step_id = getID($(this).parents('.detailView').attr('id'));
+          console.log('step_id' + step_id);
+         $.ajax({
+              url: "/projects/"+"<%=@project.id%>"+"/steps/edit_redirect",
+              type: 'GET',
+              data: {stepID: step_id, answered: true} 
+          });
+        }
+    });
+
+    // });
+  </script>

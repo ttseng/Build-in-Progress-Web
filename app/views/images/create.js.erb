@@ -1,0 +1,101 @@
+<% if @image.new_record? %>
+  alert("Failed to upload image: <%= j @image.errors.full_messages.join(', ').html_safe %>");
+<% else %>
+  // hide modal
+  $(".embedModal").modal('hide');
+
+  // reset modal forms
+  resetVideoModal();
+  // resetOtherMediaModal();
+  
+  var stepImagesCount = $('.image').length;  
+
+  // get the number of images in the step
+  <% if @image.step_id == -1 %>
+    <% stepImagesCount = @image.project.images.where(:step_id=>-1).count %>
+  <% else %>
+    <% stepImagesCount = @image.step.images %>
+  <% end %>
+
+  // var imageCount = "<%=stepImagesCount%>";
+  // console.log("imageCount: " + imageCount);
+
+  // hide blankPhoto 
+  if($('#blankPhoto').is(':visible')){
+      console.log('hiding blank photo');
+      $('#blankPhoto').hide();
+  }
+
+  // alert("adding thumbnail image");
+  <% #add image to thumbnail gallery gallery %>
+  <% if @image.has_video? %>
+      $("#images").append("<%= j render :partial=> 'images/edit_image', 
+              :locals=> {:image=>@image, :remix=> false, :overview=> false, :step_id=>@image.step_id, :index=>stepImagesCount} %>").hide().fadeIn(500);
+      <% if @image.video.video_path %>
+         if($('.placeholder.video').length>=0){
+            $('.placeholder').first().remove();
+          }
+      <% end %>
+  <% else %>
+    // replace the placeholder loading image for images uploaded to amazon s3
+    $("<%= j render :partial=> 'images/edit_image', 
+        :locals=> {:image=>@image, :remix=> false, :overview=>false, :step_id=>@image.step_id, :index=>stepImagesCount} %>").insertBefore($('.placeholder').first().hide().fadeIn(500));  
+    if($('.placeholder').first().length>=0){
+       $('.placeholder').first().remove();
+     }
+  <% end %>
+
+  <% active = "" %>
+  
+  if (stepImagesCount == 0){
+    <% active = "active" %>
+    // move media form buttons to the right gallery
+    $('.rightGallery').append($('#new_image'));
+    addImageButton("right");
+  } else{
+    // get rid of currently active image
+    $('.carousel .active').removeClass('active');
+  }
+
+  // add media to carousel 
+  <% if @image.has_video? %>
+    <% if !@image.video.embed_url.blank? %>
+      // add embedded video iframe to caoursel 
+      var video_embed_code = carousel_video_iframe("<%=@image.video.embed_url%>", "<%=@image.step_id%>", "<%= @image.id %>", "<%=active%>");
+      $('.carousel-inner.<%=@image.step_id%>').append(video_embed_code).hide().fadeIn(500);
+    <% else %>
+      // add HTML5 video player
+      var video_embed_code = carousel_video_player("<%=@image.video.video_path%>", "<%=@image.video.video_path_url(:webm)%>", "<%=@image.step_id%>", "<%= @image.id%>", "<%=active%>");
+      $('.carousel-inner.<%=@image.step_id%>').append(video_embed_code).hide().fadeIn(500);
+    <% end %>
+  <% elsif @image.has_sound? %>
+    // add soundcloud iframe to carousel 
+    var sound_embed_code = carousel_soundcloud_iframe("<%=@image.sound.embed_url%>", "<%=@image.step_id%>", "<%= @image.id%>", "<%=active%>");
+    $('.carousel-inner.<%=@image.step_id%>').append(sound_embed_code).hide().fadeIn(500);
+  <% else %>
+    // add image to carousel
+    $('.carousel-inner.<%=@image.step_id%>').append('<div class="item active"><a class="fancybox" href="<%=@image.image_path_url%>" rel="gallery <%=@image.step_id%>" data-fancybox-type="image"> <%=image_tag(@image.image_path_url(:preview), :width => "100%", :class=>@image.id)%></a></div>').hide().fadeIn(500);    
+  <% end %>
+
+  if(stepImagesCount == 0 ){
+    $('.mainPhoto').fadeIn(500);    
+  }else{
+    // reveal carousel controls
+    $('.carousel-control').fadeIn(500);
+  }
+
+  // get step ID from carousel and set the carousel to the newly uploaded image
+  var stepID = get_carousel_ID();
+  setCarousel(stepID, stepImagesCount+1);
+
+  // remove progress bars
+  $('.upload').remove();
+
+<% end %>
+
+function get_carousel_ID(){
+  var carousel_id = $('.carousel').attr('id');
+  var slashIndex = carousel_id.indexOf('-')+1;
+  var step_id = carousel_id.substring(slashIndex, carousel_id.length);
+  return step_id
+}

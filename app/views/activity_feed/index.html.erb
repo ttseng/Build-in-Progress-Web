@@ -1,0 +1,47 @@
+<div class="fullRow" style="margin-top:60px">
+  <div class="fullRow">
+  	<div class="activity_feedPage">
+  		<div class="activity_feed_header">
+			<icon class="fa fa-globe"></icon><h3>Activity Feed</h3>
+		</div>
+		<hr id="activity_feed_border">
+		<% if !@activities %>
+			<p>
+				No recent activity...
+			</p>
+		<% else %>
+			<div class="activity_feed">
+			<% @activities.each do |activity| %>
+				<% if activity.trackable %>
+                	<% unless render_activity(activity).blank? %>
+                    	<div class="activity_feed_activity">
+                    		<%= render_activity activity %>
+                    	</div>
+                		<hr>
+                	<% end %>
+                <% end %>
+			<% end %>
+		<% end %>
+			</div>
+	</div>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+	// apply ellipsis to paragraphs that overflow the notification-comment div
+	var line_height = 18;
+	
+	$('.notification-heading').each(function(){
+		var heading_height = $(this).height();
+		var lines = heading_height/line_height;
+		if (lines==2){
+			$(this).closest('.activity_feed_activity').children('.notification-comment').css("height", "20px");
+		} else if (lines>2) {
+			$(this).closest('.activity_feed_activity').children('.notification-comment').hide();
+		} 
+		$(this).closest('.activity_feed_activity').children('.notification-comment').ellipsis();
+	});
+});
+</script>

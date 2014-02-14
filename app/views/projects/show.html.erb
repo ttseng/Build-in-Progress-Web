@@ -1,0 +1,29 @@
+<div class="fullRow" style="width:940px">
+  <div class="fullRow">
+    <div id="processMap">
+      <%= render :partial => 'steps/process_map', :locals=> { :currentStep => @step, :project => @project, :steps => @project.steps, :edit=> false} %>
+    </div>
+
+    <% # Add the Project title bar%>
+    <div class="fullRow">
+    <div class = "projectTitle">
+      <p id="projectName"><a href=<%=project_steps_path(@project)%>> <%=@project.title %></a></p>
+        
+        <div class="edit">
+        <%=link_to 'Edit', edit_project_step_path(@project, @step), :class=> "btn btn-info" %>
+        </div>
+        
+        <div id="author"> <%=@project.author%> | <%= @project.created_at.strftime "%m/%d/%Y"%> - Current </div>
+    </div>
+
+    <% # Add the Detail View%>
+      <%= render :partial=> 'steps/step_detail_view' %>
+  </div>
+</div>
+</div>
+
+    <script type="text/javascript">
+
+        $('.content').css("height", "100%");
+      });
+    </script>

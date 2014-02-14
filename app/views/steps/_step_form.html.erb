@@ -1,0 +1,720 @@
+<script type="text/javascript">
+  var editMode = Boolean(<%=source=='edit'%>); // editing an existing step
+  var newMode = Boolean(<%=source=='new'%>); // editing a new step
+
+  var has_question = false;
+  var answered = Boolean("<%=params[:answered]%>");
+ 
+
+   /* -------- WRITING PROMPTS START ----------- */
+
+  // var project_overview_prompts = new Array("What inspired you to start this project?",
+  //                                  "Who is this project for?",
+  //                                  "Is there a story behind this project?",
+  //                                  "How do you intend to use this project?");
+  var regular_step_prompts = new Array("Did you face any interesting challenges at this step?", 
+                               "What materials did you use, and why did you chose them (sturdier, cheaper, etc.)?",
+                                "What types of tools did you use?",
+                                "Is there any advice you'd give to someone building this?");
+  var built_step_prompts = new Array("If you were to make this project again, what would you do differently?", 
+      "What do you wish you knew at the start of this project?",
+      "What are ways other people could remix this project?",
+      "What skills would be necessary for someone making your project?");
+
+  // select a random prompt from the list of prompts
+  function selectRandomPrompt(){
+    if(!$('#step_last').is(':checked')){
+      return regular_step_prompts[Math.floor(Math.random()*regular_step_prompts.length)];
+    }else{
+      return built_step_prompts[Math.floor(Math.random()*built_step_prompts.length)];
+    }
+  }
+
+  // set the prompt on the step form
+  function pickRandomPrompt(step_number){
+    var currentPrompt = $.trim($('.prompt_text').html());
+    var unique = false;
+
+    if(currentPrompt!=""){
+      while(!unique){
+        var randomPrompt = selectRandomPrompt();
+        if(randomPrompt != currentPrompt){
+          unqiue = true;
+          break;
+        }
+      }
+    }else{
+      var randomPrompt = selectRandomPrompt(step_number);
+    }
+
+    $('.prompt_text').hide().html(randomPrompt).fadeIn();
+
+    if($('.prompt_text').height()>18){
+      $('.prompt').css('bottom', '0');
+    }else{
+      $('.prompt').css('bottom', 'auto');
+    }
+  }
+
+/* -------- WRITING PROMPTS END ----------- */
+</script>
+
+<style type="text/css">
+  #loading {display: block;} 
+</style>
+
+<%= semantic_form_for [@project, @step], :html => {:multipart => true} do |f| %>
+    <!-- /////  TOP STEP SUBMIT FORM BUTTONS /////-->
+    <div class="editButtons top">   
+        <%= render :partial => 'step_buttons', :locals => {f: f} %>
+    </div>
+
+    <div class="stepDetailView stepForm">
+
+      <% if source == 'new' %>
+        <script type="text/javascript">
+          $('.stepDetailView').addClass('editStepForm');
+        </script>
+      <% end %>
+
+       <div class = "editDetailView">   
+        <!-- /////  WARNING IF EDITING CONFLICT  /////-->
+         <% if @step.editing_authors.length > 1 %> 
+            <div class="alert alert-error">
+              <strong style="margin-right: 5px;">Warning!   </strong><% @step.editing_authors.each do |author| %><% if author != current_user %><%= author.username %><% end %><% end %> is editing this step at the same time.  If you save, you may override their changes.  
+            </div>
+          <% end %>
+
+        <!-- /////  STEP NAME  /////-->
+        <div class="detailViewStepName">
+            <span class="label" style="margin-bottom: 10px">Step Name*</span>
+            <div class="formStepName"><%= f.input :name, :as => :string, :input_html => {:maxlength=>50, :style=>"font-size:20px; height:25px; width:425px;"}, :label=> false%></div> 
+        </div>
+      
+        <div class="clear"></div>
+        
+        <!-- /////  STEP IMAGES & PROGRESS BARS  /////-->
+        <%= render :partial => 'images/step_image_gallery', :locals => {:step=> @step, :source=>source} %>
+        <div class="upload js-progress-bars">
+          <div class="progress">
+            <div class="bars"> </div>
+          </div>
+        </div>
+
+        <script id="template-upload" type="text/x-tmpl">
+          <div id="file-{%=o.unique_id%}" class="upload">
+            {%=o.name%}
+            <div class="progress"><div class="bar" style="width: 0%"></div></div>
+          </div>
+        </script>
+
+        <!-- /////  STEP DESCRIPTION  /////-->
+        <div class="detailViewText">
+          <div class="label_container">
+            <div class="label">Step Description</div>
+            <icon class="fa fa-refresh"></icon>
+            <div class="prompt">
+                <span class="prompt_text">
+                  <script type="text/javascript">
+                    pickRandomPrompt(<%=@step.position %>);
+                  </script>
+                </span>
+              </div>
+          </div>
+          <%= f.text_area :description, :class=>"ckeditor"%>
+        </div>
+
+        <% if @step.new_record? %>
+          <%= f.hidden_field :parent_id %>
+        <% end %>
+
+        <!-- /////  ASK FOR ADVICE  /////-->
+        <div class="accordion question_accordion">
+          <span>
+            <div class="label label-warning" style="margin-left: 10px">Ask for Advice</div> 
+            <icon class="fa fa-question-circle" title="Ask others for advice on your project" style="margin-left:10px; font-size: 15px"></icon>
+          </span>         
+
+          <%= f.fields_for :question do |question_f| %>
+            <div class="advice_field" style="margin-top: 10px; margin-left: 25px;">
+                <%= question_f.text_area :description, :placeholder=>"What would you like to get advice on?", :maxlength=>125 %>
+             
+                <% if @step.question.description %>
+                  <span class="answered_input">
+                    <%= question_f.input :answered, :as=> :boolean, :label=>"Answered?", :input_html=>{:style=>"font-size:small"}%><icon class="fa fa-question-circle" title="Check if this question is answered." style="margin-left:5px; float:right; margin-top: -24px;"></icon>
+                  </span>
+                  <script type="text/javascript">
+                      has_question = true;
+                      $('.answered_container').append($('.answered_input'));
+                  </script>
+                <% end %>
+              
+              <div class="decision_container">
+                <%= question_f.fields_for :decision do |decision_f| %>
+                  <div class="label label-success" style="margin-bottom: 10px;">What I decided</div><span class="hint_text"></span>
+                  <%= decision_f.text_area :description, :placeholder=>"What did you decide to do?", :maxlength=>125 %>
+                  <%= decision_f.input :question_id, :as => :hidden, :value =>@step.question.id %>
+                <% end %>
+              </div>
+
+              <script type="text/javascript">
+                if(!$('#step_question_attributes_answered').is(':checked')){
+                   $('.decision_container').hide();
+                }
+              </script>
+          </div>
+        </div>
+        <div class="answered_container"></div>
+      <% end %>
+
+      <!-- /////  MANAGE DESIGN FILES  /////-->
+        <div class="accordion design_accordion">
+          <span>
+            <div class="label label-info manage_design_files" style="margin-left: 10px"><icon class="fa fa-paperclip"></icon>    Manage Design Files</div>
+            <icon class="fa fa-question-circle" title="Upload or remove design files for your project" style="font-size: 15px"></icon>
+            <div class="clear"></div>
+          </span>         
+
+          <div class="design_container">
+            <div style="color: #9C9B9B; margin-top: 5px; margin-left: 25px;">CAD files, Arduino or Processing sketches, etc.</div>
+            <% if @step.design_files.count > 0 %>
+              <div class="delete_existing_files">
+                  <% @step.design_files.each_with_index do |design_file, index| %>
+                    <% unless design_file.design_file_path.to_s.blank? %>
+                      <div id="df-<%= design_file.id %>" class="design_file_row">
+                        <%= link_to truncate(File.basename(design_file.design_file_path.to_s), :length => 50), design_file.design_file_path.to_s if design_file %>
+                        <%= link_to raw('<i class="fa fa-trash-o"></i> Remove File'), design_file, :method => :delete, :remote=>true, :class=> 'remove_fields', :data=> {:confirm=>  "Are you sure you want to delete this design file?"} %>
+                      </div>
+                    <% end %>
+                  <% end %>
+                </div>
+              <% end %>
+          
+            <div class="upload_new_files">
+              <div style="margin-bottom: 5px;"><b>Add Files</b></div>
+              <%= f.fields_for :design_files, multipart: true do |design_file_form| %>
+                <% if f.object.new_record? %>
+                  <%= render 'design_file_fields', f: design_file_form %>
+                <% end %>
+              <% end %>
+              <p class="add_design_file" style="display: none"><%= link_to_add_fields raw("<icon class='icon-plus-sign' style='color:green;'></icon> Add Another Design File"), f, :design_files %></p>
+            </div>
+          </div>
+          <script type="text/javascript">
+            $('.design_container a').attr("target", "_blank"); // open up design file links in a new tab
+          </script>
+          
+        </div>
+
+      <!-- /////  PROJECT BUILT? /////-->
+      <div class = "built_section">
+        <div class="label" style="float: left; margin-top: 10px; margin-right: 10px;">Built?</div>
+
+        <div class="formLastStepCheck">
+          <%= f.input :last, :as=> :boolean, :label => " "%> 
+        </div>
+        
+        <div class="hint_text">Check if your project is now complete</div>
+      </div>
+
+      <!-- /////  PUBLISHED ON DATE /////-->
+      <% if !@step.new_record? %>
+
+      <div class="publishedOn">
+        <div class="label" style="margin-bottom: 5px" >Published on</div><br>
+            <div class="input-append published_on_calendar"><%= f.text_field :published_on_date, :ignore_time=>true, :class=>"datepicker" %><span class='add-on'><i class='fa fa-calendar'></i></span></div>  at <div class='input-append bootstrap-timepicker' style='display: inline;'>  <%= f.text_field :published_on_time, :class=> 'dateselect-time input-small timepicker'%> <span class='add-on'><i class='fa fa-clock-o'></i></span></div> 
+            <div class="btn btn-small current_time">Current Time</div>
+
+          <%= f.input :timeZone, :as=> :hidden, :value=> @step.published_on.zone %>
+        </div>
+      <% end %>
+
+      <!-- /////  PUBLICATION NOTE /////-->
+      <% if !@step.project.published %>
+        <div class="published_note">
+            Note: Your project will become published on Build in Progress once you name your project and add a step with an image.
+        </div>
+      <% end %>
+
+    </div>  <!-- /////  END EDIT_DETAIL-VIEW /////-->
+   
+    <!-- /////  BOTTOM STEP SUBMIT FORM BUTTONS /////-->
+    <div class="editButtons bottom">
+      <%= render :partial => 'step_buttons', :locals => {f: f} %>
+    </div>
+
+  </div> <!-- /////  END STEP_DETAIL_VIEW  /////-->
+<% end %>
+
+ <!-- /////  IMAGE AND VIDEO UPLOADING FORM  /////-->
+<%= s3_uploader_form callback_url: images_url, callback_param: "image[image_path]", id: "s3-image-uploader", key: "uploads/{unique_id}-#{SecureRandom.hex}/${filename}" do %>
+
+   <div id="uploadMedia">
+      <div id="uploadImageWrapper" title="Add Image">
+         <button class="btn uploadImageButton uploadMediaButton" >
+            <i class="fa fa-camera uploadImageIcon"></i><br>
+            <p class="uploadImageLabel uploadMediaLabel">Image</p>
+         </button>
+          <%= file_field_tag :file, multiple: true %>
+      </div>
+
+      <div class="vertical_line"></div>
+
+      <div id="embedVideoWrapper" title="Add Video">
+        <button class="btn embedVideoButton uploadMediaButton" data-toggle="modal" data-target = "#videoEmbedModal">
+            <i class="fa fa-film embedVideoIcon"></i><br>
+            <p class="embedVideoLabel uploadMediaLabel">Video</p>
+        </button>
+      </div>
+  </div>
+<% end %>
+
+<!-- the video embed modal form -->
+<%= render :partial => 'steps/video' %>
+
+<!-- the other media embed modal form -->
+<%= render :partial => 'steps/other_media' %>
+
+<!-- editing conflict modal -->
+<%= render :partial => "editing_conflict_modal" %>
+
+<!-- import youtube iframe api -->
+
+<script type="text/javascript" src="http://www.youtube.com/iframe_api"></script>
+
+<script type="text/javascript">
+
+ function addImageButton(placement){
+    if(placement=="left"){
+      // console.log("add image button on left");
+      $('#blankPhoto').append($('#s3-image-uploader'));
+      $('#uploadImageWrapperSmall').attr("id", "uploadImageWrapper");
+      $('#embedVideoWrapperSmall').attr("id", "embedVideoWrapper");
+      // $('#embedOtherWrapperSmall').attr("id", "embedOtherWrapper");
+      $('.uploadImageLabel').show();
+      $('.embedVideoLabel').show();
+      $('#uploadImageWrapper').css("top", "100px");
+      $('#embedVideoWrapper').css("top", "100px");
+      // $('#embedOtherWrapper').css("top", "100px");
+    }
+    else if (placement=="right"){
+      // console.log("add image button on right");
+      $('.rightGallery').append($('#s3-image-uploader'));
+      $('#uploadImageWrapper').css("top", "89%");
+      $('#embedVideoWrapper').css("top", "89%");
+      // $('#embedOtherWrapper').css("top", "85%");
+      $('#uploadImageWrapper').attr("id", "uploadImageWrapperSmall");
+      $('#embedVideoWrapper').attr("id", "embedVideoWrapperSmall");
+      // $('#embedOtherWrapper').attr("id", "embedOtherWrapperSmall");
+      $('.uploadImageLabel').hide();
+      $('.embedVideoLabel').hide();
+    }
+  }
+
+    /*  MODAL 
+      adding media modal forms functionality
+  */
+
+  function resetVideoModal(){
+    // clear modal video input field text
+    $('#video_embed_url').val("");
+    $("form.video .embedPreview").html("<h3>Video Preview</h3>");
+    $('form.video .embedPreview').hide();
+    $('.transcoding').hide();
+    $('#videoFileName').html('');
+    $('.uploadVideoButton').attr('disabled', false);
+    $('.video_file_upload_field').attr('disabled', false);
+    $('#add_video_tabs a').first().tab('show');
+    $('#video_submit').attr("disabled", true);
+    $('#video_submit').html("Save");
+    $('.loadingIcon').hide();
+  }  
+
+  function resetOtherMediaModal(){
+    // clear modal video input field text
+    $('#sound_embed_url').val("");
+    $("form.sound .embedPreview").html("<h3>Video Preview</h3>");
+    $('form.sound .embedPreview').hide();
+    $('#add_other_media_tabs a').first().tab('show');
+    $('#soundcloud_submit').attr("disabled", true);
+    $('#soundcloud_submit').html("Save");
+    $('.loadingIcon').hide();
+  }  
+
+
+  /* -------- MODAL END ---------- */
+
+$(document).ready(function(){
+
+  // edit the title of the project
+  $('.editProjectTitleBtn').click(function(){
+    console.log("clicked editProjectTitle button");
+      $.ajax({
+          url: "/projects/editTitle",
+          type: 'GET',
+          data: {projectID: "<%=@project.id%>"} 
+    });
+  });
+
+  // focus the text editor
+  CKEDITOR.on('instanceReady', function(ev){
+    var editor = ev.editor;
+
+    if(typeof(editor)!=='undefined'){
+      editor.focus();
+    }
+  });
+
+    /* -------- WRITING PROMPTS ----------- */
+
+
+   $('.fa-refresh').click(function(){
+    pickRandomPrompt(<%=@step.position%>);
+  });
+
+   // toggle between prompts for the last step and prompts for regular steps
+   $('#step_last').on('click', function(){
+    pickRandomPrompt(<%=@step.position%>);
+  });
+
+  /* -------- WRITING PROMPTS END ---------- */
+
+  /* ------------IMAGE GALLERY---------------
+     Functionality for the carousel and thumbnail gallery in step form
+  */
+
+  loadCarousels("edit");
+
+  $('.formtastic.image').removeClass('image'); // remove default class added to formatastic for image form
+
+  $('.thumbGallery').append($('.image'));
+
+  // move image buttons to left or right depending on whether the step already has images
+  if($('.thumbGallery .image').length==0){
+    // console.log('adding image button to left');
+    addImageButton("left");
+  }
+  else{
+    // console.log('adding image button to right');
+    addImageButton("right");  
+  }  
+
+  // user confirms that they want to remove an image, video, or design file
+  $.rails.confirm = function(message){
+    console.log('message: ' + message);
+    if((message.indexOf("image")>=0) || (message.indexOf("video")>=0) ){
+      if(confirm(message)){
+        // remove the image
+        $('.stepImage').each(function(){
+          var image = $(this).children('img');
+          if(image.css('opacity')==0.5 ){
+            if(!image.hasClass('direct-image')){
+              destroy_saved_image(image.parents('.image'));  
+            }else{
+               destroy_saved_image(image.parents('.image'));  
+              // remote unsaved image from carousel
+            }
+          }
+        });
+        return true;
+      }else{
+        // user clicks cancel, do not remove image
+        $('.stepImage').each(function(){
+          $(this).children('img').css('opacity', 1);
+        });
+        return false;
+        }
+      } // end message contains image or video
+      else if((message.indexOf("design")>=0)){
+        if(confirm(message)){
+            remove_design_file(); // remove the design file
+            console.log($(this).html());
+            return true;
+        }else{
+          $('.remove_fields').each(function(){
+            $(this).removeClass('.file_to_remove');
+          });
+        }
+    }
+    else{
+      if(confirm(message)){
+        console.log('confirmed');
+        return true;
+      }else{
+        console.log('canceled');
+        return false;
+      }
+    }
+  }
+
+  /* -----------BACKGROUND UPLOADING---------------*/
+
+  // image uploading has started
+  $('#s3-image-uploader').bind('s3_uploads_start', function(e){
+  });
+
+
+  // image uploading has completed
+ $('#s3-image-uploader').bind("s3_upload_complete", function(e, content){
+    console.log(content.url);
+
+    // add image to slideshow
+    $('.carousel-inner').last().append("<div class='item'><a class='fancybox' href= "+content.url+" rel='gallery' data-fancybox-type='image'><img src ='"+content.url+"' style='display: none; width: 100%; min-height: 100%;'></a></div>");
+
+    // wait for carousel image to load before fading it in    
+    $('.carousel-inner').find("img[src='"+content.url+"']").closest('.item').waitForImages(function(){
+
+      $('.carousel .active').removeClass('active');  
+      $(this).addClass('active');
+
+      // other carousel stuff 
+      if($('#blankPhoto').is(':visible')){
+        $('.rightGallery').append($('#new_image'));
+        $('#blankPhoto').hide();
+        addImageButton('right');
+      }else{
+         $('.stepDetailView').find('.carousel-control').fadeIn(100);
+      }
+        // remote progress bar
+        var progress_bar_id = content.url.split("%2F")[1].split("-")[0];
+        $('#file-'+progress_bar_id).fadeOut('fast');
+        $(this).find('img').fadeIn(500);
+    });
+
+    // generate the delete image thumbnail
+    $('#images').append('<div class="image"><div class="stepImage"><img src = '+content.url+' style="display: none" class="direct-image"><div class="actions direct" style="display:none;"> <a href="/images/0?s3_filepath='+content.url+'" class="btn btn-mini trash btn-delete-image" data-confirm="Are you sure you want to delete this image?" data-method="delete" data-remote="true" rel="nofollow"><i class="fa fa-trash-o"></a></div></div></div>'); 
+    
+    $('.thumbGallery').find("img[src='"+content.url+"']").closest('.image').waitForImages(function(){
+      $(this).find('img').fadeIn(500);
+      $(this).find('.actions.direct').show();
+      // scroll to bottom of thumbGallery
+      $('#images').animate({scrollTop: $('#images')[0].scrollHeight}, 300);
+    });
+    
+  });
+
+  /* -----------BACKGROUND UPLOADING END---------------*/
+
+  // // change cursor to move if hovering over thumbnails
+  // $('.thumbGallery img').hover(function(){
+  //   if(!firstStep){
+  //      $(this).css("cursor", "pointer");
+  //     //$(this).css("cursor", "move");
+  //   }
+  // }, function(){
+  //   $(this).css("cursor", "default");
+  // });
+
+  // $('.videoIcon').hover(function(){
+  //     if(!firstStep){
+  //        $(this).css("cursor", "pointer");
+  //       //$(this).css("cursor", "move");
+  //     }
+  //   }, function(){
+  //     $(this).css("cursor", "default");
+  // });
+
+  // $('.soundIcon').hover(function(){
+  //   if(!firstStep){
+  //        $(this).css("cursor", "pointer");
+  //       //$(this).css("cursor", "move");
+  //     }
+  //   }, function(){
+  //     $(this).css("cursor", "default");
+
+  // })
+
+  // // enable move cursor when user hovers over thumbgallery images
+  // $('.thumbGallery').addClass('editStep');
+
+  // // set photo active in carousel when thumbnail is clicked
+  // $('.thumbGallery .image').click(function(){
+  //   console.log('clicked on image');
+  //   var child_image = $(this).find('img');
+  //   var carouselID = child_image.attr("data-parent");
+  //   var image = parseInt(child_image.attr("data-position"));
+
+  //   // slide to the element in the slideshow
+  //    $('.carousel.'+carouselID).carousel(image);
+  // });  
+ 
+
+  $("#images").sortable({
+    cursor: "move",
+    update: function(){
+      $.post($(this).data('update-url'), $(this).sortable('serialize'));
+    }
+    }).disableSelection();
+
+  /* -------- IMAGE GALLERY END ---------- */
+
+  /* -------- DESIGN FILES START ---------- */
+
+  if(newMode || $('.design_file_row').length>=0){
+    console.log('adding design file field');
+    $('.add_fields').click();  
+  }
+
+  /* -------- DESIGN FILES END ---------- */
+
+  /* -------- ADVICE ACCORDION ----------- */
+
+    // collapsing comments
+  $('.accordion').accordion({
+    collapsible: true, 
+    heightStyle: "content",
+    active: false,
+    icons:{
+      header: "fa fa-chevron-down",
+      activeHeader: "fa fa-chevron-up"
+    },
+    queue: false
+
+  });
+
+  if(has_question){
+    $('.question_accordion').accordion('option', 'active', 0);
+  }
+
+  if (<%= @step.design_files.count > 0 and !@step.design_files.first.design_file_path.to_s.blank? %>) {
+    $('.design_accordion').accordion( "option", "active", 0);
+  }
+
+  // $('.question_accordion').on('accordionactivate', function(event, ui) {
+  //   console.log('toggle accordion');
+
+  //    var handleHeight = $('.editDetailView').outerHeight() + $('.editButtons.top').outerHeight()*2;
+  //    if($('.question_accordion').children('.ui-state-active').length > 0){
+  //     handleHeight = handleHeight - 50;
+  //     if(editMode){
+  //       handleHeight = handleHeight - 118;
+  //     }
+  //    }else{
+  //     handleHeight = handleHeight - 16;
+  //    }
+  //    console.log('edit detail view height: ' + $('.editDetailView').outerHeight());
+  //    console.log('handleHeight: '  + handleHeight);
+  //     $('.detailViewHandle').css('height', handleHeight);
+  // });
+
+  $('#step_question_attributes_answered').change(function(){
+    if(!this.checked){
+      // hiding solution container
+      $('.decision_container').slideUp();
+    }else{
+      // showing solution continer
+      $('.decision_container').slideDown();
+    }
+  });
+
+  /* -------- ADVICE ACCORDION END ----------- */
+
+
+  /* -----------DATE AND TIME PICKER------------
+     -Editing published on date 
+  */
+
+  $('.dateselect-time').click(function(){
+    // show timepicker drop down when user clicks in time text window
+    $('.timepicker').timepicker('showWidget');
+  });
+
+  $('.current_time').click(function(){
+    // set calendar date and time to current time
+    $('.timepicker').timepicker('setTime', "<%=Time.zone.now.strftime('%I:%M %p')%>");
+    $('#step_published_on_date').attr('value', "<%=Time.zone.now.strftime('%m/%d/%Y')%>");
+  })
+
+  $('.fa-calendar').click(function(){
+    $('#step_published_on_date').datepicker('show');
+  });
+
+  $('.timepicker').timepicker();
+
+  /* -------- DATE AND TIME PICKER END ---------- */
+
+});
+
+</script>
+
+<script type="text/javascript">
+
+var saveButtonClicked = false;
+var backButtonClicked = false;
+
+$(window).load(function(){
+    if(answered == true){
+    $('#main').promise().done(function(){
+       setTimeout(function (){
+            // scroll to question accordion
+            $('body').animate({
+              scrollTop: $(document).height()
+            }, 500);
+            $('.processBlog').animate({
+              scrollTop: $('.question_accordion').position().top 
+            });
+            // trigger selecting answered
+            setTimeout(function(){
+                $('#step_question_attributes_answered').click();
+                $('.processBlog').animate({
+                  scrollTop: $('.question_accordion').position().top
+                });
+                $('body').animate({
+                  scrollTop: $('body').scrollHeight
+                });
+                // highlight the accordion
+                $('.processBlog').promise().done(function(){
+                  $('.decision_container').animateHighlight("#c1efc2", 6000);    
+                });
+              
+      }, 400);
+         }, 500);
+     
+    });
+    }
+
+});
+
+$(document).ready(function(){
+
+  // detect if save or back button is clicked (using for resetting editing at)
+  $('.update_step_button').click(function(){
+    saveButtonClicked = true;
+  });
+
+  addRemoveLinks();
+
+  $('.btn-back').click(function(){
+    backButtonClicked = true;
+  })
+
+});
+
+// set variables accessible by the images.js.coffee.erb file
+var project_id = "<%= @project.id %>"
+var step_id = "<%= @step.id %>"
+var user_id = "<%= current_user.id %>"
+
+
+$(window).bind('beforeunload', function(){
+  if(!saveButtonClicked){
+    // user is trying to exit form without saving - reset started editing at date
+    
+    $.ajax({
+      url: "/projects/"+"<%=@project.id%>"+"/steps/"+"<%=@step.id%>"+"/reset_started_editing",
+      type: 'GET',
+      async: false,
+      data: {step_id: "<%=@step.id%>", project_id: "<%=@project.id%>", user_id: "<%=@current_user.id%>", back_clicked: backButtonClicked}, 
+      success: function(data, status, xhr){
+        window.location = "<%=project_steps_path(@project)%>"
+      }
+    });
+  }
+});
+
+$(document.body).on('click', '.btn-delete-image', function(){
+    console.log('clicked delete');
+    $(this).parents('.stepImage').children('img').css('opacity', 0.5);
+  });
+
+</script>

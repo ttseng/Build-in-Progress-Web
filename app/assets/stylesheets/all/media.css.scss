@@ -1,0 +1,268 @@
+$photo-width: 370px;
+$photo-height: 277px;
+$soundcloud-height: 166px;
+
+// override formtastic styling
+.embedModal{
+    &.formtastic {
+        width: 560px;
+        margin:0 auto;
+        left:0;
+        right:0;
+    }
+    .label {
+        float: none;
+    }
+    .input {
+        margin-top: 0;
+    }
+    .link_action a {
+        padding: 3px 8px;
+    }
+}
+
+.video_mask{
+  background: #fff;
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:275px;
+  z-index:25;
+  opacity:0;
+}
+
+.carousel .item, .projectOverviewCarousel .item{
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  .carousel-caption{
+    position: absolute;
+    bottom: 0px;
+    padding-left: 22px;
+  }
+  img{
+    position: absolute;
+  }
+}
+
+.projectOverviewCarousel .item{
+  img{
+      top: -200px;
+  }
+}
+
+video{
+  width: 100%;
+  height: 100%;
+  background: black;
+  overflow: hidden;
+}
+
+.uploaded-video{
+  a{
+    position:absolute;
+    top:0;
+    height:85%;
+    width:100%;
+    z-index:30;
+  }
+}
+
+.modal_close_btn{
+  font-size:13px;
+  padding-left:5px;
+  padding-right:5px;
+}
+
+.vimeo_icon, .soundcloud_icon{
+  width:25px;
+  margin-top:-10px;
+}
+
+.soundcloud_icon{
+  width:35px;
+}
+
+form.sound{
+  .embedPreview{
+    width: 500px;
+    height: $soundcloud-height;
+    float:left;
+    margin:5px 0;
+    display:none;
+    background:black;
+
+    h5 {
+        display: table-cell;
+        width: 500px;
+        height: $soundcloud-height;
+        vertical-align:middle;
+        text-align: center;
+        color: #fff;
+        padding:0 10px;
+    }
+
+    iframe {
+        width: 100%;
+        height: 100%;
+    }
+  }
+}
+
+form.video{
+  .embedPreview{
+      width: $photo-width;
+      height: $photo-height;
+      float:left;
+      background: #000;
+      margin:5px 0;
+      display:none;
+
+      h5 {
+          display: table-cell;
+          width: $photo-width;
+          height: $photo-height;
+          vertical-align:middle;
+          text-align: center;
+          color: #fff;
+          padding:0 10px;
+        
+      }
+
+      iframe {
+          width: 100%;
+          height: 100%;
+      }
+  }
+}
+
+$video_url_hpad: 4px;
+
+#video_embed_url, #sound_embed_url{
+    display: block;
+    padding: 4px $video_url_hpad;
+    width: $photo-width - 2*$video_url_hpad;
+    float:left;
+}
+
+.supportedVideo, .supportedOtherMedia{
+  float:right;
+  margin-top:-20px;
+}
+
+.supportedVideoFormats{
+  color: black;
+  font-size:smaller;
+}
+
+#uploadVideoField{
+  margin-top:10px;
+  float:left;
+}
+
+.loadingIcon{
+  background: #F5F5F5 no-repeat center url('/assets/loading.gif');
+  width:30px;
+  height:30px;
+  position:absolute;
+  right:15px;
+  bottom:15px;
+}
+
+.flex-video {
+  position: relative;
+  height: 100%;
+  margin-bottom: 0px;
+  overflow: hidden;
+}
+ 
+.flex-video.widescreen { padding-bottom: 57.25%; }
+.flex-video.vimeo { padding-top: 0; }
+ 
+.flex-video iframe,
+.flex-video object,
+.flex-video embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.soundcloud{
+  position:relative;
+  width:100%;
+  height:$photo-height;
+  iframe{
+    width:100%;
+    height: 273px;
+    border:0;
+  }
+}
+
+.modal_close_btn{
+  padding-left:5px !important;
+  padding-right:5px !important;
+  font-size: 13px !important;
+}
+
+#uploadVideoWrapper{
+  overflow:hidden;
+  position:absolute;
+}
+
+#uploadVideoWrapper > input[type="file"]{
+   opacity:0;
+   position:absolute;
+   top:0;
+   left:0;
+}
+
+#uploadVideoWrapper:hover > input[type="file"]{
+  cursor:pointer;
+}
+
+.uploadVideoButton{
+  display:inline-block;
+  padding:5px !important;
+}
+
+form.video .modal-body{
+  min-height:150px;
+}
+
+#videoUploadProgress{
+  float:right;
+  width:400px;
+  margin-right:25px;
+  margin-top:0px;
+}
+
+.transcoding{
+  display:none;
+  position:absolute;
+  right:60px;
+  bottom:18px;
+}
+
+#videoFileName{
+  margin-top:15px;
+}
+
+.upload{
+  .progress{
+    margin-top: 0px !important;
+    margin-bottom: 5px;
+    border: none !important;
+    height: 10px;
+    background: white;
+    box-shadow: none;
+  }
+}
+
+.js-progress-bars{
+  border: none !important;
+  background: none;
+  margin-top: 0px;
+}

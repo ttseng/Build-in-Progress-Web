@@ -1,0 +1,62 @@
+<div id="editCategoriesModal" class="modal hide fade">
+  
+  <div class="modal-header">
+    <h3>Edit Project Categories</h3>
+  </div>
+  
+  <div class="modal-body">
+    <%= form_tag categorize_project_path(@project), :method => :post, :class=> "category_picker_form", remote: true do %>
+      <div class='arts_and_crafts_checkbox'><%= check_box_tag 'arts_and_crafts' %></div>
+      <%= label_tag 'arts_and_crafts', raw('<icon class="fa fa-cut" style="color:rgb(198, 0, 105);"></icon> Arts & Crafts'), :class => "category_label" %>
+
+      <div class='clothing_checkbox'><%= check_box_tag 'clothing' %></div>
+      <%= label_tag 'clothing', image_tag("icons/clothing_icon.png", :class=>"icon_clothing", :title=>"Clothing") + 'Clothing', :class => "category_label" %>
+
+      <div class='cooking_checkbox'><%= check_box_tag 'cooking' %></div>
+      <%= label_tag 'cooking', raw('<icon class="fa fa-cutlery" style="color:rgb(237, 162, 10);"></icon> Cooking'), :class => "category_label" %>
+
+      <div class='electronics_checkbox'><%= check_box_tag 'electronics' %></div>
+      <%= label_tag 'electronics', image_tag("icons/electronics_icon.png", :class=>"icon_electronics", :title=>"Electronics") + 'Electronics', :class => "category_label" %>
+
+      <div class='mechanical_checkbox'><%= check_box_tag 'mechanical' %></div>
+      <%= label_tag 'mechanical', raw('<icon class="fa fa-gears" style="color:rgb(42, 171, 170);"></icon> Mechanical'), :class => "category_label" %>
+
+      <div class='other_checkbox'><%= check_box_tag 'other' %></div>
+      <%= label_tag 'other', raw('<icon class="fa fa-asterisk" style="color:rgb(170, 9, 253);"></icon> Other'), :class => "category_label" %>
+  </div>
+
+  <div class="modal-footer">
+    <div class="btn btn-cancel">Cancel</div>
+      <%= submit_tag 'Save', :class=> "btn btn-info", :style => "margin-top: 0px; margin-right: 0px" %>
+    <% end %>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+  function resetEditCategoriesModal(){
+    if (<%= @project.categories.include?(Category.where(:name => 'Arts & Crafts').first) %>){
+      $(".arts_and_crafts_checkbox input").prop("checked", true);
+    }
+    if (<%= @project.categories.include?(Category.where(:name => 'Cooking').first) %>){
+      $(".cooking_checkbox input").prop("checked", true);
+    }
+    if (<%= @project.categories.include?(Category.where(:name => 'Clothing').first) %>){
+      $(".clothing_checkbox input").prop("checked", true);
+    }
+    if (<%= @project.categories.include?(Category.where(:name => 'Electronics').first) %>){
+      $(".electronics_checkbox input").prop("checked", true);
+    }
+    if (<%= @project.categories.include?(Category.where(:name => 'Mechanical').first) %>){
+      $(".mechanical_checkbox input").prop("checked", true);
+    }
+    if (<%= @project.categories.include?(Category.where(:name => 'Other').first) %>){
+      $(".other_checkbox input").prop("checked", true);
+    }
+    $('#editCategoriesModal').modal('hide');
+  }
+
+  $(document).ready(function(){
+    resetEditCategoriesModal(); 
+  });
+</script>

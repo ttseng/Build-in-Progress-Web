@@ -1,0 +1,5 @@
+<% # Format the author byline for projects show on the site%>
+<% num_users = project.users.count %>
+<% project.users.order("username ASC").each_with_index do |user, index| %>
+	<% if num_users > 2 && index == num_users-1 %> , and <% end %><%= user.username %><% if num_users == 2 && index == 0 %> and <% elsif num_users > 2 && index != num_users-2 && index != num_users-1 %> , <% end %>
+<% end %>

@@ -1,0 +1,30 @@
+<html>
+	<head>
+	  <title>Build in Progress</title>
+	  <%= csrf_meta_tags %>
+	  <%= javascript_include_tag "application" %>
+	  <%= stylesheet_link_tag "application-all", :media => "all" %>
+	  <%= stylesheet_link_tag "application-v01", :media => "all" %>
+	</head>
+	<body style="width:500px">
+		<div class="embedDiv">
+			<div class="embedTitle">
+				<%= link_to @project.title, project_path(@project) %> by <%= render :partial => "projects/author_byline", :locals => {:project => @project, :source=>"embed"} %> 
+			</div>
+			  <%= render :partial=> 'steps/step_detail_view', :locals=>{:step=>@project.steps.order("published_on").last} %>
+			<div class="embedLink">
+				<%= image_tag("build_in_progress_logo.png", :class=> "logo" )%>
+				<% tagline = "Check out all of " + @project.title + " at Build in Progress!" %>
+				<p> <%= link_to tagline, project_path(@project) %> </p>
+			</div>
+		</div>
+	</body>
+	</html>
+
+	<script>
+	// remove the user's comments on the embed page
+	$(document).ready(function(){
+		$('.userComments').remove();
+	});
+
+	</script>

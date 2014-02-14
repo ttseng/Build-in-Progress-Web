@@ -1,0 +1,29 @@
+$("#follow_form<%= @user.id %>").html("<%= escape_javascript(render('follow_form')) %>");
+
+var user_page = $("#username").text();
+
+if ("<%= @user.username %>" == user_page) {
+	$("#following_count").text("<%= @user.following_users_count %>");
+	$("#followers_count").text("<%= @user.followers_count %>");
+	$("#followers_count_sub").text("<%= pluralize_no_digits(@user.followers_count, 'Follower') %>");
+}
+
+else {
+	if ("<%= current_user.username %>" == user_page){
+		var following_count = parseInt($("#following_count").text());
+		following_count -= 1;
+		$("#following_count").html(following_count);
+	}
+}
+
+$('.unfollowButton').hover(
+function() {
+  $( this ).addClass( "btn-danger" );
+  $( this ).removeClass( "btn-info" );
+  $( this ).text( "Unfollow" );
+}, function() {
+  $( this ).addClass( "btn-info" );
+  $( this ).removeClass( "btn-danger" );
+  $( this ).text( "Following" );
+}
+);

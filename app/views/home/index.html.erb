@@ -1,0 +1,75 @@
+<div class="fullRow" style="width:940px; margin-top: 70px">
+
+    <div class="hero-unit">
+        <h1>Build in Progress</h1>
+        <p style="font-size: 14px">Build in Progress lets you share what you build as you’re building it.</p>
+        <br>
+        <p><%= link_to 'Create a Project', new_project_path, :class=> "btn btn-info btn-large"%> </p>
+    </div>
+
+    <% if @latestNews && (@latestNews.id != cookies.signed[:hidden_announcement_id].to_i) %>
+        <div class="news_announcement homeSection">
+            <div class="titleContainer announcementContainer">
+                <p class="updateTitle announcementTitle">Announcements</p>
+            </div>
+            <div class= "announcementContent">
+                <icon class="fa fa-bullhorn"></icon> <span class="news_title"><%= link_to @latestNews.name, news_path %> </span> <br>
+                <p><%= link_to "Learn more", news_path, :class=>"announcement_link" %>  
+                    <% if user_signed_in? %> 
+                    |  <%= link_to "Hide", hide_announcement_path(@latestNews.id), :class=>"announcement_link", remote: true %> </p>
+                    <% end %>
+            </div>
+        </div>
+    <% end %>
+
+    <% if @featuredProjects.count > 0 %>
+        <%= render :partial => 'images/home_image_gallery' %>
+    <% end %>
+
+    <% if user_signed_in? %>
+        <div class="latestActivities homeSection">
+            <div class="titleContainer">
+                <p class="updateTitle">Activity Feed</p>
+                <% if @activities.length != 0 %>
+                    <p class="view_all_link"><%= link_to "View All", activity_feed_index_path %></p>
+                <% end %>
+            </div>
+            <div class="home_activities">
+                <% if @activities.length != 0 %>
+                    <% #list the last 4 news items %>
+                    <% @activities.each_with_index do |activity, index|%>
+                        <% if activity.trackable != nil && activity.trackable_id != @activities[index-1].trackable_id %>
+                            <% unless (render_activity activity).blank? %>
+                                <div class="activity_feed_activity">
+                                    <%= render_activity activity %>
+                                </div>
+                                <hr>
+                            <% end %>
+                        <% end %>
+                    <% end %>
+                <% else %>
+                    <p id="no_activity">You have no items in your activity feed... yet!</p>
+                <% end %>
+            </div>
+        </div>
+    <% end %>
+    <div class="latestUpdates homeSection">
+        <div class="titleContainer">
+            <p class="updateTitle">Latest Updates</p>
+            <p class="view_all_link"><%= link_to "View All", projects_path %></p>
+        </div>
+        <div class="updates">
+            <% #list the last 3 updated projects %>
+            <% @latestProjects.each do |latestProject| %>
+                <%= render :partial => 'projects/projects', :locals => {:project => latestProject, :source=> "home"} %>
+            <% end %>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+$('.featureSlides .image').last().css('margin-bottom', '0px');
+</script>
+
+

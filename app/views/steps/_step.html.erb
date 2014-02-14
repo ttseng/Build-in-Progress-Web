@@ -1,0 +1,221 @@
+<script type="text/javascript">
+	// console.log(" ");
+	// console.log("creating row for " + "<%=step.name%>");
+	// console.log("step.position: " + "<%=step.position%>");
+	// console.log("step.ancestry: " + "<%=step.ancestry.to_s.html_safe%>");
+	// console.log("ancestry: " + "<%=@ancestry%>");
+
+	var returned = false;
+</script>
+
+<% currentBranch = @mapping[@ancestry[step.position]] %>
+<script type="text/javascript">
+	//console.log("currentBranch: <%=currentBranch%>");
+</script>
+
+<% #check if we're still on the same branch %>
+<% if @ancestry[step.position] == @ancestry[step.position-1] && step.position !=1%>
+	<% # draw vertical branch between steps %>
+	<div class="branchRow static">
+			<div class="branch" id="branch_<%=step.id%>"></div>
+			<div class="branchPreviewArrow" id="branchPreviewArrow_<%=step.id%>" data-index= "<%=step.position-1%>" data-step= "<%=steps.where("position" => step.position-1)[0].id %>"></div>
+			<div class="horizontalBranchPreview" id="horizontalBranchPreview_<%=step.id%>" data-index="<%=step.position-1%>"></div>
+			<div class="verticalBranchPreview" data-index="<%=step.position-1%>"></div>
+	</div>
+<% else %>
+	<% # check if we've returned to an existing branch %>
+	<% if @mapping.has_key?(@ancestry[step.position]) && @allBranches[currentBranch].index(step.position) !=0 %>
+		<script type="text/javascript">
+			//console.log("returned to an existing branch");
+			var stepID = "step_" + "<%=step.id%>";
+			returned = true;
+			//console.log("returnedBranch: <%=@mapping[step.ancestry]%>");
+			returnedBranch.push("<%=@mapping[step.ancestry]%>");
+		</script>
+
+		<% # find position difference between index values %>
+		<% prevStepInBranch = @allBranches[currentBranch][@allBranches[currentBranch].index(step.position)-1] %>
+
+		<% branchLength = step.position - prevStepInBranch %>	
+
+		<div class="branchRow static" id="branchRow_<%=step.id%>">
+			<div class="branch" id="branch_<%=step.id%>"></div>
+			<div class="branchPreviewArrow" id="branchPreviewArrow_<%=step.id%>" data-index= "<%=step.position-1%>" data-step= "<%=steps.where("position" => prevStepInBranch)[0].id %>"></div>
+			<div class="horizontalBranchPreview" id="horizontalBranchPreview_<%=step.id%>" data-index="<%=step.position-1%>"></div>
+			<div class="verticalBranchPreview" data-index="<%=step.position-1%>"></div>
+		</div>
+
+		<SCRIPT TYPE="text/javascript">
+			// scale vertical branch based on branchLength
+			var stdHeight = 50; // spacing between nodes
+			var scaledHeight = parseInt(stdHeight) * parseInt("<%=branchLength%>");
+			$('#branchRow_'+"<%=step.id%>").css("height", scaledHeight-25);
+			$('#branchRow_'+"<%=step.id%>").css("margin-top", parseInt(-(scaledHeight)));
+			$('#branch_'+"<%=step.id%>").css("height", scaledHeight);
+
+			// set horizontal branch margins based on branchLength
+			$("#branchPreviewArrow_"+"<%=step.id%>").css("margin-top", -scaledHeight/2-21);
+
+
+		</SCRIPT>
+
+	<% elsif @ancestry[step.position] != nil %>
+		<% # reveal branching elements for step %>
+		<script type="text/javascript">
+			var index = "<%=step.parent.position%>"
+			branches.push([index, "<%=step.position%>", "<%=step.id%>"]); // add the index to the branch list, which will call a javascript function to reveal the branch
+		</script>
+	<% end %>
+<% end %>
+
+		<% # draw step row %>
+		<%= content_tag_for(:div, step, :class=> 'sortable') do %>
+			<%= div_for(step, :class=> "node", :data=> {:image => "null", :title => step.name, :step => step.id }) do %>
+
+			<% # add data-image for div if the step has images associated with it %>
+			<% if step.images.count > 0 %>
+				<script type="text/javascript">
+					$(".node[data-step='" + "<%=step.id%>" + "']").data("image", "<%=step.images.order("position ASC").first.image_path_url(:thumb)%>");
+				</script>
+			<% end %>
+
+			<script>
+				$('.node').removeClass('step');
+			</script>
+
+			<% # if in edit mode, the steps should link to the edit step page.  otherwise, it should jump to the step on the page %>
+			<% if edit %>
+				<%= link_to "", edit_project_step_path(@project, step.position), :class=> "dot #{step.id}" %>
+			<% else %>
+				<% #create links to go to the clicked step %>
+				<%= link_to_function "", "goToStep('#{step.id}');", :class=> "dot #{step.id}" %>
+			<% end %>
+
+		<% end %>
+		<div class="description"> <%= step.name %></div>
+	<% end %>
+
+		<% # check if we're at the end of a branch and need to add an add step row %>
+		<% if step.position == @allBranches[currentBranch][@allBranches[currentBranch].length-1] %>
+			<% # we're on the last step of the branch - draw the add step row %>
+				<% # add dashed branch and new step link %>
+				<div class="branchRow static">
+					<div class="dashedBranch"></div>
+				</div>
+
+				<% #Create new row for adding a new step %>
+				<div class='static step' style='width: 100px'>
+					<div class="newNode" id="newNode_<%=step.id%>"  >
+						<% if @ancestry[step.position] == nil %>
+							<%= link_to "",new_project_step_path(@project, :parent_id => step.parent), :class=> "newStep",%>
+						<% else %>
+							<%= link_to "",new_project_step_path(@project, :parent_id => step.parent.id), :class=> "newStep",%>
+						<% end %>
+					</div>
+					<div class="description addNewStep" id="description_<%=step.id%>" style="visibility:hidden">add new step</div>
+				</div>
+		<% end %>
+
+<script>
+var offset = 120;
+
+	// print the absolute location of the node / newNode (debugging)
+	$(".node").hover(function(){
+		var offset = $(this).offset();
+		console.log("left: " + offset.left + " top: " + offset.top);
+	});
+
+	$(".newNode").hover(function(){
+		var offset = $(this).offset();
+		console.log("left: " + offset.left + " top: " + offset.top);
+	});
+
+	function showBranches(branchArray){
+		console.log("");
+		console.log("branchArray.length: " + branchArray.length);
+		for(var index = 0; index < branchArray.length; index++){
+			console.log("");
+			branchIndex = index + 1; // current branch 
+			origin = branchArray[index][0]; // where the branching starts
+			endpoint = branchArray[index][1]; // where the branaching ends
+			id = branchArray[index][2]; // the id of the branched step
+			console.log("branchIndex: " + branchIndex);
+			console.log("origin: " + origin);
+			console.log("endpoint: " + endpoint);
+			console.log("id: " + id);
+			console.log("returnedBranch: " + returnedBranch);
+			console.log("branchArray: " + branchArray);
+
+			// change branch previews to solid lines
+			$(".branchPreviewArrow[data-index='" + origin + "']").addClass("branchPreview");
+			$(".branchPreviewArrow[data-index='" + origin + "']").removeClass("branchPreviewArrow");
+			$(".branchPreview[data-index='" + origin + "']").show();
+
+			$(".horizontalBranchPreview[data-index='" + origin + "']").addClass("horizontalBranch");
+			$(".horizontalBranchPreview[data-index='" + origin + "']").removeClass("horizontalBranchPreview");
+			$(".horizontalBranch[data-index='" + origin + "']").show();
+
+			$(".verticalBranchPreview[data-index='" + origin + "']").addClass("verticalBranch");
+			$(".verticalBranchPreview[data-index='" + origin + "']").removeClass("verticalBranchPreview");
+
+			// add preview branch elements to verticalBranch
+			//$(".verticalBranch[data-index='" + origin + "']").after('<div class="branchPreviewArrow"></div>');
+
+
+			<% if false %>
+			// $(".verticalBranch[data-index='" + origin + "']").after('<div class="branchPreviewArrow" id="branchPreviewArrow_<%=step.id%>" data-index= "<%=step.position-1%>" data-step= "<%=steps.where("position" => prevStepInBranch)[0].id %>"></div>');
+			<% end %>
+			
+			// scale the vertical branch based on the distance between 
+			var branchHeight = (endpoint - origin -1)*50 +12.5;
+			$(".verticalBranch[data-index='" + origin + "']").css("height", branchHeight);
+
+			// adjust margins depending on whether we've returned to an existing branch
+
+			if(!returned){
+				console.log("shifting top margin by -25px");
+				$('#step_'+id).css("margin-top", "-25px");
+			}
+			else{
+				// rule: currentBranch+1 => margin shifted +25
+				// all others, margin shifted -25
+				var returnBranch = false;
+				for(var returnIndex = 0; returnIndex < returnedBranch.length; returnIndex++){
+					if(parseInt(returnedBranch[returnIndex])+ 1 == branchIndex){
+						returnBranch = true;
+					}
+				}
+				//console.log("currentBranch: " + branchIndex);
+				//console.log("returnBranch: " + returnBranch);
+				if(returnBranch){
+					$('#step_'+id).css("margin-top", "25px");
+				}
+				else{
+					$('#step_'+id).css("margin-top", "-25px");
+				}
+			}
+			
+			// adjust branch length if we're braching from the first step
+			if(origin==0){
+				// add an extra 12.5 pixels to the branch height
+				var branchHeight = $(".verticalBranch[data-index='" + origin + "']").css("height");
+				var originBranchHeight = parseInt(branchHeight) + 12.5;
+				console.log("origin branch height: " + originBranchHeight);
+
+				$(".verticalBranch[data-index='" + origin + "']").css("height", originBranchHeight);
+				$("#dashedBranch_0").addClass("solidBranch");
+				$("#dashedBranch_0").removeClass("dashedBranch");
+				$(".solidBranch").show();
+				showFirstRow = true;
+			}
+
+			$(".verticalBranch[data-index='" + origin + "']").show();
+			 }
+
+ 			// hide first row if there's no branching from the first step
+			 if(!showFirstRow){
+			 	console.log("hiding first row");
+			 	$('.firstRow').hide();
+		}
+	}
+</script>

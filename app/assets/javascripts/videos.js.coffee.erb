@@ -1,0 +1,35 @@
+jQuery ->
+  $('#videoEmbedModal').fileupload
+    dataType: "script"
+    add: (e, data) ->
+        types = /(\.|\/)(mov|mp4|avi)$/i
+        file = data.files[0]
+        size = file.size/(10e5)
+        size_limit = 50 # file size limit is 50 mb
+        if (types.test(file.type) || types.test(file.name)) && (size < size_limit)
+            $('#video_submit').html('Saving...')
+            $('#videoFileName').html(file.name)
+            $('.uploadVideoButton').attr('disabled', true)
+            $('.video_file_upload_field').attr('disabled', true)
+            $('.loadingIcon').show()
+            $('#images').append('<div class="placeholder video" style="background-image: none">uploading video...<br><%=image_tag("icons/loading.gif")%></div>');
+            $('.placeholder').hide();
+            data.context = $(tmpl("video-upload", file))
+            # $('#videoUploadProgress').append(data.context)
+            data.submit()
+        else if (size > size_limit)
+            alert("Your video is larger than 50 MB and cannot be uploaded.  Please upload to Youtube or Vimeo and embed your video instead.")
+        else
+            alert("#{file.name} is not a supported video format")
+    progress: (e, data) ->
+        if data.context
+            progress = parseInt(data.loaded / data.total * 100, 10)         
+            # data.context.find('.bar').css('width', progress + '%')
+            if progress > 95
+                setTimeout ( -> 
+                    $('.embedModal').modal('hide');
+                    ), 2000
+                $('.placeholder').show();
+                document.getElementById("images").scrollTop = document.getElementById("images").scrollHeight                    
+    
+

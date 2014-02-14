@@ -1,0 +1,139 @@
+<div class="fullRow" style="width:940px">
+  <div class="projectPage">
+      <script type="text/javascript">
+        console.log('category_param: <%=params[:category]%>');
+      </script>
+
+      <!--Apply Project Filters-->
+      <% if current_page?(:action=>"index") %>
+        <% project_filter = "All Projects" %>
+      <% elsif current_page?(:action=>"built") %>
+        <% project_filter = "Built Projects" %> 
+      <% elsif current_page?(:action=>"builds") %>
+        <% project_filter = "Builds in Progress" %> 
+      <% elsif current_page?(:action=>"featured") %>
+        <% project_filter = "Featured Projects" %>
+      <% else %>
+        <% project_filter = "" %>
+      <% end %>
+      <!--Apply Project Categories-->
+      <% if !params[:category].blank?  %>
+        <% project_category = params[:category] %>
+      <% else %>
+        <% project_category = "" %>
+      <% end %>
+
+        <div class="projectTitleBar">
+          <h3 class="projectHeading">
+            <% if project_category.blank? %>
+                <%= project_filter %>
+            <% else %>
+              <%= project_category %> Projects               
+            <% end %>
+          </h3>
+
+          <div id="projectExploreFilter">
+            <div class="addProjectButton">
+              <%= link_to 'Create a Project', new_project_path, :class=> "btn btn-info"%>
+            </div>
+            <div class="btn-group">
+              <a class="btn dropdown-toggle" data-toggle="dropdown" href="#" id="expDropdown">
+                <%= project_filter %>
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li class="all_projects"><%= link_to "All Projects", projects_path(:category => project_category) %></li>
+                <li class="featured"><%= link_to "Featured Projects", featured_projects_path(:category => project_category) %></li>
+                <li class="builds"><%= link_to "Builds in Progress", builds_projects_path(:category => project_category) %></li>
+                <li class="built"><%= link_to "Built Projects", built_projects_path(:category => project_category) %></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="categoriesBar">
+
+            <div class="explore_category_icon arts_and_crafts_icon_div"><%= link_to raw('<icon class="fa fa-cut icon_arts_and_crafts" style="color:rgb(198, 0, 105);" title="Arts & Crafts"></icon>'), projects_path(:category => "Arts & Crafts") %></div>
+          
+            <div class="explore_category_icon clothing_icon_div"><%= link_to image_tag("icons/clothing_icon.png", :class=>"icon_clothing"), projects_path(:category => "Clothing") , :title=>"Clothing"%><div class="img_bottom_border" style="color: rgb(255,0,0)"></div></div>
+            
+            <div class="explore_category_icon cooking_icon_div"><%= link_to raw('<icon class="fa fa-cutlery icon_cooking" style="color:rgb(237, 162, 10);" title="Cooking"></icon>'), projects_path(:category=>"Cooking") %></div>
+
+            <div class="explore_category_icon electronics_icon_div"><%= link_to image_tag("icons/electronics_icon.png", :class=>"icon_electronics", :style=>"max-height:20px"), projects_path(:category => "Electronics") , :title=>"Electronics"%><div class="img_bottom_border" style="color:rgb(99, 170, 32)"></div></div>
+            
+            <div class="explore_category_icon mechanical_icon_div"><%= link_to raw('<icon class="fa fa-gears icon_mechanical" style="color:rgb(42, 171, 170);" title="Mechanical"></icon>'), projects_path(:category => "Mechanical")  %></div>
+            
+            <div class="explore_category_icon other_icon_div"><%= link_to raw('<icon class="fa fa-asterisk icon_other" style="color:rgb(170, 9, 253);" title="Other"></icon>'), projects_path(:category => "Other") %></div>
+
+          </div>
+
+        </div>
+
+        <% if !project_category.blank? && project_filter != "All Projects" %>
+          <div class="filter_label">
+            > <%= project_filter %>
+          </div>
+        <% end %>
+
+        <div id="ExpProjects">
+          <% if @projects.count > 0 %>
+            <%= render :partial => "explore_project", :collection => @projects, as: :project  %>
+          <% else %>
+          <div style="margin-top: 40px; text-align: center;">
+            There are no projects under this category...yet!
+          </div>
+          <% end %>
+        </div>
+
+        <div class="clear"></div>
+        <%= will_paginate @projects.where("title not like ? ", "%Untitled%"), :param_name => 'projects_page', previous_label: h("Previous"), next_label: h("Next"), :page_links=> false %>
+
+        <%= image_tag("loading.gif", :alt => "Loading...", :class => "loadingGIF") %>
+    </div>
+</div>
+
+<script type="text/javascript">
+  // highlight the current page in the dropdown tab
+  $(document).ready(function(){
+    $('.loadingGIF').hide();
+    // highlight project filter in dropdown
+    if("<%=project_filter%>"=="All Projects"){
+      $('li.all_projects').css("background-color", "#E0F2FD");
+    } else if ("<%=project_filter%>"=="Builds in Progress"){
+      $('li.builds').css("background-color", "#E0F2FD");
+    } else if ("<%=project_filter%>"=="Built Projects"){
+      $('li.built').css("background-color", "#E0F2FD");
+    } else if ("<%=project_filter%>" == "Featured Projects"){
+      $('li.featured').css("background-color", "#E0F2FD");
+    }
+
+    // underline category
+    if("<%=project_category%>".length > 0){
+        if ("<%=project_category%>" == "Arts &amp; Crafts"){
+          $('icon.icon_arts_and_crafts').css({'padding-bottom':'2px', 'border-bottom-style':'solid', 'border-bottom-weight':'3px'});
+        } else if ("<%=project_category%>" == "Clothing"){
+          $('.clothing_icon_div').children('.img_bottom_border').show();
+        } else if ("<%=project_category%>" == "Cooking"){
+          $('icon.icon_cooking').css({'padding-bottom':'2px', 'border-bottom-style':'solid', 'border-bottom-weight':'3px'});
+        } else if("<%=project_category%>" == "Electronics"){
+          $('.electronics_icon_div').children('.img_bottom_border').show();
+        } else if ("<%=project_category%>" == "Mechanical"){
+          $('icon.icon_mechanical').css({'padding-bottom':'2px', 'border-bottom-style':'solid', 'border-bottom-weight':'3px'});
+        } else if ("<%=project_category%>" == "Other"){
+          $('icon.icon_other').css({'padding-bottom':'2px', 'border-bottom-style':'solid', 'border-bottom-weight':'3px'});
+        }
+    }
+
+    $('.explore_category_icon').hover(function(){
+      if($(this).children('a').children('img')){
+        $(this).children('.img_bottom_border').show();
+      }
+    }, function(){
+      if($(this).children('a').children('img') && "<%=project_category%>" != $(this).children('a').attr('title')){
+         $(this).children('.img_bottom_border').hide();
+        }
+    });
+
+
+    // $('.explore_category_icon icon').tooltip();
+  });
+</script>

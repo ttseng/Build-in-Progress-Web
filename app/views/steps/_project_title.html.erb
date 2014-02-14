@@ -1,0 +1,362 @@
+<% # Add the Project title bar%>
+
+<div id="projectNameContainer">
+  <% if @authorLoggedIn %>
+    <p id="projectName"><%= best_in_place project, :title, :type=>:textarea, :html_attrs => {:maxlength => 40}, :nil => "Project Title" %></p>
+  <% else %>
+     <p id="projectName"><%= project.title %></p>
+  <% end %>
+
+</div>
+    
+    <div id="projectAuthor">
+      <div class="authorAttribution">by <% project.users.order("username ASC").each do |author| %> <%= link_to author.username, user_path(author), :class=>"project_author_name" %><% end %> | <%= project.created_at.strftime "%m/%d/%Y"%> - 
+      <% if project.built %>
+        <%= project.built_step.published_on.strftime "%m/%d/%Y"%>
+      <% else %>
+        Current
+      <% end %>
+    </div>
+     <% if @authorLoggedIn %> 
+        <div class="btn btn-small btn-info edit_authors_button" data-toggle="modal" data-target="#editCollaboratorsModal" title="Edit Collaborators"><icon class="fa fa-group"></icon></div> 
+        <script type="text/javascript">
+          $('.authorAttribution').css('max-width', '250px');
+        </script>
+      <% end %>
+    </div>
+
+    <% # add any commas or 'ands' between usernames %>
+    <% if project.users.length == 2 %>
+      <script type="text/javascript">
+        $('.project_author_name').last().before(' and ');
+      </script>
+    <% elsif project.users.length > 2 %>
+        <script type="text/javascript">
+          $('.project_author_name:not(:last)').after(', ');
+          $('.project_author_name').last().before(' and ');
+        </script>
+    <% end %>
+
+    <% # remix attributes %>
+    <% if @project.is_remix? %>
+      <div class="projectRemixAttribution">
+        <% parent_users_count = @project.parent.users.count %>
+        based on <span class="remix_project_title"><%= link_to @project.parent.title, project_path(@project.parent) %> by <%= render :partial => "projects/author_byline", :locals => {:project=>@project.parent, :source=>"remix"} %></span> 
+        <% if @project.depth > 1 %>
+            original project: <span class="remix_project_title"><%= link_to @project.root.title, project_path(@project.root) %></span> 
+            <% end %>
+          </div>
+    <% end %>
+
+    <% #remix button %>
+    <%= link_to "Remix", remix_project_path(@project), :method=> :put, :class=> "btn btn-success remixButton"%>
+
+    <% #delete project button %>
+    <% if @authorLoggedIn %>
+       <%=link_to raw('<i class="btn btn-danger fa fa-trash-o"></i>'), project, :method=> :delete, :data=> {:confirm=>  "Are you sure you want to delete this project?"}, :class=>"deleteProjectButton"%>
+    <% end %>
+
+    <div id="projectOverviewDescription">
+      <% if @authorLoggedIn %>
+        <p>
+          <%= best_in_place @project, :description, :type => :textarea, :nil=> "Add a description of your project here!", :sanitize => false %>
+        </p>
+      <% elsif @project.description && @project.description.length > 0%>
+        <p style="padding-bottom: 25px;">
+          <%= @project.description %>
+        </p>
+      <% else %>
+        <p style="padding-bottom: 25px;"></p>
+        <script type="text/javascript">
+          $('#projectOverviewDescription').css('background', 'none');
+        </script>
+      <% end %>
+      
+      <div class="category_icon arts_and_crafts_icon_div"><icon class="fa fa-cut" style="color:rgb(198, 0, 105);" title="Arts & Crafts"></icon></div>
+      
+      <div class="category_icon clothing_icon_div"><%= image_tag("icons/clothing_icon.png", :class=>"icon_clothing", :title=>"Clothing")%></div>
+      
+      <div class="category_icon cooking_icon_div"><icon class="fa fa-cutlery" style="color:rgb(237, 162, 10);" title="Cooking"></icon></div>
+
+      <div class="category_icon electronics_icon_div"><%= image_tag("icons/electronics_icon.png", :class=>"icon_electronics", :title=>"Electronics") %></div>
+      
+      <div class="category_icon mechanical_icon_div"><icon class="fa fa-gears" style="color:rgb(42, 171, 170);" title="Mechanical"></icon></div>
+      
+      <div class="category_icon other_icon_div"><icon class="fa fa-asterisk" style="color:rgb(170, 9, 253);" title="Other"></icon></div>
+      
+      <div class="category_icon placeholder_icon_div"></div>
+
+      <% if @authorLoggedIn %>
+        <div class="edit_categories" data-toggle="modal" data-target="#editCategoriesModal" title="Edit Categories"><a><icon class='fa fa-plus-circle'></icon> Edit Project Categories</a></div>  
+      <% end %>
+
+    </div>
+
+
+    <div class='projectInfo'>
+      <div class="projectFavorite projectInfoDiv">
+        <div class="favoriteCount">
+          <% if !authorLoggedIn && user_signed_in?%>
+            <% if current_user.favorites.include?(@project) %>
+              <%= link_to "", favorite_project_path(@project, type: "unfavorite"), method: :put, :class=> "favoriteStar fa fa-star", :title=>"Unfavorite", :rel=>"tooltip"%>
+              <script type="text/javascript"> userFavorited = true; </script>
+            <% else %>
+              <%= link_to "", favorite_project_path(@project, type: "favorite"), method: :put, :class=> "favoriteStar fa fa-star-o", :title=> "Favorite", :rel=>"tooltip", :style=> "color:#DFDF00" %> 
+              <script type="text/javascript"> userFavorited = false;</script>
+            <% end %>
+          <% else %>
+            <span class="favoriteStar fa fa-star" title="Favorites"/>
+          <% end %>
+        </div><p class="favoriteCounter"><%=@project.favorited_by.count%></p>
+      </div>
+
+        <% # comment counter %>
+        <% if @project.comment_count > 0 %>
+           <a id="dropdown-comment" role="button" data-toggle="dropdown" href="#" height="100%" >
+        <% end %>
+        <div class="projectComment dropdown projectInfoDiv">
+          <div class="commentCount">
+            <span class="commentIcon fa fa-comment" title="Comments"/>
+          </div>
+          <p class="commentCounter"><%=@project.comment_count%></p>
+
+          <% if @project.comment_count > 0 %>
+            </a>
+          <% end %>
+
+          <% if @project.comment_count > 0 %>
+          <ul class="comment-list dropdown-menu" role="menu" aria-labelledby="dropdown-comment">
+
+            <% @project.steps.each do |step| %>
+
+              <% if step.comment_threads.count >0 %>
+
+                <% step.comment_threads.each do |comment| %>
+                  <% if comment.body.length>0 %>
+                    <li class="comment-list-item step_id_<%=step.id%>" id="<%=comment.id%>">
+                        <div class="comment-list-image">
+                        <% if User.find(comment.user_id).avatar_url != nil %>
+                          <%= image_tag(User.find(comment.user_id).avatar_url(:thumb), :class=>"commentAvatar img-polaroid") %>
+                        <% else %>
+                          <%= image_tag("default_avatar.png", :class=>"commentAvatar img-polaroid") %>
+                        <% end %>
+                      </div>
+                      <div class="comment-list-title">
+                        <p><span class="notification-bold"><%= truncate(User.find(comment.user_id).username, length: 13) %></span> commented on <span class="notification-bold"><%= truncate(step.name, length: 20) %></span>: "<%=truncate(comment.body)%>"</p>
+                      </div>
+                    </li>
+                  <% end %>
+                <% end %>
+              <% end %>
+
+            <% end %>
+
+          </ul>
+          <% end %>
+        </div>
+
+        <% # remix counter %>
+        <div class="projectRemix dropdown projectInfoDiv">
+          <% if @project.remix_count > 0 %>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" height="100%" >
+          <% end %>
+            <div class="remixCount">
+              <span class="remixIcon fa fa-code-fork" title="Remixes"/>
+            </div>
+            <p class="remixCounter"><%=@project.remix_count%></p>
+          </a>
+          <% if @project.remix_count > 0 %>
+          <ul class="dropdown-menu remix-list" role="menu">
+            <% @project.descendants.published.order(:created_at).each do |remix| %>
+              <a href = "<%=project_path(remix)%>">
+              <li class="remix-list-item">
+                  <div class="remix-list-image">
+                    <% if !remix.default_image.blank? %>
+                      <%=image_tag(remix.default_image.image_path_url(:preview), :class=>"img-polaroid")%>
+                      <% else %>
+                        <span class="blankRemixImage img-polaroid"/>
+                      <% end %>
+                    </div>
+                  <div class="remix-list-title"><span class="notification-bold"><%= remix.title %></span> by <span class="notification-bold"><%= render :partial => "projects/author_byline_no_links", :locals => {:project => remix} %> </span></div>
+              </li>
+              </a>
+            <% end %>
+          </ul>
+          <% end %>
+      </div>
+
+    </div>
+
+    <!-- modal form for editing project collaborators -->
+    <%= render :partial => "steps/edit_collaborators" %>
+    <%= render :partial => "steps/edit_categories" %>
+
+    <script type="text/javascript">
+
+     function resetCategoriesForm() {
+      if (<%= @project.categories.include?(Category.where(:name => 'Arts & Crafts').first) %>){
+        $(".arts_and_crafts_checkbox input").prop("checked", true);
+        $(".arts_and_crafts_icon_div").show();
+      }
+      else{
+        $(".arts_and_crafts_checkbox input").prop("checked", false);
+        $(".arts_and_crafts_icon_div").hide();
+      }
+
+      if (<%= @project.categories.include?(Category.where(:name => 'Clothing').first) %>){
+        $(".clothing_checkbox input").prop("checked", true);
+        $(".clothing_icon_div").show();
+      }
+      else{
+        $(".clothing_checkbox input").prop("checked", false);
+        $(".clothing_icon_div").hide();
+      }
+
+      if (<%= @project.categories.include?(Category.where(:name => 'Cooking').first) %>){
+        $(".cooking_checkbox input").prop("checked", true);
+        $(".cooking_icon_div").show();
+      }
+      else{
+        $(".cooking_checkbox input").prop("checked", false);
+        $(".cooking_icon_div").hide();
+      }
+
+      if (<%= @project.categories.include?(Category.where(:name => 'Electronics').first) %>){
+        $(".electronics_checkbox input").prop("checked", true);
+        $(".electronics_icon_div").show();
+      }
+      else{
+        $(".electronics_checkbox input").prop("checked", false);
+        $(".electronics_icon_div").hide();
+      }
+
+      if (<%= @project.categories.include?(Category.where(:name => 'Mechanical').first) %>){
+        $(".mechanical_checkbox input").prop("checked", true);
+        $(".mechanical_icon_div").show();
+      }
+      else{
+        $(".mechanical_checkbox input").prop("checked", false);
+        $(".mechanical_icon_div").hide();
+      }
+
+      if (<%= @project.categories.include?(Category.where(:name => 'Other').first) %>){
+        $(".other_checkbox input").prop("checked", true);
+        $(".other_icon_div").show();
+      }
+      else{
+        $(".other_checkbox input").prop("checked", false);
+        $(".other_icon_div").hide();
+      }
+    }
+
+    $(function() {
+      //$('.category_icon icon').tooltip();
+      resetCategoriesForm();
+    });
+
+    $('.btn-cancel').click(function(){
+      $('#editCategoriesModal').modal('hide');
+    });
+
+    $('.edit_categories').click(function(){
+      resetCategoriesForm();
+    });
+
+    var title_grey = 'rgba(56, 56, 56, 0.8)';
+    var title_grey_highlight = 'rgba(70, 70, 70, 0.8)'
+
+    $('.projectRemix').hover(function(){
+      if($('.remixCounter').html()>0){
+       $(this).css('background', title_grey_highlight);
+      }
+    }, function(){
+      $(this).css('background', title_grey);
+    });
+
+    $('.projectComment').hover(function(){
+      if($('.commentCounter').html()>0){
+        $(this).css('background', title_grey_highlight);
+      }
+    },function(){
+      $(this).css('background', title_grey);
+    });
+
+      var num_comments = 0;
+
+      var elems = $(".comment-list-item");
+      var comments_id_list = [];
+      for (var index = 0; index < elems.length; index++) {
+          var elemId = elems[index].id;
+          comments_id_list.push(parseInt(elemId));
+      }
+
+      comments_id_list = mergeSort(comments_id_list);
+      // console.log(comments_id_list);
+
+      for (var i = 0; i < comments_id_list.length; i++) {
+        $(".comment-list").append(document.getElementById(comments_id_list[i]));
+      }
+
+      function merge(left, right){
+        var result = [],
+          il = 0,
+          ir = 0;
+        while (il < left.length && ir < right.length){
+          if (left[il] > right[ir]){
+            result.push(left[il++]);
+          } else {
+            result.push(right[ir++]);
+          }
+        }
+        return result.concat(left.slice(il)).concat(right.slice(ir));
+      }
+
+      function mergeSort(items){
+        if (items.length < 2) {
+          return items;
+        }
+        var middle = Math.floor(items.length / 2),
+          left = items.slice(0, middle),
+          right = items.slice(middle);
+        return merge(mergeSort(left), mergeSort(right));
+      }
+
+      $(".comment-list").children().hide();
+
+      $( ".comment-list-item" ).each(function( index ) {
+        $(this).show();
+        num_comments += 1;
+        if(num_comments >= 5) {
+          return false;
+        }
+      });
+
+      $('.comment-list').bind('scroll', function(){
+         if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight){
+          $(this).children().eq(num_comments).show();
+          num_comments += 1;
+         }
+      });
+
+      $('.comment-list-item').click(function(){
+        var element_class = $(this).attr('class');
+        var step_id_label = "step_id_";
+        var step_id = element_class.substring(element_class.indexOf(step_id_label)+step_id_label.length, element_class.length);
+        goToStepComment(step_id, $(this).attr('id'));
+      });
+
+      $('#projectOverviewDescription').hover(function(){
+        $(this).fadeTo('fast', 1);
+      }, function(){
+        $(this).fadeTo('fast', 0.7);
+      });
+
+      $('.best_in_place').keydown(function(e){
+        if(e.keyCode == 13){
+          e.preventDefault();
+          // console.log('pressed enter key');
+          return false;
+        }
+      });
+
+    </script>

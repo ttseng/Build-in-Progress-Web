@@ -1,0 +1,5 @@
+<%=content_tag_for(:div, image) do %>
+<div class="stepImage">
+  <%= image_tag(image.image_path_url(:preview), :data => {:parent => step_id, :position=> index}) if image.image_path? %>
+</div>
+<% end %>

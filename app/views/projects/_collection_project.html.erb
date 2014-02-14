@@ -1,0 +1,55 @@
+<div class ="project">
+	<% #show default image for project overview if the project has an image uploaded %>
+	<div class="exploreRibbon-wrapper">
+	<% if !project.last_step_with_images.blank? && project.images.count > 0%>
+			<%= link_to image_tag(project.default_image.image_path_url(:preview), :width=>"100%"), project  %>
+	<% else %>
+		<%= link_to(project) do %>
+			<div class = "blankImage"></div>
+		<% end %>
+	<% end %>
+	<% if project.built %>
+		<div class='exploreRibbon'>built!</div>
+	<% end %>
+
+	<% if project.has_unanswered_question? %>
+		<%= link_to project_steps_path(project, :step=>project.step_with_question.id) do %>
+				<div class="vert-ribbon">
+					<div class="container">
+						<div class="base">?</div>
+						<div class="left_corner"></div>
+						<div class="right_corner"></div>
+					</div>
+				</div>
+			<% end %>
+	<% end %>
+
+		<div class="projectInfo">
+			<div class="exploreFavorite">
+				<icon class="fa fa-star"> </icon> <span class="exploreFavoriteCount"><%=project.favorited_by.length%></span>
+			</div>
+			<div class="exploreComment">
+				<icon class="fa fa-comment"></icon>
+				<span class="exploreCommentCount"><%=project.comment_count%></span>
+			</div>
+			<div class="exploreRemix">
+				<icon class="fa fa-code-fork"></icon>
+					<span class="exploreRemixCount"><%=project.remix_count%></span>
+			</div>
+
+		</div>
+	
+
+
+	</div>
+
+	<% if can? :destroy, Collectify.where(:project_id => project.id, :collection_id => params[:id]).first %>
+
+		<div class="delete"> <%=link_to raw('<i class="btn btn-inverse fa fa-times" style="display:block"></i>'), {controller: "collectifies", action: "destroy", :project_id => project.id}, :method => :delete, :data=> {:confirm=>  "Are you sure you want to remove this project from your collection?"} %> </div>
+
+	<% end %>
+
+	<div class="name"><%=link_to project.title, project %> </div>
+	<div class="author">by <%= render :partial => "projects/author_byline", :locals => {:project => project, :source=>"collections"} %> </div>
+
+</div>

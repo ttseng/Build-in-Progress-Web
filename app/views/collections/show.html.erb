@@ -1,0 +1,138 @@
+<div class="fullRow" style="width:940px; margin-top: 60px">
+  <div class="fullRow">
+
+    <div class="collectionsTitleSection">
+      <div id="collectionAvatar">  
+        <% if @collection.image.length > 0%>
+          <%= image_tag(@collection.image_url(:thumb), :class=>"collectionAvatar img-polaroid") %>
+        <% else %>
+          <%= image_tag("default_collection.png", :class=>"collectionAvatar img-polaroid") %>
+        <% end %>
+      </div>
+
+      <div class="collectionsText">
+        <h3 id="collectionsName"><%= @collection.name %></h3>
+        <p id="collectionsDesc">
+          <% if @collection.description.blank? && current_user == @collection.user%>
+            <span style="color:#838383">Add a description to your collection by clicking edit!</span>
+          <% else %>
+            <%= @collection.description %>
+          <% end %>
+        </p>
+        <p id="collectionsInfo"><%= @collection.projects.count %> <i class="fa fa-folder-open" style='color:gray;'></i> &nbsp;|&nbsp; <%= link_to @collection.user.username, user_path(@collection.user) %></p>
+        <% if user_signed_in? && current_user == @collection.user %>
+          <div class="edit_collection">
+            <div class="btn btn-info btn-small editCollectionTitleBtn">Edit</div>
+          </div>
+        <% end %>
+
+        <% if @collection.challenge==true %>
+          <div class="challengeLabel">challenge</div>
+          <script type="text/javascript">
+            $('.collectionsTitleSection').addClass('challenge');
+            $('#collectionsName').addClass('challenge');
+          </script>
+        <% end %>
+      </div>
+
+      <%= form_for @collection, :html=> {:class=>"collectionTitleForm"}, :remote=> true do |f| %>
+      <div id="collectionAvatarForm">  
+        <div class="formField avatarFormField">
+          <% if @collection.image.length > 0%>
+              <%= image_tag(@collection.image_url(:thumb), :class=>"collectionAvatar img-polaroid") %>
+            <% else %>
+              <%= image_tag("default_collection.png", :class=>"collectionAvatar img-polaroid")%>
+          <% end %>
+          <div class="clear"></div>
+            <div id="img_prev">
+                <p id="img_prev_filename"></p>
+            </div>
+
+          <div id="uploadImageWrapper" class="collectionsUploadImageWrapper" title="Add Image" style="left:80px;">
+              <button class="btn collectionsUploadImage" >
+                <p class="collectionsUploadImageText" style="margin:auto;">Add Image</p>
+              </button>
+              <%= f.file_field :image, :label=> false, :onChange=>"javascript: readURL(this);"%>
+            </div>
+          <div class="clear"></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="span3 collectionTitleFormWrapper">
+          <div class="field" style="width:600px">
+            <%= f.text_field :name, :label=> false, :class=> "collectionTitleFormTitleField", :maxlength=> 50, :placeholder => "Collection Name" %>
+            <span class="error_message">Collections must have a title!</span>
+          </div>
+          
+          <div class="field">
+            <%= f.text_area :description, :label=> false, :class=> "collectionTitleFormDescField", :maxlength=> 210, :placeholder => "Collection description", :style=> "width: 640px;" %>
+          </div>
+          <div class="form_buttons">
+            <%= link_to 'Cancel', collection_path, :class=> "btn btn-small cancel_button", :style => 'color: #000;' %>
+            <%= f.submit 'Save', :class=> "btn btn-info btn-small save_button" %>
+            <%=link_to raw('<i class="btn btn-danger fa fa-trash-o collectionDeleteBtn"></i>'), @collection, :method=> :delete, :data=> {:confirm=>  "Are you sure you want to delete this collection?"}%>
+          </div>
+        </div>
+      </div>
+      <% end %>
+    </div>
+    <%= render 'project_form' %>
+
+    <% if @featured_projects.length>0 %>
+    <div class='featuredProjectsTitle'>Featured Projects</div>
+       <div class="collectionFeaturedSection">
+        <div id="featuredProjects">
+          <%= render :partial => "projects/collection_project", :collection => @featured_projects, as: :project %>
+        </div>
+    </div>
+    <div class='featuredProjectsTitle'>All Projects</div>
+    <% end %>
+
+    <div class="collectionsProjectSection">
+      <div id = "projects" >      
+        <%= render :partial => "projects/collection_project", :collection => @projects, as: :project  %>
+      </div>
+
+      <% if @collection.projects.count == 0 %>
+      <p style="color: black">Add a project to your collection by adding a project URL above!</p>
+      <p style="color: black">Note: Your collection will become public on Build in Progress once you name it and add a published project.</p>
+      </br>
+      <% end %>
+
+      <div class="clear"></div>
+    </div>
+
+<script type="text/javascript">
+    $("#img_prev").hide();
+
+    $('.content').css("height", "100%");
+    $('.editCollectionTitleBtn').click(function() {
+      $('.collectionsText').hide();
+      $('.edit').hide();
+      $('#collectionAvatar').hide();
+      $('.collectionTitleForm').show();
+    });
+
+    function readURL(input) {
+      // validate that an image was uploaded
+      if(!/(\.jpg|\.jpeg|\.png|\.gif)$/i.test(input.value)) {
+         alert("Invalid image file type.  Please upload a .jpg, .jpeg, .png, or .gif file.");      
+         field = $('#collection_image');
+         field.replaceWith(field=field.clone(true));
+      }else{
+        if (input.files && input.files[0]) {
+          $("#img_prev").show();
+          $("#img_prev_filename").html('<a id="remove_img"><i class="fa fa-times"></i></a> '+input.files[0].name);
+          $("#uploadImageWrapper").hide();
+          // $(".collectionTitleFormTitleField").addClass("collectionTitleFormAdjust");
+        }
+      }
+    }
+
+    $("#img_prev_filename").click(function() {
+        $("#img_prev").hide();
+        $("#uploadImageWrapper").show();
+        $(".collectionTitleFormTitleField").removeClass("collectionTitleFormAdjust");
+    });
+</script>

@@ -1,0 +1,30 @@
+<div class="fullRow" style="width:940px">
+    <div class="projectPage">
+
+      <div class="projectTitleBar projectViewAllTitleBar">
+        <div class="projectViewAllAvatar">
+          <% if @user.avatar.length > 0 %>
+              <%= link_to image_tag(@user.avatar_url(:thumb), :class=>"avatar img-polaroid"), user_path %>
+          <% else %>
+              <%= link_to image_tag("default_avatar.png", :class=>"avatar img-polaroid"), user_path(@user) %>
+          <% end %>
+        </div>
+        <h3 class="projectViewAllHeading">
+          <%= @user.username %>'s Collections (<%=@user.collections.count%>)
+        </h3>
+      </div>
+      <div class="projectSideArea projectViewAll">
+          <div class="userProjects allProjects">
+
+              <% @collections.each_with_index do |collection, index| %>
+                <%= render :partial => 'collections/collections', :locals=> {:collection => collection, :source => "user_collections"} %>
+              <% end %>
+
+          </div>
+      </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+</script>

@@ -1,0 +1,26 @@
+<%= semantic_form_for("user", :url => user_session_path, :html=> {:class=> "modal hide fade", :id=>"signInModal"}) do |f| %>
+
+<div class="modal-header">
+  <h3>Sign In</h3>
+</div>
+
+<div class="modal-body">
+  <%= f.label :username, :class=>"smallLabel" %>  
+  <%= f.text_field :username, :value=>"" %>
+  <br>
+  <%= f.label :password, :class=>"smallLabel" %>  
+  <%= f.password_field :password %>
+  <div class="clear"></div>
+  <%= link_to "Forgot password?", new_password_path('user'), :class=>"pwForgot" %>
+</div>
+
+<div class="modal-footer">
+  <%= link_to "Sign Up",   new_registration_path(resource_name), :class=>"btn btn-small", :style=>'float:left'  %>
+  <div style="float:right;">
+    <%= button_tag "Cancel", :type=>"button", :class => "btn btn-small", :href => "#", 
+    :data => {:target => "#signInModal", :toggle => "modal"} %>
+
+    <%= f.submit 'Login', :class=>"btn btn-small btn-primary" %>
+  </div>
+</div>
+<% end %>

@@ -1,0 +1,7 @@
+AWS_ACCESS_KEY_ID: "your_aws_access_key_id"
+AWS_ACCESS_KEY: "your_aws_access_key"
+AWS_BUCKET: "your_aws_bucket"
+DEV_HOST_URL: "development_url (localhost:3000)"
+PRODUCTION_HOST_URL: "production_url"
+GMAIL_USERNAME: "your_gmail_username"
+GMAIL_PASSWORD: "your_gmail_password"

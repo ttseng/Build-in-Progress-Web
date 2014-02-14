@@ -1,0 +1,15 @@
+<%= semantic_form_for @image do |image_form| %>
+	<%= image_form.input :project_id, :as => :hidden, :label => false, :input_html => {:value => @project.id} %>
+	<%= image.form.hidden_field :key %>
+	<% if @step.new_record? %>
+  		<%= image_form.input :step_id, :as => :hidden, :label => false, :input_html => {:value => -1} %>
+  		<%= image_form.input :saved, :as => :hidden, :label => false, :input_html => {:value => false} %>
+	<% else %>
+	  	<%= image_form.input :step_id, :as => :hidden, :label => false, :input_html => {:value => @step.id} %>
+	  	<%= image_form.input :saved, :as => :hidden, :label => false, :input_html => {:value => true} %>
+ 	<% end %>
+ 	<%= image_form.submit %>
+
+ $(function(){
+
+ });

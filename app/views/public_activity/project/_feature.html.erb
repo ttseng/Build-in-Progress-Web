@@ -1,0 +1,28 @@
+<% # Create Project Notification %>
+
+<% source = params[:source] %>
+<% project = activity.trackable %>
+<% if project %>
+	<% if source == "navbar" %>
+		<%= link_to project_path(project, :notification_id => activity.id) do %>
+			<icon class="fa fa-thumb-tack"></icon>
+			<p class="notification-image">
+				<%= render :partial=>"images/navbar_image", :locals=> {:activity => activity} %>
+			</p>
+			<p class="notification-text">
+				<span class="notification-bold"><%= project.title %></span> has been featured!
+			</p>
+			<br>
+			<p class="notification-date" style="display:inline-block"><%= time_ago_in_words(activity.created_at) %> ago</p>
+		<% end %>
+	<% else %>
+		<icon class="fa fa-thumb-tack"></icon>
+		<p class ="notification-image">
+			<%= link_to image_tag(project.default_image.image_path_url(:square_thumb), :class=>"img-polaroid"), home_index_path %>
+		</p>
+		<p class="notification-heading">
+			<%= link_to project.title, project_path(project) %></span> has been featured!
+		</p>
+		<span class="notification-date"><%= time_ago_in_words(activity.created_at) %> ago</span>
+	<% end %>
+<% end %>

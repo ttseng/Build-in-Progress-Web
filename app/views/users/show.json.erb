@@ -1,0 +1,12 @@
+{ 
+	"success":true, 
+	"info":"ok", 
+	"data":
+		{ "projects":
+			<%= JSON.pretty_generate(@all_projects.order("updated_at DESC").as_json(only: [:title, :id, :built], :methods=> [:image_path, :updated_at_formatted, :collaborative?])).html_safe %>
+			,
+			"user":
+				<%= JSON.pretty_generate(@user.as_json(only: [:avatar, :username, :about_me, :id])).html_safe %>
+	} 
+}
+	

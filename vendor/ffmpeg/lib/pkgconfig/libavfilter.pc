@@ -1,0 +1,14 @@
+prefix=/app/vendor/ffmpeg
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: libavfilter
+Description: FFmpeg audio/video filtering library
+Version: 3.91.100
+Requires: libpostproc = 52.3.100, libswresample = 0.17.104, libswscale = 2.5.101, libavformat = 55.21.100, libavcodec = 55.44.100, libavutil = 52.53.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir} -lavfilter -ldl -lx264 -lvpx -lvpx -lvorbisenc -lvorbis -logg -lfaac -lm -pthread -lbz2 -lz -lrt
+Libs.private: 
+Cflags: -I${includedir}

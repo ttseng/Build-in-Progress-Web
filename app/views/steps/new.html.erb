@@ -1,0 +1,28 @@
+<script type="text/javascript">
+  var newStepSlideVisible = false;
+</script>
+
+<div class="fullRow" style="width:940px">
+
+ 	<%= render :partial => 'images/project_overview_image_gallery', :locals => {:source=>"new"} %>
+
+	<div id="processMap" class="new">
+    	<%= render :partial => 'process_map', :locals=> {:source=> "new"} %>
+	</div>
+    
+    <div class="processBlog">
+    	<div class = "detailViewHandle"><icon class="fa fa-chevron-right" style="margin-left: 3px; font-size: 23px;"></i><icon class="fa fa-file-text" style="display: block; margin-top: 6px; font-size: 24px; margin-left: 1px;"></i></div>
+		<%= render :partial => 'step_form', :locals=> {:source => "new"} %>
+	</div>
+
+
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+       // hide footer
+        $('#footer').hide();
+	});
+
+</script>
+

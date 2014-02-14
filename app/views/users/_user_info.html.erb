@@ -1,0 +1,57 @@
+<div class="userProfile">
+
+	<div id="userAvatar">  
+    <% if @user.avatar.length > 0%>
+        <%= link_to image_tag(@user.avatar_url(:thumb), :class=>"avatar img-polaroid"), user_path%>
+    <% else %>
+        <%= image_tag("default_avatar.png", :class=>"avatar img-polaroid")%>
+    <% end %>
+
+  </div>
+    
+	<div id="username"><h4><%= link_to @user.username, user_path %></h4></div>
+
+  <% if !@user.about_me.blank? %>
+    <h6>About me</h6>
+    <div id="about_me"><%=@user.about_me%></div>
+  <% end %>
+
+  <hr style="margin-bottom:8px;">
+
+  <% if @arts_and_crafts_count > 0 %>
+    <div class="profile_category_icon arts_and_crafts_icon_div"><icon class="fa fa-cut" style="color:rgb(198, 0, 105);" title="Arts & Crafts"></icon></div>
+  <% end %>
+  
+  <% if @clothing_count > 0 %>
+    <div class="profile_category_icon clothing_icon_div"><%= image_tag("icons/clothing_icon.png", :class=>"icon_clothing", :title=>"Clothing")%></div>
+  <% end %> 
+
+  <% if @cooking_count > 0 %>
+    <div class="profile_category_icon cooking_icon_div"><icon class="fa fa-cutlery" style="color:rgb(237, 162, 10);" title="Cooking"></icon></div>
+  <% end %>
+
+  <% if @electronics_count > 0 %>
+    <div class="profile_category_icon electronics_icon_div"><%= image_tag("icons/electronics_icon.png", :class=>"icon_electronics", :title=>"Electronics") %></div>
+  <% end %>
+  
+  <% if @mechanical_count > 0 %>
+    <div class="profile_category_icon mechanical_icon_div"><icon class="fa fa-gears" style="color:rgb(42, 171, 170);" title="Mechanical"></icon></div>
+  <% end %>
+  
+  <% if @other_count > 0 %>
+    <div class="profile_category_icon other_icon_div"><icon class="fa fa-asterisk" style="color:rgb(170, 9, 253);" title="Other"></icon></div>
+  <% end %>
+
+  <div class="clear" style="margin: 10px 0px;"></div>
+
+  <div>Last seen: <%=@user.last_updated_date%> ago </div>
+  <div>Member since: <%=@user.created_at.strftime "%b %d, %Y"%></div><br>
+
+  <div>Builds in Progress: <%=@user.projects.not_built.count%></div>
+  <div>Built Projects: <%=@user.projects.built.count%></div><br>
+
+</div>
+
+<script>
+  //$('.profile_category_icon icon').tooltip();
+</script>

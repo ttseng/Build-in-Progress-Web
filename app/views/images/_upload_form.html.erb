@@ -1,0 +1,9 @@
+<span class="btn btn-mini fileinput-button">
+    <i class = "fa fa-plus"></i>
+        Add Photo
+        <%= form.fields_for Image.new, :html=> {:multipart => true} do |image_form| %>   
+        	<%= image_form.file_field :file, multiple: true, name:"image[file]"%>
+		<% end %>
+</span>
+        <%= link_to 'Reorder Photos', '#', :class=> "btn btn-mini" %>
+

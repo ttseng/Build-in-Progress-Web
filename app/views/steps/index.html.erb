@@ -1,0 +1,210 @@
+<script type="text/javascript">
+  var firstStepID; // store the ID of the first step
+  var userFavorited = false;
+  var createdStep = "<%=flash[:createdStep]%>" || "<%=params[:step]%>"
+  var anchor = window.location.hash // step id containing comment
+  $('head title').html("<%=@project.title%>"); // set title of page to project name
+</script>
+<style type="text/css">
+#loading {display: block;}
+</style>
+
+<div class="fullRow" style="width:940px">
+
+  <%= render :partial => 'images/project_overview_image_gallery', :locals => {:source => 'index'} %>
+
+    <div id="processMap">
+      <%= render :partial => 'process_map', :locals=> {:source=>"index"} %>
+    </div>
+
+    <div class="processBlog">
+      <% if @project.steps.count > 0 %>
+         <div class = "detailViewHandle"><icon class="fa fa-chevron-right" style="margin-left: 3px; font-size: 23px;"></i><icon class="fa fa-file-text" style="display: block; margin-top: 6px; font-size: 20px; margin-left: 1px;"></i></div>
+      <% end %>
+      <div class="stepDetailView">
+        <% # Add the Detail View%>
+        <%= render :partial=> 'step_detail_view', :collection => @project.steps.order(:published_on), as: :step  %>
+        <div class="shim">
+      </div>
+    </div>
+
+  <% # add sign in modal %>
+  <%= render :partial=> "sign_in" %>
+  
+  <% # add editing conflict modal %>
+  <%= render :partial => "editing_conflict_modal" %>
+</div>
+
+
+<!-- soundcloud API stuff ONLY LOAD IF THE PROJECT ALREADY HAS SOUNDCLOUD EMBEDDED IN IT-->
+<% if @project.sounds.length > 0 %>
+  <script src="//connect.soundcloud.com/sdk.js"></script>
+  <script>
+  var sc_client_id = "468abf0ced361eaca87f3566c4c4855e";
+    SC.initialize({
+      client_id: sc_client_id
+    });
+  </script>
+<% end %>
+
+<script type="text/javascript">
+
+    // edit the title of the project
+    $('.editProjectTitleBtn').click(function(){
+      console.log("clicked editProjectTitle button");
+        $.ajax({
+            url: "/projects/editTitle",
+            type: 'GET',
+            data: {projectID: "<%=@project.id%>"} 
+      });
+    });
+
+    $(window).load(function(){
+      // go to the recently created step
+       if(createdStep.length>0){
+        console.log("going to created step");
+        goToStep(createdStep);
+      }   
+      // scroll to the top of the page
+      window.scrollTo(0,0);
+    });
+
+    $(document).ready(function(){
+
+      // hide footer
+      $('#footer').hide();   
+
+      /* -------- ------ Carousel Stuff -------------- */
+
+      if("<%= @project.images.count > 0%>"){
+        loadCarousels("index");
+      }
+
+        // collapsing comments
+        $('.accordion').accordion({
+          collapsible: true, 
+          heightStyle: "content",
+          active: false,
+          icons:{
+            header: "fa fa-chevron-down",
+            activeHeader: "fa fa-chevron-up"
+          }
+        });
+
+        $('.accordion h5').hover(function(){
+          $(this).css("color", "#0769AD");
+        },
+        function(){
+          $(this).css("color", "#000");
+      });
+
+      $('.carousel .video_mask').click(function(){
+        console.log('clicked video mask');
+        trigger_video_mask($(this));
+      });
+
+      $('.carousel').on('slide', function(){
+        reset_video_masks($(this));
+      });
+
+      $('.carousel').on('slid', function(){
+          console.log('carousel slid');
+          stopHTMLVideo($(this));
+          stopVimeo($(this));
+          stopSoundcloud($(this));
+      });
+
+      /* -------------- Carousel Stuff End-------------- */
+
+      /* -------------- Comment stuff -------------- */
+
+      // if anchor is a comment, expand the comment accordion and go to the anchor
+      if(anchor.indexOf("comment")>=0){
+        var step_id = getClassID("#comments", anchor);
+        var comment_id = getClassID("comment", "<%=params[:comment_id]%>");
+        goToStepComment(step_id, comment_id);     
+      }
+
+      /* -------------- Comment stuff end -------------- */
+
+      /* -------------- Process Map Tools -------------- */
+      // disable undo button 
+      $('.undoIcon').bind('click', false);
+      
+      if("<%=@authorLoggedIn%>"=="false" && "<%=user_signed_in?%>"=="true"){
+        console.log('adding favorite star');
+        $('.favoriteStar').tooltip({'placement':'bottom'});
+      }
+
+      // toggle favorite star
+      $('.favoriteStar').hover(function(){
+        if("<%=@authorLoggedIn%>"=="false"){
+        if(!userFavorited){
+          $('.favoriteStar').removeClass("fa-star-o");
+          $('.favoriteStar').addClass("fa-star");
+        }
+        else{
+          $('.favoriteStar').addClass("fa-star-o");
+          $('.favoriteStar').removeClass("fa-star");
+        }
+      }
+      },
+      function(){
+      if(!"<%=@authorLoggedIn%>" && <%=user_signed_in?%>){
+        if(!userFavorited){
+          $('.favoriteStar').removeClass("fa-star");
+          $('.favoriteStar').addClass("fa fa-star-o");
+        }
+        else{
+          $('.favoriteStar').addClass("fa-star");
+          $('.favoriteStar').removeClass("fa-star-empty");
+        }
+      }
+      });
+
+      /* -------------- Process Map Tools End -------------- */
+
+        // open up all links in the detail view an external window
+        $('.detailViewText a').attr("target", "_blank");
+        $('.comment a').not('.username').not('.delete_comment').attr('target', "_blank");
+        $('.adviceContainer a').attr('target', "_blank");
+        $('.detailViewDesignFiles a').attr('target', "_blank");
+
+      /* -------------- Editing Conflict Modal Stuff -------------- */
+
+      $('.editButton').click(function(){
+      editButton = $(this);
+      // go to edit_redirect
+       $.ajax({
+          url: "/projects/<%=@project.id%>/steps/edit_redirect",
+          type: 'GET',
+          data: {stepID: getClassID('edit', $(this).attr('id'))} ,
+          success: function(data, status, xhr){
+            console.log('data: ' + data);
+            if(data.indexOf("window.location")==-1){            
+              console.log('creating modal');
+              $('#editing_conflict_modal .modal-body').append('User <strong>' + data+'</strong> is currently editing this step.  Are you sure you want to continue?');
+              $('#editing_conflict_modal').modal('show');
+            }
+          }
+          
+         });
+    });
+
+      $('#editing_conflict_modal .cancelButton').click(function(){
+        console.log('hiding modal');
+        $('#editing_conflict_modal .modal-body').html('');
+        $('#editing_conflict_modal').modal('hide');
+        
+      });
+
+      $('#editing_conflict_modal .continueButton').click(function(){
+        console.log('clicked continue');
+        window.location.href = '/projects/<%=@project.id%>/steps/'+editButton.data('position')+'/edit';
+      });    
+
+      
+    });
+
+
+</script>

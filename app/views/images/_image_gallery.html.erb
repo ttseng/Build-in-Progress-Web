@@ -1,0 +1,24 @@
+<div class="imageGallery">
+    <p style="margin: 5px 0px;"><b>Upload Step Images</b> - Click and drag to rearrange</p>
+    <div class = "wrapper">
+      <div class="scrolls">
+        <div id="images" data-update-url="<%= sort_images_url %>">
+          <% if !step.new_record? %>
+          <% @images.order("position").each do |image| %>
+              <%= render :partial => 'images/image', :locals => {:image=> image} %>
+          <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+<% #drag images %>
+<script>
+$("#images").sortable({
+  cursor: "move",
+  axis: 'x', 
+  update: function(){
+    $.post($(this).data('update-url'), $(this).sortable('serialize'));
+  }
+  }).disableSelection();
+</script>

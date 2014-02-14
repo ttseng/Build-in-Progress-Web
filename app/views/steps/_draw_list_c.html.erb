@@ -1,0 +1,328 @@
+<% (0..@ancestry.length-1).each do |index| %>
+	<% currentStep = @steps.where("position" => index).first %>
+	<% currentStepAncestry = currentStep.ancestry %>
+	<script type="text/javascript">
+		console.log(" ");
+		console.log("index: <%=index%>");
+		console.log("currentStep: <%=currentStep.name%>");
+		console.log('currentStepAncestry: <%=currentStepAncestry%>');
+	</script>
+
+	<% if index == 0 %>
+		<script type="text/javascript">
+			// console.log("first step");
+			$('ul.'+'<%=currentStep.id%>').append("<li class= '<%= currentStep.id %>'> <%= currentStep.name %></li>");
+		</script>	 
+
+	<% elsif @ancestry[index] == @ancestry[index-1] %>
+		<% prevStep = @steps.where("position" => index-1).first %>
+		<% if @ancestry[index] == nil %>
+			<script type="text/javascript">
+				// console.log("same ancestry as previous step");
+				 $('li.'+'<%=prevStep.id%>').append("<ul class= '<%= prevStep.id %>'><li class= '<%=currentStep.id %>'>  <%= currentStep.name %></li></ul>");
+			 </script>
+		<% else %>
+			<% slashLocation = currentStepAncestry.rindex("/") %>
+			<% if slashLocation != nil %>
+				<% currentStepAncestry = currentStepAncestry[slashLocation+1, currentStepAncestry.length] %>
+			<% end %>
+			<script type="text/javascript">
+				 $('ul.'+'<%=currentStepAncestry%>').append("<li class= '<%= currentStep.id %>'> <%= currentStep.name %></li>");
+			 </script>
+		<% end %>
+	<% else %>
+		<% slashLocation = currentStepAncestry.rindex("/") %>
+			<% if slashLocation != nil %>
+				<% currentStepAncestry = currentStepAncestry[slashLocation+1, currentStepAncestry.length] %>
+			<% end %>
+		<script type="text/javascript">
+			console.log("first step with this ancestry");
+			$('li.'+'<%=currentStepAncestry%>').append("<ul class= '<%= currentStepAncestry %>'><li class= '<%=currentStep.id %>'>  <%= currentStep.name %></li></ul>");
+		</script>			
+	<% end %>
+<% end %>
+
+<script>
+/**
+ * jQuery org-chart/tree plugin.
+ *
+ * Author: Wes Nolte
+ * http://twitter.com/wesnolte
+ *
+ * Based on the work of Mark Lee
+ * http://www.capricasoftware.co.uk 
+ *
+ * Copyright (c) 2011 Wesley Nolte
+ * Dual licensed under the MIT and GPL licenses.
+ *
+ */
+(function($) {
+
+  var colWidth = 92;
+
+  $.fn.jOrgChart = function(options) {
+    var opts = $.extend({}, $.fn.jOrgChart.defaults, options);
+    var $appendTo = $(opts.chartElement);
+
+    // build the tree
+    $this = $(this);   
+    // console.log("opts.chartClass: " + opts.chartClass);
+    var $container = $("<div class='" + opts.chartClass + "'/>");
+    if($this.is("ul")) {
+      buildNode($this.find("li:first"), $container, 0, opts);
+    }
+    else if($this.is("li")) {
+      buildNode($this, $container, 0, opts);
+    }
+    $appendTo.append($container);
+
+    // add drag and drop if enabled
+    if(opts.dragAndDrop){
+        $('.stepNode').draggable({
+            cursor      : 'move',
+            distance    : 20,
+            helper      : 'clone',
+            opacity     : 0.8,
+            revert      : 'invalid',
+            revertDuration : 100,
+            snap        : '.stepNode.expanded',
+            snapMode    : 'inner',
+            stack       : '.stepNode',
+            zIndex      : 5000
+
+        });
+        
+        $('.stepNode').droppable({
+            accept      : '.stepNode',          
+            activeClass : 'drag-active',
+            hoverClass  : 'drop-hover'
+        });
+        
+      // Drag start event handler for nodes
+      $('.stepNode').bind("dragstart", function handleDragStart( event, ui ){
+        
+        var sourceNode = $(this);
+        sourceNode.parentsUntil('.node-container')
+                   .find('*')
+                   .filter('.stepNode');
+      });
+
+      // Drag stop event handler for nodes
+      $('.stepNode').bind("dragstop", function handleDragStop( event, ui ){
+
+        /* reload the plugin */
+        // console.log("");
+        // console.log('#######################dropped handle');
+        $(opts.chartElement).children().remove();
+        // $("#org").jOrgChart({
+        //     chartElement : '#chart',
+        //     dragAndDrop  : true
+        // });
+        $this.jOrgChart(opts);  
+        $('.stepLabel').ellipsis();    
+      });
+    
+      // Drop event handler for nodes
+      $('.stepNode').bind("drop", function handleDropEvent( event, ui ) {    
+	  
+        var targetID = $(this).data("tree-node");
+        var targetLi = $this.find("li").filter(function() { return $(this).data("tree-node") === targetID; } );
+        var targetUl = targetLi.children('ul');
+		
+        var sourceID = ui.draggable.data("tree-node");		
+        var sourceLi = $this.find("li").filter(function() { return $(this).data("tree-node") === sourceID; } );		
+        var sourceUl = sourceLi.parent('ul');
+
+        if (targetUl.length > 0){
+  		    targetUl.append(sourceLi);
+        } else {
+  		    targetLi.append("<ul></ul>");
+  		    targetLi.children('ul').append(sourceLi);
+        }
+        
+        //Removes any empty lists
+        if (sourceUl.children().length === 0){
+          sourceUl.remove();
+        }
+		
+      }); // handleDropEvent
+        
+    } // Drag and drop
+  };
+
+  // Option defaults
+  $.fn.jOrgChart.defaults = {
+    chartElement : 'body',
+    depth      : -1,
+    chartClass : "jOrgChart",
+    dragAndDrop: false
+  };
+	
+  var nodeCount = 0;
+
+  function findChildren(stepTitle, childLength){
+    for(var k=0; k<childLength-1; k++){
+    	 var ulChildren = $("li:contains('"+stepTitle+"')").last().find('ul').first();
+         var nestedULCount = $(ulChildren.children()[k]).children().length;
+         if (nestedULCount > 2){
+         	childLength = childLength + nestedULCount -1;
+         }
+    }
+  }
+  
+  // Method that recursively builds the tree
+  function buildNode($node, $appendTo, level, opts) {
+    var $container = $("<div class='mapContainer'/>");
+    //console.log(""  );
+
+    var stepName = $node.clone().children("ul,li").remove().end().html().trim();
+    var stepID = $node.attr("class");
+    console.log("stepID: " + stepID);
+    console.log("stepName: " + stepName);
+
+    // find direct children
+    var ulChildren =  $("li:contains('"+stepName+"')").last().find('ul').first();
+    var childrenLength = ulChildren.children().length;
+    console.log("childrenLength before nesting: " + childrenLength);
+    
+    //findChildren(stepName, childrenLength);
+
+    // find nested children
+    for(var k = 0; k<childrenLength; k++){
+      //console.log('k: ' + k);
+      //console.log($(ulChildren.children()[k]).html());
+      var nestedULCount = $(ulChildren.children()[k]).find('ul').children().length;
+      //console.log("nestedULCount: " + nestedULCount);
+      
+      for(var j=0; j<nestedULCount; j++){
+        //console.log("j: " + j);
+        var nestedLength =  $($(ulChildren[k]).find('ul').children()[j]).find('li').length;
+        //console.log("nestedLength: " + nestedLength);
+        if (nestedLength >1){
+          //console.log("increment childrenLength");
+          childrenLength = childrenLength + nestedLength -1 ;
+        }
+      }
+    }  
+
+    // var childrenLength = $("li:contains('"+stepName+"')").last().find('ul').length+1;
+   // console.log("FINAL childrenLength: " + childrenLength);
+
+    var width = childrenLength*colWidth;
+
+    // Construct the node container(s)
+    var $nodeCell = $("<div class='mapCell'/>").addClass("node-cell");
+    var $childNodes = $node.children("ul:first").children("li");
+    var $nodeDiv;
+
+    if($childNodes.length > 1) {
+      $nodeCell.css("width", width);
+    }
+    
+    // Draw the node
+    // Get the contents - any markup except li and ul allowed
+    var $nodeContent = $node.clone()
+                            .children("ul,li")
+                            .remove()
+                            .end()
+                            .html();
+	
+      //Increaments the node count which is used to link the source list and the org chart
+  	nodeCount++;
+  	$node.data("tree-node", nodeCount);
+  	$nodeDiv = $("<div>").addClass("stepNode")
+                         .addClass($node.attr("class"))
+                                     .data("tree-node", nodeCount)
+                                     .append("<p class='stepLabel'>" + $nodeContent + "</p>");
+
+    $nodeCell.append($nodeDiv);
+    $container.append($nodeCell);
+
+      // if it can be expanded then change the cursor
+      //$nodeDiv.css('cursor','n-resize');
+    
+      // recurse until leaves found (-1) or to the level specified
+      //console.log("childNodes.length: " + $childNodes.length);
+      //console.log("width: " + width);
+
+      if(childrenLength>0){
+      if(opts.depth == -1 || (level+1 < opts.depth)) { 
+        var $downLineCell = $("<div class='verticalLineCell'/>");
+        
+        // draw the connecting line from the parent node to the horizontal line 
+        $downLine = $("<div></div>").addClass("line down");
+        $downLineCell.append($downLine);
+        $container.append($downLineCell);
+
+        // Draw the horizontal lines
+        // get the width of the previous div
+
+        var $linesRow = $("<div class='mapRow'/>");
+        var verticalLineWidth = width;
+        //console.log("verticalLineWidth: "+ verticalLineWidth);
+        $linesRow.css("width", verticalLineWidth);
+
+        var i = 0;
+        $childNodes.each(function() {
+          //console.log("i: " + i);
+          var childSize = $($("li:contains('"+stepName+"')").last().children('ul').children('li')[i]).children('ul').length;
+          var horizontalSize = childSize * colWidth/2;
+          //console.log("childSize: " + childSize);
+          //console.log("horizontalSize: " + horizontalSize);
+
+          var $left = $("<div class='lineCell'>&nbsp;</div>").addClass("line left top");
+          var $right = $("<div class='lineCell'>&nbsp;</div>").addClass("line right top");
+          $left.css('width', horizontalSize);
+          $right.css('width', horizontalSize);
+          $linesRow.append($left).append($right);
+          i = parseInt(i)+1;
+        });
+ 
+        // horizontal line shouldn't extend beyond the first and last child branches
+        $linesRow.find("div:first")
+                    .removeClass("top")
+                 .end()
+                 .find("div:last")
+                    .removeClass("top")
+
+        $container.append($linesRow);
+        var $childNodesRow = $("<div />");
+        //var $childNodesRow = $("<tr/>");
+
+        $childNodes.each(function() {
+           var $td = $("<div class='node-container'/>");
+           // determine width of parent element and pass it to buildNodes
+           
+           //$childNodesRow.css('width', '92px');
+           // recurse through children lists and items
+           buildNode($(this), $td, level+1, opts);
+           $childNodesRow.append($td);
+        });
+      }
+
+      }
+      $container.append($childNodesRow);
+
+
+    // any classes on the LI element get copied to the relevant node in the tree
+    // apart from the special 'collapsed' class, which collapses the sub-tree at this point
+    if ($node.attr('class') != undefined) {
+        var classList = $node.attr('class').split(/\s+/);
+        $.each(classList, function(index,item) {
+            if (item == 'collapsed') {
+                //console.log($node);
+                $nodeRow.nextAll('div').css('visibility', 'hidden');
+                    $nodeRow.removeClass('expanded');
+                    $nodeRow.addClass('contracted');
+            } else {
+                $nodeDiv.addClass(item);
+            }
+        });
+    }
+    $appendTo.append($container);
+    
+  };
+
+})(jQuery);
+
+</script>

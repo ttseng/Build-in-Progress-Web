@@ -1,0 +1,7 @@
+$('#ExpProjects').append('<%= j render :partial => "explore_project", :collection => @projects, as: :project %>');
+<% if @projects.next_page %>
+	$('.pagination').replaceWith('<%= j will_paginate @projects.where("title not like ? ", "%Untitled%"), :param_name => "projects_page", previous_label: h("Previous"), next_label: h("Next"), :page_links=> false %>');
+<% else %>
+	$('.pagination').remove();
+	$('.loadingGIF').remove();
+<% end %>

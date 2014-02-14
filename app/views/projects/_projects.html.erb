@@ -1,0 +1,58 @@
+<% if source == "home" %>
+	<div class ="latestProject" >
+<% else %>
+	<div class ="userProject" >
+<% end %>
+
+	<div class="homeRibbon-wrapper">
+		<% if project.images.count > 0 && !project.default_image.nil? %>
+			<%= link_to image_tag(project.default_image.image_path_url(:preview), :width=>"100%"), project  %>
+		<% else %>
+			<%= link_to(project) do %>
+				<div class = "blankImage"></div>
+			<% end%>
+		<% end %>
+		<% if project.built %>
+				<div class='homeRibbon'>built!</div>
+		<% end %>
+
+		<% if project.has_unanswered_question? %>
+			<%= link_to project_steps_path(project, :step=>project.step_with_question.id) do %>
+				<div class="vert-ribbon" id="<%=project.id%>">
+					<div class="container">
+						<div class="base">?</div>
+						<div class="left_corner"></div>
+						<div class="right_corner"></div>
+					</div>
+				</div>
+			<% end %>
+		<% end %>
+	</div>
+
+	<div class="name"><%=link_to project.title, project, :class=>"name", :title=>project.title %> </div>
+
+	<% if source == "home" || source == "user_favorites"%>
+		<div class="authorDate">by <%= render :partial => "projects/author_byline", :locals => {:project => project, :source=>"profile"} %> </div>
+	<% else %>
+		<div class="userFavorite">
+			<icon class="fa fa-star"></icon>
+			<span class="count"><%=project.favorited_by.length%></span>
+		</div>
+
+		<div class="userComment">
+			<icon class="fa fa-comment"></icon>
+			<span class="count"><%=project.comment_count%></span>
+		</div>
+
+		<div class="userRemix">
+			<icon class="fa fa-code-fork"></icon>
+			<span class="count"><%=project.remix_count%></span>
+		</div>
+
+	<% if user_signed_in? && project.users.include?(current_user) %>
+
+		<div class="delete"> <%=link_to raw('<i class="btn btn-danger fa fa-trash-o" style="display:block"></i>'), project, :method => :delete, :data=> {:confirm=>  "Are you sure you want to delete this project?"} %> </div>
+
+	<% end %>
+<% end %>
+</div>

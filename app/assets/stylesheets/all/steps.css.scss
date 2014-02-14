@@ -1,0 +1,796 @@
+// Styles used for Process Map Version A
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+$branchLineBorder: 4px; // width of lines used to connect stpes in the process map
+$pageWidth: 940px;
+$halfPageWidth: $pageWidth/1.7;
+$processMapWidth: $pageWidth/2.5;
+$textWidth: 400px;
+$stepWidth: 150px;
+
+$blue: #08C;
+$lightblue: #02ABFF;
+$lightgrey: #8B8787;
+$darkgrey: #727272;
+$hovergrey: #C2C1C1;
+$grey: #9B9A9A;
+$red: #DD5F5F;
+$lightred: #D6A7A7;
+$teal: #62C3E0;
+$green: #5CB85C;
+
+$orange: #EC9700;
+$lightorange: #F8C66E;
+
+// Detail View Styling //
+
+.processBlog{
+	padding:0;
+	float:right;
+	width: 518px;
+	position: relative;
+	margin-bottom: 10px;
+	overflow-y: scroll;
+}
+
+.detailViewHandle{	
+	z-index: 1;
+	float: left;
+	width: 18px;
+	padding: 3px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	background: #ccc;
+	color: white;
+	font-size: 20px;
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+	border: 1px solid #AFAFAF;
+	text-shadow: 1px 1px #A3A3A3;
+	-webkit-box-shadow: -1px 0px 1px rgba(165, 165, 165, 0.57);
+	-moz-box-shadow:    -1px 0px 1px rgba(165, 165, 165, 0.57);
+	box-shadow:         -1px 0px 1px rgba(165, 165, 165, 0.57);
+}
+
+.detailViewHandle:hover{
+	background: $hovergrey;
+	cursor: pointer;
+}
+
+.stepDetailView{
+	float:right;
+	overflow:visible;
+	width:94.5%;
+	height: 99%;
+	font-family: "Verdana";
+	p{
+		font-family:"Verdana";
+	}
+	.detailViewStepName{
+		width:104%;
+		float:left;
+		text-align: left;
+		margin-top: 15px;
+		
+		.name{
+			width: 80%;
+			font-size: 25px;
+			font-weight:bold;
+			line-height: 25px;
+			margin-bottom:0px;
+			font-family: "open sans";
+		}
+
+		a{
+			color: black;
+		}
+		a:hover{
+			color: $darkgrey;
+			text-decoration:none;
+		}
+
+		li{
+			list-style-type:none;
+		}
+	}
+	.shim{
+		width: 100%;
+		float:right;
+		position: relative;
+	}
+}
+
+.stepDetailView.editStepForm{
+	height: 102%;
+}
+
+.detailView {
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+	padding: 0px 20px 0px 20px;
+	margin: 10px 0px;
+	margin-top: 0px;
+	border: 1px solid #ccc;
+  	float: left;
+	background-color: #FFF;
+	clear:right;
+	border-radius: 5px;
+	position:relative;
+	width: 99%;
+	.detailViewPhoto{
+		height: 284px;
+
+	}
+	.mainPhoto{
+		margin-left:-20px;
+		width: 87.5%;
+		overflow: hidden;
+		height: 100%;
+		border-top-left-radius: 5px;
+	}
+	.thumbGallery{
+	}
+
+	.emptyStepDescription{
+		color: #838383;
+	}
+	.editButton{
+		position: absolute;
+		right: 20px;
+		top: 290px;
+	}
+	.adviceContainer{
+		position: relative;
+	}
+	.adviceContainer.answered{
+		// background: $lightorange;
+	}
+}	
+
+$image_width: 95%;
+
+.image{
+	width:  $image_width;
+	float: left;
+	margin-bottom: 5px;
+	position: relative;
+	.stepImage{
+		img{
+			width: 100%;
+		}
+	}
+}
+
+.placeholder{
+  background: #fff no-repeat center url('/assets/loading.gif');
+  height: 59px;
+  width: 87%;
+  border: solid 1px #CCC;
+  position:relative;
+  padding:4px;
+  display: inline-block;
+  text-align:center;
+  img{
+    margin-top:10px !important;
+  }
+}
+
+.editDetailView{
+	padding-top:10px;
+	padding-left:20px;
+	padding-right:10px;
+	overflow-x:hidden;
+	border: 1px solid #ccc;
+	background: white;
+	.detailViewStepName{
+		width:100% !important;
+		background: transparent !important;
+		margin-top: 0px;
+	}
+	.detailViewPhoto{
+		margin-top: 20px;
+		height: 255px;
+	}
+	.mainPhoto{
+		width: 75%;
+		height: 100%;
+	}
+	.rightGallery{
+		width: 23%;
+		padding-left: 0px;
+		z-index: 0;
+	}
+	.thumbGallery{
+		height: 225px;
+		float: left;
+		margin-right: 0px;
+		width: auto !important;
+		min-width: 104px;
+		img:hover{
+			cursor: move;
+		}
+		.fa-play-circle:hover{
+			cursor: move;
+		}
+	}
+	.label_container{
+		position: relative;
+		min-height: 25px;
+		.label{
+			position:absolute;
+		}
+		.fa-refresh{
+			position: absolute;
+			left: 115px;
+			font-size:16px;
+			margin-right:4px;
+			color: $darkgrey;
+		}
+		.fa-refresh:hover{
+			cursor: pointer;
+			color: $grey;
+		}
+		.prompt{
+			position:absolute;
+			left:137px;
+			color: $darkgrey;
+		}
+	}
+	.publishedOn{
+		input{
+			height: 24px;
+		}
+	}
+	.published_on_calendar{
+		margin-right:3px;
+	}
+	#step_published_on_time{
+		margin-left: 3px;
+	}
+	.current_time{
+		margin-left:3px;
+	}
+	.question_accordion, .design_accordion{
+		position:relative;
+		padding-bottom:10px;
+		margin-bottom: 10px;
+		margin-top: 10px;
+	}
+	.question_accordion{
+		border-bottom: 1px solid $orange;
+	}
+	.design_accordion{
+		border-bottom: 1px solid $teal;
+	}
+
+	.decision_container{
+		padding: 5px;
+		border-radius: 5px;
+		padding-left:10px;
+		.hint_text{
+			color: $darkgrey;
+			margin-left:10px;
+		}
+		margin-left:25px;
+		li{
+			list-style-type:none;		
+		}
+	}
+	.answered_input{
+		position:absolute;
+		top:5px;
+		right:0;
+		width:145px;
+		li{
+			list-style-type:none;
+		}
+		#step_question_attributes_answered{
+			margin-right: 5px;
+			margin-top: -2px;
+		}
+		.fa-question-sign{
+			float:right;
+			margin-top:-25px;
+			margin-right: 10px;
+			font-size: 15px;
+		}
+	}
+
+	.built_section{
+		display: inline-block;
+		width: 100%;
+		margin-bottom: 10px;
+		.hint_text{
+			color: #9C9B9B;
+			margin-top: 9px;
+			float: left;
+			margin-left: 5px;
+			font-size: small;
+		}
+	}
+
+	.published_note{
+		color: $darkgrey;
+		padding-bottom: 15px;
+		font-size: 12px;
+	}
+	.accordion:focus{
+		outline:none;
+	}
+	.ui-accordion-header:focus{
+		outline: none !important;
+	}
+	textarea{
+		padding: 5px !important;
+	}
+}
+
+.advice_field, .design_container {
+	textarea{
+		width: 95%;
+		height: 50px;
+		margin-top: 5px;
+	}
+}
+
+.design_container {
+	.delete_existing_files, .upload_new_files {
+		margin-right: 10px;
+		padding: 7px 29px;
+	}
+	.design_file_row{
+		margin: 5px 0px;
+	}
+	.upload_new_files {
+		margin-top: 5px;
+		margin-bottom: 10px;
+		margin-left: 30px;
+		padding-left: 10px;
+		padding-top: 10px;
+		padding-bottom: 0px;
+		background-color: #efefef;
+		border-radius: 5px;
+	}
+	.design_file_upload_fieldset{
+		position: relative;
+		width: 100%;
+		height: 40px;
+		#uploadDesignFileWrapper{
+			position: absolute;
+			overflow: hidden;
+		}
+		#uploadDesignFileWrapper > input[type="file"]{
+			position: absolute;
+			top: 0;
+			left: 0;
+			opacity:0;
+			font-size: 90px;
+		}
+		#uploadDesignFileWrapper:hover > input[type="file"] {
+			cursor: pointer;
+		}
+		#uploadDesignFileWrapper:hover{
+			cursor: pointer;
+		}
+
+	}
+
+	.design_file_header {
+		text-align: center;
+	}
+
+	.design_file_entry {
+		padding: 5px 0;
+	}
+
+	.hiddenFields {
+		display: none;
+	}
+
+	hr {
+		margin: 10px;
+	}
+
+	.remove_fields {
+		float: right;
+	}
+
+	.add_design_file {
+		margin-top: 10px;
+		text-align: center;
+	}
+	.design_file_upload_fieldset{
+		label{
+			max-width: 250px;
+			display: inline;
+			text-overflow: ellipsis;
+		}
+	}
+}
+
+.projectOverview{
+	padding:0px !important;
+
+	.editButton{
+		margin-right:10px;
+		margin-top:-35px;
+		position:relative;
+	}
+	.projectOverviewName{
+		margin-left:20px !important;
+		margin-top: 5px !important;
+		background: transparent !important;
+		padding-left:0px !important;
+		width:517px !important;
+		a{
+			color: black !important;
+		}
+	}
+	.detailViewText p{
+		margin-left:20px;
+	}
+	.emptyProjectOverviewDescription{
+		color: #838383;
+	}
+	.projectOverviewPhoto{
+		margin: 0px auto !important;
+		float: none !important;
+		padding: 0px !important;
+
+	}
+	.userComments{
+		margin-left: 20px !important;
+		width: 90% !important;
+	}
+	.projectOverviewCarousel{
+		float: none !important;
+		width: 539px !important;
+		margin-left:auto;
+		margin-right:auto;
+		.carousel-inner{
+			height:275px;
+			.item{
+			  opacity: 0;
+			  -webkit-transition-property: opacity;
+			  -moz-transition-property: opacity;
+			  -o-transition-property: opacity;
+			  transition-property: opacity;
+			}
+			.flex-video a{
+				height:60%;
+			}
+			video{
+			  width: 100%;
+			  background: black;
+			}
+			.active{
+				opacity: 1;
+			}
+			.active.left, .active.right{
+				left:0;
+				opacity:0;
+				z-index:2;
+			}
+			.next.left, .prev.right{
+				opacity:1;
+			}
+		}
+	}	
+}
+
+.detailViewStepDate{
+	width: 80%;
+	float:left;
+	margin-top: 15px;
+	color: #9B9A9A;
+	padding: 0px 0px;
+}
+
+.detailViewStepAuthors{
+	float: left;
+	color: $lightgrey;
+	margin-top: 3px;
+	width: 90%;
+	font-size: smaller;
+	line-height: 12px;
+	a{
+		color: $lightgrey;
+	}
+}
+
+#detailViewNumSteps{
+	width:100px;
+	height:30px;
+	float:right;
+	text-align:right;
+	font-size: small;
+	padding: 0px 0px;
+}
+
+#detailViewPhoto{
+	position: relative;
+	height: 276px;
+	padding-right:0px;
+	float:left;
+	margin: 10px 0px;
+	margin-top: 0px;
+}
+
+
+.detailViewText{
+	width:100%;
+	display:inline-block;
+	font-size:12px;
+	line-height:150%;
+	padding: 0px;
+	margin: 10px 0px 0px 0px;
+
+	p{
+		a{
+			color: $blue !important;
+			text-decoration: underline !important;
+			word-wrap: break-word;
+		}	
+		a:hover{
+			color: $lightblue !important;
+		}
+	}
+
+}
+
+.questionContainer{
+	position: relative;
+	
+	.textHeading{
+		font-size:15px;
+		font-weight:bold;	
+		color: white;
+		padding:0px 10px;
+		margin-top:0px;
+		height:27px;
+		line-height:24px;
+	}
+	.text{
+		margin: 10px;
+		float:left;
+	}
+	.answered_checkbox_container{
+		font-size:small;
+		position: absolute;
+		top:0;
+		right:0;
+		padding: 4px;
+		padding-right:0px;
+		font-weight: bold;
+		border-top-left-radius: 5px;
+	}
+}
+
+.ribbonHeader{
+	color: #FFF;
+	position: relative;
+	background: #EC9700;
+	padding: 5px;
+	margin-top: 0px;
+	margin-left: -40px;
+	margin-bottom: 10px;
+	clear: both;
+	float: left;
+}
+.ribbonHeader.decision{
+	background: $green;
+}
+.ribbonHeader.design{
+	background:  $teal;
+}
+
+.ribbonTitle{
+	padding: 5px 0px 4px 0px;
+	font-weight: bold;
+	margin-left: -20px;
+	padding-left: 20px;
+	width: 100%;
+	padding-right: 20px;
+}
+
+.ribbonTitle.question{
+	color: $orange;
+	border-bottom: 1px solid $orange;
+}
+.ribbonTitle.question.answered{
+	margin-left: 0px;
+	padding-left: 0px;
+}
+.ribbonTitle.decision{
+	color: $green;
+	border-bottom: 1px solid $green;
+	margin-left: 0px;
+	padding-left: 0px;
+	margin-top: 10px;
+}
+
+.ribbonTitle.design{
+	color: $teal;
+	border-bottom: 1px solid $teal;
+	margin-top: 10px;
+}
+
+.projectOverview .adviceContainer{
+	margin-left:20px;
+	margin-right:20px;
+}
+
+.decisionContainer{
+
+	a {
+		color: #0088cc;
+		text-decoration: underline;
+		font-weight: bold;
+	}
+
+	a:hover {
+		color: $lightblue;
+	}
+}
+.projectOverview .decisionContainer{
+	margin-left:50px;
+	margin-right:20px;
+}
+
+.editButtons{
+	width: 91.7%;
+	height:30px;
+	float:right;
+	z-index:1000;
+	background: #A2A2A2;
+	padding: 7px;
+	padding-top: 8px;
+	padding-bottom: 5px;
+}
+
+.editButtons.top{
+	border-top-right-radius: 3px;
+}
+
+.editButtons.bottom{
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	width: 97%;
+	padding-left: 7px;
+	margin-bottom: 5px;
+}
+
+.deleteButton{
+	float:left;
+}
+
+.deleteStepButton{
+	margin-top: 10px !important;
+}
+
+.submitButtons{
+	width:auto;
+	float:right; 
+	text-align:right; 
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	.update_step_button{
+		height: 25px;
+	}
+}
+
+.clear{
+	 	clear: both;
+}
+
+.test{
+	height: 50px;
+	text-align:left;
+}
+
+.stepForm{
+	#detailViewPhoto{
+		margin-bottom:0px !important;
+	}
+	#step_timeZone_input{
+		display:none;
+	}
+}
+
+.ui-datepicker {
+	z-index: 100 !important;
+}
+
+.datepicker{
+	width:100px;
+}
+
+.current_time{
+	margin-top:-10px;
+}
+
+.fa-calendar:hover{
+	cursor:pointer;
+}
+
+.bootstrap-timepicker-widget{
+	position:absolute;
+	top:-135px;
+}
+.bootstrap-timepicker-widget.dropdown-menu:after, .bootstrap-timepicker-widget.dropdown-menu:before{
+		display:none !important;
+}
+
+.userComments{
+	float:left;
+	padding-top:0px;
+	margin-top:10px;
+	width: 100%;
+	border-top:1px dotted #949494;
+}
+
+.formStepName{
+	float:left;
+}
+
+.formLastStepCheck{
+	float:left;
+	margin-top: 5px;
+	font-family: 'open sans';
+	li{
+		list-style-type: none;
+		label{
+			display: hidden;
+		}
+	}
+}
+
+.lastStepHelp{
+	float:left;
+	font-size:15px;
+	margin-top: 5px !important;
+	margin-left: 5px;
+}
+
+#step_last_input{
+	float: left;
+	label{
+		padding-top:7px;
+	}
+}
+
+.category_icon {
+	font-size: 2em;
+	margin-top: -50px;
+	display:inline-block;
+	max-width: 30px;
+	min-height: 30px;
+	margin-right: 5px;
+	img{
+		max-height: 100%;
+	}
+}
+
+.edit_categories {
+	margin-top: 5px;
+
+	a {
+		color: white;
+	}
+}
+
+// image captioning styling
+.carousel-caption, .fancybox-desktop{
+	color: #fff;
+	opacity: 0.8;
+
+	a{
+		color: #41BFE5; 
+		font-weight:bold;
+	}
+
+	a:hover{
+		color: #A9E2F3;
+	}
+}

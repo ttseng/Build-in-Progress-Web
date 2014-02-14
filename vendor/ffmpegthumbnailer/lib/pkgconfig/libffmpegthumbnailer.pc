@@ -1,0 +1,11 @@
+prefix=/app/vendor/ffmpegthumbnailer
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libffmpegthumbnailer
+Description: Generates thumbnails for movie files
+Version: 2.0.8
+Libs: -L${libdir} -lffmpegthumbnailer 
+Libs.private: -L/app/vendor/ffmpeg/lib -lavutil -lavformat -lavcodec -lswscale   -lpng12   -ljpeg
+Cflags: -I${includedir}

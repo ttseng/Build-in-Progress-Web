@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Build in Progress</title>
+</head>
+
+<body>
+    <div class ="navbar">
+      <%= link_to image_tag("build_in_progress_logo.png"), home_index_path, :class=> "brand logo" %>
+      <ul class="nav">
+				<li><%=link_to "Explore", projects_path %></li>
+	  </ul>	
+    </div>
+    
+  <div class="error_container">
+  	<h3>Oops, something went wrong!</h3>
+  	<p>Please help us out by reporting this error using our <%= link_to contact_path do %> contact form.<% end %></p>
+  </div>
+
+
+</body>
+</html>

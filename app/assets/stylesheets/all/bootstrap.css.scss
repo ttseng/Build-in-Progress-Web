@@ -1,0 +1,79 @@
+$pageWidth: 940px;
+$blue: #08C;
+$halfPageWidth: $pageWidth/1.7;
+
+.navbar{
+	position:fixed;
+	right:0;
+	left:0;
+	top:0;
+	z-index: 100;
+
+}
+.navbar .brand{
+	font-family:'Sketch Rockwell';
+	color: #000;
+}
+
+.row{
+	margin-left: 0;
+}
+
+.fullRow{
+	height:100%;
+	min-height:100%;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+.navbar-search{
+	margin-right:20px;
+}
+
+body{
+	font-size: 13px !important;
+}
+
+// Build-in Progress Styling
+
+.content{
+	margin-top: 40px;
+	height:100%;
+}
+
+a{
+	color: $blue;
+}
+
+a:hover{
+	color:#7f7f7f;
+}
+
+.navbar-inner {
+  background-color: #A9E2F3; /* background color will be black for all browsers */
+  background-image: none;
+  background-repeat: no-repeat;
+  filter: none;
+  color: #000;
+  min-width:790px;
+
+}
+
+.navbar .nav li.dropdown.open>.dropdown-toggle{
+	background-color: #DFFBFF !important;
+}
+
+.label{
+	font-family: "Helvetica"
+}
+
+a.brand{
+	font-size:large;
+	font-weight:bold;
+}
+
+.alert{
+	background-color: #F2F2F2;
+	border: none;
+}
+

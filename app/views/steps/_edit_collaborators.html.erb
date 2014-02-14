@@ -1,0 +1,237 @@
+<div id="editCollaboratorsModal" class="modal hide fade">
+  
+  <div class="modal-header">
+    <h3>Edit Project Collaborators</h3>
+  </div>
+
+  <div class="modal-body">
+      <b>Current Project Collaborators</b>
+      <% @project.users.each_with_index do |user, index| %>
+            <div class="user">
+              <% if user.avatar.present? %>
+                <%= image_tag(user.avatar_url(:thumb), :class=>"img-polaroid user_avatar") %>
+              <% else %>
+                <%= image_tag("default_avatar.png", :class=>"img-polaroid user_avatar") %>
+              <% end %>
+              <%= user.username %>
+              <% if @project.users.length > 1 %>
+              <div class="btn btn-small remove-user-button" id="<%=user.username%>">remove</div>
+              <% end %>
+            </div>
+      <% end %>
+      <div id="new_collaborators">
+        <b>Add Additional Collaborators</b>
+        <div class="user add_user">
+          <form>
+            <input type="text" placeholder="username" id="new_username">
+          </form>
+          <div class="search_results">
+            <div class="dropdown">
+            <a class="search_results_toggle" data-toggle="dropdown" href="#"></a>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="modal-footer">
+    <div class="btn btn-cancel">Cancel</div>
+    <div class="btn btn-primary btn-save">Save</div>
+  </div>
+
+</div>
+
+  <script type="text/javascript">
+  var firstTyped = true;
+  var userRemoved = false; // variable to store whether or not to refresh the page when user clicks on cancel on modal (will refresh to show new collaborator attribute on project title if collaborators has been removed)
+
+  // resetSearchResults - removes search result dropdown from page
+  function resetSearchResults(){
+      $('.search_results .dropdown-menu li').remove();
+      $('.search_results_toggle').parent().removeClass('open');  
+      firstTyped = true;
+  }
+
+   // resetEditCollaboratorsModal - resets the editCollaboratorsModal
+    function resetEditCollaboratorsModal(){
+      resetAddUser('all');
+      $('#editCollaboratorsModal').modal('hide');
+      $('.btn-save').attr('disabled', true);
+      firstTyped = true;
+    }
+
+    // reset the add user form by either removing all by one search form or removing a specific new user element from the page (if the user clicks remove on a user that has been added but not yet committed)
+    function resetAddUser(element){
+      if(element == "all"){
+          if($('.add_user').length > 1){
+            $('.add_user')[0,$('.add_user').length-2].remove();
+          }
+            
+            $('.add_user').html('<form><input type="text" placeholder="username" id="new_username"></form><div class="search_results"><div class="dropdown"><a class="search_results_toggle" data-toggle="dropdown" href="#"></a><ul class="dropdown-menu" role="menu" aria-labelledby="dLabel"></ul></div></div>');
+      }else{
+        element.fadeOut();
+        element.remove();
+      }
+    }
+
+    // add an additional add new user form to the bottom of the modal
+    function addNewUserForm(){
+      $('#new_collaborators').append('<div class="user add_user"><form><input type="text" placeholder="username" id="new_username"></form><div class="search_results"><div class="dropdown"><a class="search_results_toggle" data-toggle="dropdown" href="#"></a>     <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel"></ul></div></div></div>');
+    }
+
+    // takes the 'data' array returned from the find_users ajax call and returns an array of all the usernames (the first element of each subarray) 
+    function getUserNames(data){
+      var usernames = new Array();
+      for(var i = 0; i<data.length; i++){
+        usernames[i] = data[i][0];
+      }
+      return usernames;
+    }
+
+  $(document).ready(function(){
+
+    // disable save button
+    $('.btn-save').attr('disabled', true);
+
+    $('#editCollaboratorsModal').on('hidden', function(){
+        console.log('closed modal');
+        resetEditCollaboratorsModal();
+    });
+
+    // select search result - replace the form with the added user (avatar and username)
+    $(document.body).on('click', '.search_result', function(){
+       $(this).parents('.add_user').find('form').remove();
+       $(this).closest('.search_results').hide();
+       $(this).closest('.user').append($(this).html());
+       $(this).closest('.user').append('<div class="btn btn-small remove-user-button new" id='+$(this).text()+'>remove</div>');
+       addNewUserForm();
+       $('.btn-save').attr('disabled', false);
+    });
+
+    // when the user clicks save on the editAuthorsModal, it adds each new user to the project's authors
+    $('.btn-save').click(function(){
+      if($(this).attr('disabled')!="disabled"){
+          var users_array = new Array();
+          for(var i=0; i < $('.add_user').length-1; i++){
+            var username = $($('.add_user')[i]).clone().children().remove().end().text().replace(/\s+/g, '');
+            users_array[i] = username;
+          }
+          if (users_array.length > 0){
+           $.ajax({
+              url: "<%=add_users_projects_path%>",
+              type: 'GET',
+              data: {users: users_array, project_id: "<%=@project.id%>"},
+              success: function(data, status, xhr){
+                console.log('data: ' + data);
+                if($.trim(data) == "true"){
+                  console.log('refresh page');
+                  // refresh the page
+                  location.reload();
+                }
+              }
+          });
+          }else{
+            location.reload(); // refresh the page
+          }
+        }
+    });
+
+    $('.btn-cancel').click(function(){
+      if(!userRemoved){
+        resetEditCollaboratorsModal();  
+      }else{
+        location.reload();
+      }
+    });
+  });
+
+// remove user button clicked - remove user from project
+$(document.body).on('click', '.remove-user-button', function(){
+   var username = $(this).attr('id');
+   var user_element = $(this).parents('.user');
+   if( $(this).hasClass('new')) {
+    // reset form (do not remove from project because it hasn't actually been added to the project yet
+      resetAddUser($(this).closest('.add_user'));
+
+   }else{
+    if(window.confirm("Are you sure you want to remove " + username + "?")){
+      // selected ok to remove user
+      $.ajax({
+        url: "<%=remove_user_projects_path%>",
+        type: 'GET',
+        data: {username: username, project_id: "<%=@project.id%>"},
+        success: function(data, status, xhr){
+          if($.trim(data) == "true"){
+            // remove the user from the list of users
+            user_element.fadeOut();
+            $('.btn-save').attr('disabled', false);
+            userRemoved = true;
+          }
+        }
+      });
+    }else{
+      // cancelled request, do nothing
+    }
+   }
+   if($('.add_user').length>1){
+    $('.btn-save').attr('disabled', false);
+  }else{
+    $('.btn-save').attr('disabled', true);
+  }
+  });
+
+// search for valid members to add to a project based on user input
+$(document.body).on('input', '#new_username', function(e) {
+    var input_val = $(this).val();
+
+      if (input_val){
+        if(input_val.length == 1){
+          resetSearchResults();
+        }
+      
+        $.ajax({
+          url:"<%=find_users_projects_path%>",
+          type: 'GET',
+          data: {input: input_val, project_id: "<%=@project.id%>"},
+          success: function(data,status,xhr){
+            if(data.length == 0){
+               // no search results, remove dropdown
+               $('.search_results_toggle').parent().removeClass('open');  
+            }else{
+              var usernames = getUserNames(data);
+              $('.search_results_toggle').parent().addClass('open');  
+              if(!firstTyped){
+                // remove any extraneous search results from the dropdown
+                $('.search_results li').each(function(){
+                  if($.inArray($(this).attr('class'), usernames)=="-1"){
+                    $(this).remove();
+                  }
+                });
+              }
+              // add search results to the dropdown
+              for(var i = 0; i<data.length; i++){
+                if(!$('#'+data[i][0]).length>0){
+                  if(firstTyped){
+                    // loading for the first time, add the search results to the dropdown menu
+                    $('.search_results .dropdown-menu').append('<li class='+data[i][0]+'><a class="search_result" href="#">'+'<img src=' + data[i][1]+' class="img-polaroid"></img>' + data[i][0] +'</a></li>');
+                  }else{
+                    // only add search results if they don't already exist
+                    if(!$('.search_results li').find('.'+data[i][0])){
+                      $('.search_results .dropdown-menu').append('<li class='+data[i][0]+'><a class="search_result" href="#">'+data[i][0] +'</a></li>');
+                    }
+                  }
+                }
+              }
+              firstTyped = false;
+            }
+          }
+        });
+      }else{
+        resetSearchResults();
+      }
+
+});
+
+  </script>

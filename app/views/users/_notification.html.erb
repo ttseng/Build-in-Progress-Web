@@ -1,0 +1,22 @@
+<% # Fetch notifications in which the current user is the recipient %>
+<% @notifications = current_user.last_few_notifications%>
+
+<% @notifications.each do |notification| %>
+	<% if notification.trackable != nil %>
+		<% if !notification.viewed %>
+			<li class="notification new notification_<%=notification.id%>">		
+		<% else %>
+			<li class="notification notification_<%=notification.id%>">		
+		<% end %>		
+			<%= render_activity notification, source: "navbar" %>
+		</li>
+	<% end %>
+<% end %>
+
+<% if @notifications.length > 0 %>
+	<li class="notification">
+		<p class="notification-all"><%= link_to "View all", notifications_path, :class=> "notification-all" %></p>
+	</li>
+<% else %>
+		<p class="no-notification">No new notifications</p>
+<% end %>

@@ -1,0 +1,11 @@
+<div class="followSideArea">
+  <div class="row span6 followRow">
+    <table class="followTable">
+      <tr>
+        <td id="following" class="span1"><%= link_to "<h4 id='following_count'>#{@user.following_users_count}</h4><p id='following_count_sub'>Following</p>".html_safe, following_user_path %></td>
+        <td id="followers" class="span1"><%= link_to "<h4 id='followers_count'>#{@user.followers_count}</h4><p id='followers_count_sub'>#{pluralize_no_digits(@user.followers_count, 'Follower')}</p>".html_safe, followers_user_path %></td>
+        <td id="follow" class="span1 offset2"><div id="follow_form<%= @user.id %>"><%= render :partial => 'follow_form', :locals=> {:user => @user, :header=> true} %></div></td>
+      </tr>
+    </table>
+  </div>
+</div>

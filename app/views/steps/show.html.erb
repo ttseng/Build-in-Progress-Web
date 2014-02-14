@@ -1,0 +1,61 @@
+<style type="text/css">
+#loading {display: block;}
+</style>
+
+<div class="fullRow" style="width:940px">
+      <%= render :partial => 'images/project_overview_image_gallery', :locals => {:source => 'show'} %>
+
+      <div id="processMap">
+        <%= render :partial => 'process_map', :locals=> { :currentStep => @step, :project => @project, :steps => @project.steps, :source=>"show"} %>
+      </div>
+
+      <div class="processBlog">
+          <div class = "detailViewHandle"><icon class="fa fa-chevron-right" style="margin-left: 3px; font-size: 23px;"></i><icon class="fa fa-file-text" style="display: block; margin-top: 6px; font-size: 24px; margin-left: 1px;"></i></div>
+
+          <div class="stepDetailView">
+            <% # Add the Detail View%>  
+            <%= render :partial=> 'step_detail_view', :locals=>{:step=>@step} %>
+          </div>
+    </div>
+
+  <% # add sign in modal %>
+  <%= render :partial=> "sign_in" %>
+</div>
+
+<script type="text/javascript">
+
+    // edit the title of the project
+    $('.editProjectTitleBtn').click(function(){
+       $('.favoriteStar').hide();
+      console.log("clicked editProjectTitle button");
+        $.ajax({
+            url: "/projects/editTitle",
+            type: 'GET',
+            data: {projectID: "<%=@project.id%>"} 
+      });
+    });
+    
+      $(document).ready(function() {
+
+        // hide footer 
+        $('#footer').hide();
+
+        loadCarousels("index");
+
+        $('.content').css("height", "100%");
+
+        $(window).load(function(){
+          var stepID = "<%=@step.id%>";
+            $('.stepNode.'+stepID).css("border", "3px solid #FFFF00");
+        });
+
+        $(window).bind("refresh", function(){
+          var stepID = "<%=@step.id%>";
+            $('.stepNode.'+stepID).css("border", "3px solid #FFFF00");
+        });
+
+        // disable undo button 
+      $('.undoIcon').bind('click', false);
+
+      });
+    </script>

@@ -1,0 +1,9 @@
+
+<div class="addProjectContainer">
+<%= form_tag({controller: "collections", action: "add_project"}, method: "post", :class=> "form-inline add_project_form") do %>
+  <%= label_tag 'project_url', 'Add project to collection:', :class=>"project_url_label" %>
+  <%= text_field_tag 'project_url', nil, placeholder: "http://buildinprogress.herokuapp.com/projects/xx/steps" %>
+
+  <%= submit_tag '+ Add project', :class=> "btn btn-info addProjectButton", :style => "margin-top: 0px; margin-right: 0px" %>
+<% end %>
+</div>

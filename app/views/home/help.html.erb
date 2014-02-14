@@ -1,0 +1,137 @@
+<div class="fullRow" style="margin-top:60px; width:940px">
+	
+		<ul class="nav nav-list">
+			<li class="nav-header">Project Page</li>
+			<li><a href="#add_step">Add a Step</a></li>
+			<li><a href="#create_branch">Create a Branch</a></li>
+			<li><a href="#reorder_steps">Reorder Steps</a></li>
+			<li><a href="#edit_collaborators">Edit Collaborators</a></li>
+			<li class="nav-header">Collections</li>
+			<li><a href="#collection_add_project">Add a project</a></li>
+			<li class="nav-header">Remixing</li>
+			<li><a href="#create_remix">Create a remix</a></li>
+			<li class="nav-header">Following</li>
+			<li><a href="#create_remix">Follow a user</a></li>
+		</ul>
+
+	<div class="centeredContainer helpPage instructionPage">
+		<h3>Help</h3>		
+		<hr style="margin: 5px 0">
+		<div class="helpText">
+			<h3 class="instruction_category">Project Page</h3>
+			<h4><span id="add_step"></span>Add a Step</h4>
+			<p>To add a step, expand the "Add New Step" panel at the bottom left side of the project page.  Next, drag out the "Add New Step" container over a <i>parent step</i>, or the existing step that should precede the new step.  The new step will be added below the parent step.
+			</p>
+			<%= image_tag "help/create_step_static.png", :class=>"help_gif create_step_img" %>
+			<div class="clear"></div>
+			<hr>
+
+			<h4><span id="create_branch"></span>Create a Branch</h4>
+			<p>To create a branch, drag out the "Add New Step" container over the step you want it to branch from.  If there are already steps following the parent step, the new step will be added to a new branch.
+			</p>
+			<%= image_tag "help/create_branch_static.png", :class=>"help_gif create_branch_img" %>
+			<div class="clear"></div>
+			<hr>
+
+			<h4><span id="reorder_steps"></span>Reorder Steps</h4>
+			<p>To reorder any steps on the left-hand side of the project page, drag and drop steps on top of existing steps.</p>
+			<%= image_tag "help/reorder_step_static.png", :class=>"help_gif reorder_step_img" %>
+			<div class="clear"></div>	
+
+			<p>To reorder steps on the right-hand side of the project page, you will need to edit the date the step was published (all steps on the right are ordered chronologically).  To change the date, click "edit" on the step that you wish to reorder and changed the "Published On" date on the bottom of the page.</p>
+			<%= image_tag "help/change_date_static.png", :class=>"help_gif change_date_img", :style=>"margin-top: 10px;" %>
+			<div class="clear"></div>			
+			<hr>
+
+			<h4><span id="edit_collaborators"></span>Edit Collaborators</h4>
+			<p>You can add collaborators to any projects that you have created or are listed as a collaborator on.  To add collaborators to a project, first go to the project page and click on the "Edit Collaborators" button in the byline for the project.  Type the username of the collaborator you would like to add, select the user from the dropdown menu, and click the "Save" button.  All collaborators can edit the project directly. </p>
+			<%= image_tag "help/edit_collaborators_static.png", :class=>"help_gif edit_collaborators_img" %>
+			<p>To remove collaborators, enter the "Edit Project Collaborators" window by clicking the "Edit Collaborators" button.  Click the "remove" button next to any user to remove the user from the project.</p>
+
+			<div class="clear"></div>			
+			<hr>
+
+			<h3 class="instruction_category">Collections</h3>
+			<h4><span id="collection_add_project"></span>Add a Project</h4>
+			<p>To add a project to a collection, enter the project URL and click the "+ Add project" button.  Anyone can add a project to a collection, but only the owner of the collection can remove projects.</p>
+			<%= image_tag "help/add_project_static.png", :class=>"help_gif add_project_img" %>
+			<div class="clear"></div>
+			<hr>
+
+			<h3 class="instruction_category">Remixing</h3>
+			<h4><span id="create_remix"></span>Create a Remix</h4>
+			<p>A remix is a new project inspired by an existing project on the site.</p>
+			<%= image_tag "help/remix_static.png", :class=>"help_gif remix_img" %>
+			<p>Within the title area of every project is a "Remix" button.  When you click the remix button, it will create a remix of the original project that you can edit however you'd like.  Your remix becomes public on Build in Progress once you've edited it.
+			<p>If your project is public, you should see your remix listed under the list of remixes on the original project page. </p>
+
+			<div class="clear"></div>
+			<hr>
+
+			<h3 class="instruction_category">Following</h3>
+			<h4><span id="create_remix"></span>Follow a User</h4>
+			<p>If you follow users on Build in Progress, you'll receive updates about what they're creating and doing on the site.</p>
+			<%= image_tag "help/follow_static.png", :class=>"help_gif follow_img" %>
+			<p>To follow a user, go to their profile page and click the "follow" button.  Their activity will now appear on your activity feed (which you can view on the homepage when you're logged in), and they will be listed under the users you're following on your profile.</p>
+
+			<div class="clear"></div>
+			<hr>
+
+		</div>
+	</div>
+	<div class="clear"></div>
+</div>
+
+<script type="text/javascript">
+// alternate between static image and gif for different help images
+$('.create_step_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/create_step.gif") %>');
+}, function(){
+	$(this).attr('src', '<%= asset_path("help/create_step_static.png") %>');
+});
+
+$('.create_branch_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/create_branch.gif") %>');
+}, function(){
+	$(this).attr('src', '<%= asset_path("help/create_branch_static.png") %>');	
+});
+
+$('.reorder_step_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/reorder_step.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/reorder_step_static.png") %>');	
+	});
+
+$('.edit_collaborators_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/edit_collaborators.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/edit_collaborators_static.png") %>');	
+	});
+
+$('.change_date_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/change_date.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/change_date_static.png") %>');	
+	});
+
+$('.add_project_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/add_project.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/add_project_static.png") %>');	
+	});
+
+$('.remix_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/remix.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/remix_static.png") %>');	
+	});
+
+$('.follow_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/follow.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/follow_static.png") %>');	
+	});
+
+
+
+</script>

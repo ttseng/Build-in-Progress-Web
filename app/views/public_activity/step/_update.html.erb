@@ -1,0 +1,36 @@
+<% # Create Step Notification %>
+
+<% source = params[:source] %>
+<% step = activity.trackable %>  
+
+<% if step %>
+	<% project = activity.trackable.project %>
+	<% if project %>
+		<% if source == "navbar" %>
+			<%= link_to project_path(project) do %>
+				<icon class="fa fa-edit"></icon>
+				<p class="notification-image">
+					<%= render :partial=>"images/navbar_image", :locals=> {:activity => activity}  %>
+				</p>
+				<p class="notification-text">
+					<span class="notification-bold"><%= activity.owner.username if activity.owner %></span> updated <span class="notification-bold"><%= step.name %> </span> in <span class="notification-bold"><%= project.title %> </span>
+				</p>
+				<br>
+				<p class="notification-date" style="display:inline-block"><%= time_ago_in_words(activity.created_at) %> ago</p>
+			<% end %>
+		<% else %>
+			<icon class="fa fa-edit"></icon>
+			<p class ="notification-image">
+				<% if activity.owner.avatar.length > 0 %>
+					<%= link_to image_tag(activity.owner.avatar_url(:thumb), :class=>"img-polaroid"), user_path(activity.owner) %>
+				<% else %>
+					<%= link_to image_tag("default_avatar.png", :class=>"img-polaroid"), user_path(activity.owner) %>
+				<% end %>
+			</p>
+			<p class="notification-heading">
+				<%= link_to activity.owner.username, user_path(activity.owner) if activity.owner %> updated <%= link_to step.name, project_steps_path(project, :step => step.id, :notification_id => activity.id) %></span> in <%= link_to project.title, project_path(project) %> 	
+			</p>
+			<span class="notification-date"><%= time_ago_in_words(activity.created_at) %> ago</span>
+		<% end %>
+	<% end %>
+<% end %>

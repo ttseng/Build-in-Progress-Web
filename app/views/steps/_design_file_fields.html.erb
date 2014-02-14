@@ -1,0 +1,11 @@
+<fieldset class="design_file_upload_fieldset">   
+	<div id = "uploadDesignFileWrapper" title="Add Design File">
+		<button class="btn btn-info uploadDesignFileButton" style="padding: 3px 5px;">Choose File</button>
+		<%= f.file_field :design_file_path, :onChange=>"javascript: addField(this);" %>
+	</div>
+	<%= f.hidden_field :_destroy, :class => "destroy_design_file", :value => true %>
+	<%= link_to raw('<i class="fa fa-trash-o"></i> Remove File'), "#", class: "remove_fields" %>
+	<%= f.hidden_field :step_id, :value => @step.id %>
+	<%= f.hidden_field :project_id, :value => @project.id %>
+	<%= f.hidden_field :user_id, :value => current_user.id %>
+</fieldset>

@@ -1,0 +1,145 @@
+<script>
+
+function showBranchPreview(){
+	function(){
+		if(branchMode){
+			// change color of branch
+			//$(this).css("background", "url('/assets/branchArrowHover.png')");
+
+			if(branching==0){
+				// add a column to the table
+				$('#stepTable tr:gt(0)').append('<td></td>');
+				branching++;
+			}
+			// add a row to the table
+			$('#stepTable tr:last').after('<tr class="step"><td width="175px"></td><td class="node"><a class="dot"/></td><td class="description"></td></tr>');
+			// draw branch connecting steps
+
+			// show adjacent branch preview
+			//$('.branchPreview').show();
+			var currentRow = $(this).parent().parent().children().index($(this).parent());
+			var currentColumn = $(this).parent().children().index($(this));
+			currentColumn = parseInt(currentColumn);
+			var horizontalBranchColumn = currentColumn+1;
+			console.log(currentRow + " " + horizontalBranchColumn);
+			// draw horizontal branch
+			$('#stepTable tr:eq(' + currentRow+ ') td:eq(' + horizontalBranchColumn +')').show();
+
+			var rows = $(this).parent().parent().children().length;
+			var columns = $(this).parent().children().length;
+			console.log("rows: " + rows);
+			console.log("columns: " + columns);
+
+			//draw vertical branches
+			for (i=currentRow; i<rows; i++){
+				if(i%2 == 0){
+					if(i==rows-3){
+						$('#stepTable tr:eq(' + i+ ') td:eq(' + 1 +')').show();
+					}
+					else{
+						$('#stepTable tr:eq(' + i+ ') td:eq(' + 3 +')').show();
+					}
+				}
+				else{
+					$('#stepTable tr:eq(' + i+ ') td:eq(' + 2 +')').show();
+				}
+
+				}
+				console.log("i: " + i);
+				
+
+			// $('#stepTable tr:eq(' + currentNodeRow+ ') td:eq(' + currentNodeColumn+1 +')').html("<hr/>");
+			// $('#stepTable tr:eq(' + currentNodeRow+ ') td:eq(' + currentNodeColumn+1 +')').show();
+		}
+
+	},
+	function(){
+			if(branchMode){
+			// remove the last row of the table
+			$('#stepTable tr:last').remove();
+
+			var currentRow = $(this).parent().parent().children().index($(this).parent());
+			var currentColumn = $(this).parent().children().index($(this));
+			currentColumn = parseInt(currentColumn);
+			var branchColumn = currentColumn+1;
+			console.log(currentRow + " " + branchColumn);
+			$('#stepTable tr:eq(' + currentRow+ ') td:eq(' + branchColumn +')').hide();
+
+			$(this).css("background", "url('/assets/branchArrow.png')");
+
+			$('.verticalBranchPreview').hide();
+
+		}
+
+	}
+}
+$(".branchPreviewArrow").hover(function(e){
+		if(branchMode){
+			// change color of branch
+			//$(this).css("background", "url('/assets/branchArrowHover.png')");
+
+			if(branching==0){
+				// add a column to the table
+				$('#stepTable tr:gt(0)').append('<td></td>');
+				branching++;
+			}
+			// add a row to the table
+			$('#stepTable tr:last').after('<tr class="step"><td width="175px"></td><td class="node"><a class="dot"/></td><td class="description"></td></tr>');
+			// draw branch connecting steps
+
+			// show adjacent branch preview
+			//$('.branchPreview').show();
+			var currentRow = $(this).parent().parent().children().index($(this).parent());
+			var currentColumn = $(this).parent().children().index($(this));
+			currentColumn = parseInt(currentColumn);
+			var horizontalBranchColumn = currentColumn+1;
+			console.log(currentRow + " " + horizontalBranchColumn);
+			// draw horizontal branch
+			$('#stepTable tr:eq(' + currentRow+ ') td:eq(' + horizontalBranchColumn +')').show();
+
+			var rows = $(this).parent().parent().children().length;
+			var columns = $(this).parent().children().length;
+			console.log("rows: " + rows);
+			console.log("columns: " + columns);
+
+			//draw vertical branches
+			for (i=currentRow; i<rows; i++){
+				if(i%2 == 0){
+					if(i==rows-3){
+						$('#stepTable tr:eq(' + i+ ') td:eq(' + 1 +')').show();
+					}
+					else{
+						$('#stepTable tr:eq(' + i+ ') td:eq(' + 3 +')').show();
+					}
+				}
+				else{
+					$('#stepTable tr:eq(' + i+ ') td:eq(' + 2 +')').show();
+				}
+
+				}
+				console.log("i: " + i);
+				
+
+			// $('#stepTable tr:eq(' + currentNodeRow+ ') td:eq(' + currentNodeColumn+1 +')').html("<hr/>");
+			// $('#stepTable tr:eq(' + currentNodeRow+ ') td:eq(' + currentNodeColumn+1 +')').show();
+		}		
+	},
+	function(){	
+		if(branchMode){
+			// remove the last row of the table
+			$('#stepTable tr:last').remove();
+
+			var currentRow = $(this).parent().parent().children().index($(this).parent());
+			var currentColumn = $(this).parent().children().index($(this));
+			currentColumn = parseInt(currentColumn);
+			var branchColumn = currentColumn+1;
+			console.log(currentRow + " " + branchColumn);
+			$('#stepTable tr:eq(' + currentRow+ ') td:eq(' + branchColumn +')').hide();
+
+			$(this).css("background", "url('/assets/branchArrow.png')");
+
+			$('.verticalBranchPreview').hide();
+
+		}
+	});
+</script>

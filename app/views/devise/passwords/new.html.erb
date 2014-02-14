@@ -1,0 +1,24 @@
+<div class="fullRow" style="margin-top:60px">
+	<div class="fullRow">
+
+		<div class="pwPage">
+
+<h2>Forgot your password?</h2>
+
+<%= semantic_form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f| %>
+  <%= devise_error_messages! %>
+
+  <div class="formField"><%= f.label :email, :class=> "label" %><br />
+  <%= f.email_field :email, :autofocus => true %></div>
+
+  <div><%= f.submit "Send me reset password instructions", :class=> "btn btn-primary" %></div>
+<% end %>
+
+<%= render "devise/shared/links" %>
+
+		</div>
+	</div>
+</div>
+
+
+

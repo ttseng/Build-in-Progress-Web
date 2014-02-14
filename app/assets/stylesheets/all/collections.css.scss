@@ -1,0 +1,603 @@
+// Place all the styles related to the Collections controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+$pageWidth: 940px;
+$halfPageWidth: $pageWidth/1.7;
+$tooltip_color: #045FB4;
+$lightgrey: #E2E2E2;
+$lightblue: #02ABFF;
+
+.collectionPage{
+  width:890px;
+	margin-top:60px;
+  position:relative;
+  background: white;
+  // box-shadow: 1px 1px 5px #888888;
+  border: 1px solid #E2E2E2;
+
+  .collectionHeading{
+    float:left;
+    font-family: 'Helvetica';
+    font-size:20px;
+    font-weight:bold;
+  }
+
+  .collectionTitleBar{
+    height:48px;
+    padding: 5px 20px 0px 20px;
+  }
+
+  #collectionFilter{
+    float:right;
+    margin-top:15px;
+    a{
+      font-weight: normal;
+      font-size:small
+    }
+  }
+
+  #collections{
+    float:left;
+    width:980px;
+    display:inline-block;
+    position: relative;
+    padding: 5px 0px 35px 20px;
+    padding-bottom:35px; 
+  }
+}
+
+.collectionTitle{
+
+  width: $pageWidth;
+  height:75px;
+  margin-left: auto;
+  margin-right: auto;
+
+  margin-top:20px;
+  box-shadow: 1px 1px 3px #888888;
+  padding: 20px 20px 0px 20px;
+  border-radius:5px;
+  background: #fff;
+  border: 1px solid #CCC;
+
+}
+
+.collectionTitle a{
+  color: #000
+}
+
+.collectionTitle a:hover{
+  color: #D3D3D3;
+}
+
+.collectionAvatar, .collectionAvatarUpload {
+  float: left;
+  width: 105px;
+  margin-left: 26px;
+}
+
+.collectionAvatarUpload {
+  float: left;
+  width: 105px;
+  margin-top: -20px;
+  margin-left: 28px;
+}
+
+input#collection_image {
+  width: 175px;
+}
+
+#collectionName{
+  width: 475px;
+  height: 31px;
+  float:right;
+  line-height:28px;
+  color: #fff;
+  margin: 0px 5px 0px 5px;
+  font-size: 25px;
+  font-weight: bold;
+  margin-top:3px;
+  overflow: hidden;
+
+  a:hover{
+    color: #D3D3D3;
+  }
+}
+
+.edit_collection{
+  width:54px;
+  padding: 5px 0px;
+  float: right;
+  .editCollectionTitleBtn {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+  }
+}
+
+.deleteStepButton{
+  float:right;
+}
+
+.editButton{
+  margin-top: 5px;
+}
+
+.collectionsTitleSection{
+  height: 120px;
+  width:895px;
+  position:relative;
+  background-color: #fff;
+  // box-shadow: 1px 1px 5px #888888;
+  border: 1px solid #E2E2E2;
+  border-radius: 5px;
+  padding: 20px 0;
+  margin-bottom: 20px;
+
+  .collectionsText {
+    height:115px;
+    float: left;
+    margin-left: 30px;
+    width: 700px;
+    position:relative;
+
+    #collectionsName{
+      position:absolute;
+      top:0;
+      margin:0;
+      width: 600px;
+      overflow:hidden;
+    }
+
+    #collectionsDesc{
+      position:absolute;
+      top:50px;
+    }
+
+    #collectionsInfo{
+      position:absolute;
+      bottom:0;
+      margin:0;
+    }
+
+    #author {
+      width:300px;
+      float:right;
+      text-align:right;
+      padding: 5px 0px;
+      font-size: small;
+      margin-top:0px;
+      margin-right:10px;
+    }
+  }
+}
+
+  .featuredProjectsTitle{
+    width: 860px;
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 0px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 10px 20px;
+    padding-left:0px;
+    margin-top: -10px;
+  }
+
+.collectionFeaturedSection{
+  background-color: #fff;
+  border: 1px solid #E2E2E2;
+  border-radius: 5px;
+  padding: 0px 0px 0px 20px;
+  margin-bottom: 25px;
+  width: 878px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+
+  #featuredProjects{
+    width: auto;
+    white-space: nowrap;
+    margin-top: 15px;
+
+   .delete{
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
+  }
+}
+
+.add_project_form{
+  width: 857px;
+  padding: 10px 20px;
+  background: white;
+  border-radius: 5px;
+  border: 1px solid #E2E2E2;
+  label{
+    font-weight:bold;
+  }
+}
+
+.collectionsTitleSection.challenge{
+      border: 4px solid #7633B1;
+}
+
+#collectionsName.challenge{
+    color: #7633B1
+}
+
+#collectionAvatar{
+  float:left;
+}
+
+.project_url_label{
+  margin-right:10px;
+}
+
+#project_url{
+  width:520px;
+}
+
+.collectionsProjectSection{
+  width:878px;
+  position:relative;
+  background: white;
+  // box-shadow: 1px 1px 5px #888888;
+  border: 1px solid #E2E2E2;
+
+  border-radius: 5px;
+  padding: 20px 0px 0px 20px;
+
+  .delete{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
+}
+
+.processBlog .projectInfo{
+  width: $halfPageWidth;
+  height:40px;
+  box-sizing: border-box;         /* Opera/IE 8+ */
+  border-bottom-left-radius:10px;
+  border-bottom-right-radius:10px;
+  -webkit-box-shadow: 2px 2px 2px 2px #919191;
+  box-shadow: 1px 1px 1px 1px #919191;
+  padding: 0px 5px 0px 5px;
+  background-color:#8B8787;
+  color: #FFF;
+  z-index:-100;
+  float:right;
+  padding-top:7px;
+}
+
+#collectionAvatarForm {
+  margin-left: -39px;
+  .avatarFormField{
+    width:140px;
+    float:left;
+  }
+  .fa-times {
+    margin-top: -75px !important;
+    margin-left: -98px !important;
+    width: 10px !important;
+  }
+}
+
+.collectionTitleForm{
+  margin: -23px 0px 5px 39px;
+  width:500px;
+  display:none;
+}
+
+.collectionTitleFormAdjust {
+  margin-top: -32px !important;
+}
+
+.collectionTitleFormWrapper {
+  margin-top:10px;
+  height:135px;
+  position:relative;
+  float:left;
+  margin-left:20px;
+  .error_message{
+    color: red;
+    margin-left:10px;
+    display:none;
+  }
+
+  .form_buttons{
+    position:absolute;
+    bottom:-12px;
+    width:710px;
+  }
+}
+
+.collectionTitleFormTitleField, .collectionTitleFormDescField{
+  height:25px;
+  font-size:25px;
+  width:325px;
+  margin-top:5px;
+}
+
+input#collection_name.collectionTitleFormTitleField {
+  font-size: 2em;
+  font-weight: bold;
+  height: 35px;
+  width:639px;
+  line-height:35px;
+}
+
+.collectionTitleFormDescField{
+  height: 40px;
+  font-size: 13px;
+  margin-top: 1px;
+}
+
+.collectionTitleFormSubmitButton, .collectionTitleCancelButton{
+    width:54px;
+    float:right;
+    padding: 5px 0px;
+    font-size: small;
+    margin-top:  4px;
+    margin-left: 10px;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.collectionTitleCancelButton{
+  margin-left:-20px;
+  color:#000;
+  float:left;
+  margin-right:10px;
+}
+
+.collectionTitleCancelButton a{
+  margin-left:-20px;
+  color:#000;
+}
+
+.collectionDeleteBtn {
+  float: right;
+  height: 16px;
+}
+
+.collectionsUploadImage {
+  width: 90px;
+  position: absolute;
+  height: 25px;
+
+  p {
+    font-size: 0.75em;
+    margin-top: -3px !important;
+  }
+}
+
+#uploadAvatarWrapper{
+  left:38px;
+  width:90px;
+  height:75px;
+  overflow:hidden;
+  position:absolute;
+  bottom:-45px;
+}
+
+.collectionsUploadImageWrapper {
+  margin-left: -41.5px;
+  margin-top: 29px;
+}
+
+#img_prev_filename {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100px;
+  text-overflow: ellipsis;
+  margin-left: 32px;
+  margin-top: 9px;
+}
+
+.favoriteCount, .commentCount{
+  display:inline;
+  float:left;
+  margin-top:0px; 
+  font-size:20px;
+  color: #DFDF00 !important;
+}
+
+.tooltip-inner{
+  background-color: $tooltip_color;
+}
+
+.tooltip.top .tooltip-arrow{
+  border-top-color: $tooltip_color;
+}
+.tooltip.right .tooltip-arrow{
+  border-right-color: $tooltip_color;
+}
+.tooltip.left .tooltip-arrow{
+  border-left-color: $tooltip_color;
+}
+.tooltip.bottom .tooltip-arrow{
+  border-bottom-color: $tooltip_color;
+}
+.tooltip.in{
+  opacity: 1.0;
+}
+
+.tooltip-inner{
+  background-color: $tooltip_color;
+}
+
+.tooltip.top .tooltip-arrow{
+  border-top-color: $tooltip_color;
+}
+.tooltip.right .tooltip-arrow{
+  border-right-color: $tooltip_color;
+}
+.tooltip.left .tooltip-arrow{
+  border-left-color: $tooltip_color;
+}
+.tooltip.bottom .tooltip-arrow{
+  border-bottom-color: $tooltip_color;
+}
+
+.tooltip.in{
+  opacity: 1.0;
+}
+
+.collectionTitleBar .addCollectionButton{
+  position:absolute;
+  top:5px;
+  right:20px;
+}
+
+.collection {
+  position:relative;
+  width: 270px;
+  float: left;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  background: #fff;
+  box-shadow: 1px 1px 2px #B6B1B1;
+
+  .blankImage{
+  	width:270px;
+  	height:181px;
+  }
+
+  .name {
+    padding-top: 5px;
+    padding-left:10px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 13px;
+    color: #000;
+    max-height: 23px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    a{
+      font-family: "verdana";
+      color: #000;
+    }
+    a:hover{
+      color: #7f7f7f;
+    }
+  }
+
+ .author{
+  display:inline;
+  float:left;
+  padding: 0px 10px 10px 10px;
+  font-size:13px;
+  a{
+    color: #000;
+  }
+  a:hover{
+      color: #7f7f7f;
+  }
+}
+
+  .authorDate{
+    float:left;
+  }
+
+  .delete{
+    float:right;
+  }
+
+
+  .actions {
+    font-size: 10px;
+    text-align: center;
+    color: #777;
+  }
+}
+
+.collection:hover{
+  box-shadow: 1px 1px 2px #8A8A8A;
+}
+
+.newCollectionContainer{
+  padding:40px;
+}
+
+.collection .collectionInfo{
+  width:100%;
+  height:30px;
+  position:absolute;
+  bottom: 0;
+  background: rgba(0,0,0,0.3);
+}
+
+.image-wrapper{
+  overflow:hidden;
+  height: 127px;
+  border-bottom: 1px solid #ccc;
+  background-color: rgb(162, 162, 162);
+}
+
+.exploreImage-wrapper {
+  position:relative;
+  overflow: hidden;
+  height:187px;
+  background-color: #ccc;
+
+  .mini-col-avatar {
+    margin-top: -140px;
+    margin-left: 175px;
+    padding: 0px;
+    border: 2px solid white;
+  }
+}
+
+.challenge_icon_small{
+  width:40px;
+  position:absolute;
+  right:10px;
+  bottom:5px;
+}
+
+.challenge_icon_med{
+  width:50px;
+  position:absolute;
+  left:-150px;
+  top:-10px;
+}
+
+
+.challengeRibbon{
+  left:145px;
+  top:-190px;
+  width: 150px;
+  position: relative;
+  font: bold 17px Sans-Serif;
+  color: #fff;
+  text-align: center;
+  text-shadow: rgba(255,255,255,0.5) 0px 1px 0px;
+  -webkit-transform: rotate(45deg);
+  -moz-transform:    rotate(45deg);
+  -ms-transform:     rotate(45deg);
+  -o-transform:      rotate(45deg);
+  padding: 3px 0;
+  padding-left:10px;
+  background-color: #9A59D3;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#9A59D3), to(#7946A6)); 
+  background-image: -webkit-linear-gradient(top, #9A59D3, #7946A6); 
+  background-image:    -moz-linear-gradient(top, #9A59D3, #7946A6); 
+  background-image:     -ms-linear-gradient(top, #9A59D3, #7946A6); 
+  background-image:      -o-linear-gradient(top, #9A59D3, #7946A6); 
+  -webkit-box-shadow: 0px 0px 3px rgba(0,0,0,0.3);
+  -moz-box-shadow:    0px 0px 3px rgba(0,0,0,0.3);
+  box-shadow:         0px 0px 3px rgba(0,0,0,0.3);
+}
+
+.challengeLabel{
+  position: absolute;
+  bottom: -25px;
+  right: -25px;
+  border-top-left-radius: 3px;
+  font-size: 15px;
+  color: #FFF;
+  padding: 10px;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#9A59D3), to(#7946A6));
+}

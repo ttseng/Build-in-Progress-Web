@@ -1,0 +1,33 @@
+<% # Create Collection Notification %>
+
+<% source = params[:source] %>
+<% collection = activity.trackable %>
+
+<% if collection %>
+	<% if source == "navbar" %>
+		<%= link_to collection_path(collection) do %>
+			<icon class="fa fa-plus"></icon>
+			<p class="notification-image">
+				<%= render :partial=>"images/navbar_image", :locals=> {:activity => activity} %>
+			</p>
+			<p class="notification-text">
+				<span class="notification-bold"><%= activity.owner.username if activity.owner %></span> created a new collection: <span class="notification-bold"><%=activity.trackable.name%> </span>
+			</p>
+			<br>
+			<p class="notification-date" style="display:inline-block"><%= time_ago_in_words(activity.created_at) %> ago</p>
+		<% end %>
+	<% else %>
+		<icon class="fa fa-plus"></icon>
+		<p class ="notification-image">
+			<% if activity.owner.avatar.present? %>
+				<%= link_to image_tag(activity.owner.avatar_url(:thumb), :class=>"img-polaroid"), user_path(activity.owner) %>
+			<% else %>
+				<%= link_to image_tag("default_avatar.png", :class=>"img-polaroid"), user_path(activity.owner) %>
+			<% end %>
+		</p>
+		<p class="notification-heading">
+			<%= link_to activity.owner.username, user_path(activity.owner) if activity.owner %> created a new collection: <%= link_to activity.trackable.name, collection_path(collection) %> 
+		</p>
+		<span class="notification-date"><%= time_ago_in_words(activity.created_at) %> ago</span>
+	<% end %>
+<% end %>

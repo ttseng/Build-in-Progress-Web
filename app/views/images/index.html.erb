@@ -1,0 +1,41 @@
+<% if false %>
+<div id="images">
+  <%= render @images %>
+</div>
+<div class="clear"></div>
+
+<%= semantic_form_for Image.new do |f| %>
+  <div class="control-group">
+    <%= f.label :project_id, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.input :project, :collection => Project.all, :label=> false %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <%= f.label :step_id, :class => 'control-label' %>
+    <div class="controls">
+    <!--replace hard-coded "1" with a filter for the current project-->
+    <%= f.input :step, :collection => Step.where(:project_id => "1"), :label=> false %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <%= f.label :caption, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :caption, :class => 'text_field' %>
+    </div>
+  </div>
+
+  <%= f.label :file, "Upload Image:" %>
+  <%= f.file_field :file, multiple: true, name: "image[file]"%>
+  
+  <!--  <div class="form-actions">
+    <%= f.submit nil, :class => 'btn btn-primary' %>
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                images_path, :class => 'btn' %>
+  </div> -->
+<% end %>
+<% end %>
+
+

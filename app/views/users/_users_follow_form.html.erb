@@ -1,0 +1,11 @@
+<% if user_signed_in? %>
+	<% unless current_user == user %>
+	  <% if current_user.following?(user) %>
+	    <%= link_to 'Following', unfollow_user_path(user), :remote => true, :class=> "btn btn-small btn-info unfollowButton" %>
+	  <% else %>
+	    <%= link_to 'Follow', follow_user_path(user), :remote => true, :class=> "btn btn-small btn-success followButton" %>
+	  <% end %>
+	<% end %>
+<% else %>
+	<%= link_to 'Follow', new_user_session_path, :class=> "btn btn-small btn-success followButton" %>
+<% end %>

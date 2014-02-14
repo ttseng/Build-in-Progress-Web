@@ -1,0 +1,65 @@
+<div class="fullRow" style="margin-top:50px;width:940px">
+
+		<% website_project = Project.where(:title=>"Build in Progress Website").where(:remix_ancestry => nil).first() %>
+		<% mobile_project = Project.where(:title=>"Build in Progress Mobile").where(:remix_ancestry => nil).first() %>
+
+		<div class="centeredContainer newsPage">
+			<div class="heading">
+				<icon class="fa fa-bullhorn" style="font-size:30px;margin-top: 15px; margin-right:10px;"></icon><h3 style="margin-top: 0px;">Build in Progress News</h3>
+			</div>
+
+			<div class="subheading">
+				Find all the latest updates to Build in Progress right here.  Check out the project pages for the <%= link_to "Build in Progress Website", project_path(website_project), :class=>"project_link" %> and <%= link_to "Build in Progress Mobile", project_path(mobile_project), :class=>"project_link" %> to give feedback!
+			</div>
+		</div>
+
+		<% # get all updates and sort by descending created at date %>
+		<% all_news = (website_project.steps.where("position !=?", 0) + mobile_project.steps.where("position !=?", 0)).sort_by {|step| -step.created_at.to_i}  %>
+
+		<% all_news.each do |news_item| %>
+		<div class="news_item">
+			<div class="title"><%= link_to news_item.name, project_steps_path(news_item.project, :step=>news_item.id) %></div>
+			<div class="description">
+				<%= news_item.description.html_safe %>
+				<%= link_to "Comment", project_steps_path(news_item.project, :step=>news_item.id), :class=> "news_comment" %>
+			</div>
+			<div class="images">
+				<% if news_item.images.count > 0 %>
+					<%= link_to image_tag(news_item.images.order(:position).first.image_path_url(:preview)), project_steps_path(news_item.project, :step=>news_item.id)  %>
+				<% end %>
+			</div>
+			<div class="clear"></div>
+			<div class="created_at"><%= news_item.created_at.strftime "%a %b %d at %I:%M %p"%></div>
+		</div>
+		<% end %>
+			<% if website_project && mobile_project %>
+
+				<div class="subheading">
+					Find all the latest updates to Build in Progress right here.  Check out the project pages for the <%= link_to "Build in Progress Website", project_path(website_project), :class=>"project_link" %> and <%= link_to "Build in Progress Mobile", project_path(mobile_project), :class=>"project_link" %> to give feedback!
+				</div>
+
+			<% end %>
+		</div>
+
+		<% if website_project && mobile_project %>
+			<% # get all updates and sort by descending created at date %>
+			<% all_news = (website_project.steps.where("position !=?", 0) + mobile_project.steps.where("position !=?", 0)).sort_by {|step| -step.created_at.to_i}  %>
+
+			<% all_news.each do |news_item| %>
+			<div class="news_item">
+				<div class="title"><%= link_to news_item.name, project_steps_path(news_item.project, :step=>news_item.id) %></div>
+				<div class="description">
+					<%= news_item.description.html_safe %>
+					<%= link_to "Comment", project_steps_path(news_item.project, :step=>news_item.id), :class=> "news_comment" %>
+				</div>
+				<div class="images">
+					<% if news_item.images.count > 0 %>
+						<%= link_to image_tag(news_item.images.order(:position).first.image_path_url(:preview)), project_steps_path(news_item.project, :step=>news_item.id)  %>
+					<% end %>
+				</div>
+				<div class="clear"></div>
+				<div class="created_at"><%= news_item.created_at.strftime "%a %b %d at %I:%M %p"%></div>
+			</div>
+		<% end %>
+	<% end %>
+
