@@ -1,0 +1,40 @@
+<div class="viewModes">
+
+  <%= link_to project_path(@project) do %>
+    <div class="mapMode mode" title="Map">
+      <icon class="fa fa-sitemap"/>
+    </div>
+  <% end %>
+
+  <% if @project.images.count > 0 %>
+    <%= link_to gallery_project_path(@project) do %>
+      <div class="galleryMode mode" title="Gallery"/>
+        <icon class="fa fa-th">
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if !@project.unpublished?  && @project.steps.length >0 %>
+    <%= link_to blog_project_path(@project) do %>
+      <div class="blogMode mode" title="Blog">
+        <icon class="fa fa-align-justify"/>
+      </div>
+    <% end %>
+  <% end %>
+  
+</div>
+
+<% if source == "map" %>
+  <script type="text/javascript">
+    $('.mapMode').addClass('selected');
+  </script>
+<% elsif source == "gallery" %>
+  <script type="Text/javascript">
+    $('.galleryMode').addClass('selected');
+  </script>
+<% elsif source == "blog" %>
+ <script type="Text/javascript">
+    $('.blogMode').addClass('selected');
+  </script>
+<% end %>
+

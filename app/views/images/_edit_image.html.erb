@@ -4,8 +4,10 @@
     <%= image_tag Image.find(image.original_id).image_path_url(:thumb), :data=> {:parent=>step_id, :position=> index} if Image.find(image.original_id).image_path? %>
   <% elsif image.has_video? %>
     <%= image_tag image.image_path_url(:preview), :data=> {:parent=>step_id, :position=> index} if image.image_path? %>
-  <% else %>
-    <%= image_tag image.image_path_url(:thumb), :data=> {:parent=>step_id, :position=> index} if image.image_path? %>
+  <% elsif !image.image_path_url.nil? %>
+    <%= image_tag image.image_path_url(:thumb), :data=> {:parent=>step_id, :position=> index} %>
+  <% elsif image.s3_filepath.present? %>
+      <%= image_tag image.s3_filepath, :data=> {:parent=>step_id, :position=> index} %>
   <% end %>
 
   <div class="actions">
@@ -22,9 +24,6 @@
   <% if image.has_video? %>
   <% # draw small play icon over image to indicate that it's a media file %>
     <i class="fa fa-play-circle videoIcon"></i>
-  <% elsif image.has_sound? %>
-    <% # draw small audio icon over image %>
-    <i class="fa fa-volume-up  soundIcon"></i>
   <% end %>
 
 </div>
@@ -33,7 +32,6 @@
 <script type="text/javascript">
 $(document).ready(function(){
   $('.btn-delete-image').click(function(){
-    console.log('clicked delete');
     $(this).parents('.stepImage').children('img').css('opacity', 0.5);
   });
 });

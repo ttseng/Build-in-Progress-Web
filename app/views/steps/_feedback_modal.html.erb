@@ -1,0 +1,101 @@
+<div id="feedbackModal" class="modal hide fade" style="z-index: 100000">
+  
+  <div class="modal-header">
+    <h3>Leave Feedback</h3>
+  </div><%# end modal header %>
+
+  <div class="modal-body">
+      <div class="contactText">
+      
+      <%= form_for Message.new, :url => contact_path, remote: true do |form| %>
+
+       <%= form.select(:type, [['Select a topic'], ['Report a bug'],['Suggest a new feature'], ['General comments']]) %>
+
+       <div class="message_body" style="display: none;">  
+          <%= form.label "Message" %>
+          <%= form.text_area :body, :style=>"width: 500px; height: 150px", :maxlength=>"500" %>
+        
+          <%= form.hidden_field :user, :value => current_user.username %>
+
+          <%= form.hidden_field :project_url, :value => request.original_url %>
+
+          <p>From <i><%= current_user.username %></i> for <i><%= @project.title %></i></p>
+          
+          <div style="display: none">
+            <%= form.submit "Send", :class=> "btn btn-primary send_button" %>
+          </div>
+
+        </div>
+        
+      <% end %>
+
+
+    </div>
+  </div><%# end modal body %>
+
+  <div class="modal-footer">
+    <div class="btn btn-cancel">Cancel</div>
+    <div class="btn btn-primary btn-send disabled">Send</div>
+  </div><%# end modal footer %>
+
+</div>
+
+<script type="text/javascript">
+
+  // var originalForm = $('#feedbackModal .modal-body').html(); // original contents of form
+
+  function submitMessage(){
+    $('#new_message').submit();    
+    $('#feedbackModal .modal-body').hide();
+    $('#feedbackModal .modal-footer').before("<div style='padding: 15px' id='thank_you_message'>Thanks for your feedback!</div>").fadeIn();
+    $('#feedbackModal .btn-send').css('display', 'none');
+    $('#feedbackModal .btn-cancel').html('Close');
+  }
+
+  $('#feedbackModal .btn-send').click(function(){
+    if($(this).prop('disabled') == false){
+      submitMessage();
+    }
+  });
+
+  $('#feedbackModal .btn-cancel').click(function(){
+    $('#feedbackModal').modal('hide');  
+    $('#feedbackModal .modalBody').show();
+    $('#feedbackModal #message_body').val("");
+    // $('#feedbackModal .modal-body').html(originalForm);
+  });
+
+   $('#feedbackModal').on('show', function(){
+    $(this).find('.modal-body').css({
+            'max-height':'100%'
+     });
+    $('.btn-send').prop('disabled', true);
+    $('#feedbackModal #thank_you_message').remove();
+    $('#feedbackModal .btn-send').show();
+    $('#feedbackModal .modal-body').show();
+  });
+
+  $('#feedbackModal #message_body').bind("propertychange keyup input paste", function(event){
+    if($(this).val()!=""){
+      $('#feedbackModal .btn-send').removeClass('disabled');
+      $('.btn-send').prop('disabled', false);
+    }else{
+      $('#feedbackModal .btn-send').addClass('disabled');
+      $('.btn-send').prop('disabled', true);
+    }
+  });
+
+
+   $('select').change(function(){
+    var selection = $('select option:selected').text();
+    // console.log(selection);
+    if(selection!="Select a topic"){
+      $('.message_body').show();
+    }else{
+      $('.btn-send').prop('disabled', true);
+      $('#feedbackModal .btn-send').addClass('disabled');
+      $('.message_body').hide();
+    }
+  });
+
+</script>

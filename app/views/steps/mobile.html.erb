@@ -1,0 +1,142 @@
+<!-- load process map -->
+<style>
+	table{
+		margin: 0 auto !important;
+	}
+	.stepLabel{
+		width: 96% !important;
+		max-height: none !important;
+		-moz-user-select: none;
+   		-khtml-user-select: none;
+   	    -webkit-user-select: none;
+	}
+	body{
+	   -webkit-user-select: none;
+     	-moz-user-select: -moz-none;
+      	-ms-user-select: none;
+        user-select: none;
+	}
+	.drop-hover{
+		opacity: 0.9 !important;
+	}
+	.navbar{
+		visibility: hidden;
+	}
+	#chart{
+		width: 99%;
+	}
+</style>
+
+
+<% content_for :metatags do %>
+	 <meta name="viewport" 
+	 	content="width=device-width, 
+	 	initial-scale=0.5" />
+<% end %>
+
+
+<div id="mobileProcessMap">
+	<%= render :partial => 'process_map', :locals=> {:project => @project, :steps => @project.steps, :source=>"show"} %>
+</div>
+
+
+<script type="text/javascript">
+
+	var zoom;
+	var minNodeWidth = 90;
+	var minNodeHeight = 85;
+	var font_size;
+
+	$(document).ready(function(){
+
+		$('.navbar').hide();
+		$('#footer').hide();
+
+		// PROCESS MAP RESIZING FOR MOBILE //
+		var screenWidth = $(window).width();
+		var processMapWidth = $('.jOrgChart tbody').first().width();
+		var maxScaleFactor = 3;
+		var maxNodeWidth = minNodeWidth*maxScaleFactor; // may need adjusting
+		var maxFontSize = 50;
+
+		var screenHeight = $(window).height();
+		var processMapHeight = $('.jOrgChart tbody').first().height();
+
+		var pressTimer; // timer to determine longtap on mobile
+
+		zoom = screenWidth/processMapWidth;
+
+		if(zoom>1) {
+			if(minNodeWidth * zoom > maxNodeWidth){
+				zoom = maxScaleFactor;
+			}
+
+			// resize step nodes
+			$('.stepNode').css('width', minNodeWidth*zoom);
+			$('.stepNode').not('.branch_label').css('height', minNodeHeight*zoom);
+			$('.stepNode').css('border-width', parseInt($('.stepNode').css('border-width'))*zoom*1.5);
+
+			// adjusting font size
+			// console.log('adjusting font size');
+			font_size = parseInt($('.stepLabel').css('font-size'))*zoom; // stepLabel fontSIze
+			font_size = Math.min(font_size, maxFontSize);
+		
+			$('.stepLabel').css('font-size', font_size);
+			$('.stepLabel').css('line-height', font_size+"px");
+		}else{
+			zoom = 1;
+		}
+
+		if(processMapHeight*zoom < screenHeight){
+			$('#chart').css('height', screenHeight);
+		}else{
+			if($('#chart').height() < $(window).height()){
+				$('#chart').css('height', $(window).height());
+			}else{
+				$('#chart').css('height', '');
+			}
+		}
+
+		// CLICK AND DRAG STUFF
+
+		if($('#mobileProcessMap').length > 0){
+	        // $('.stepNode').mouseup(function(){
+	        //   // console.log('clear timing');
+	        //   clearTimeout(pressTimer);
+	        //   $('.stepNode').draggable('disable');
+	        //   $('body').tap();
+	        //   window.dragging = false;
+	        //   return false;
+	        // }).mousedown(function(){
+	        // 	element = $(this);
+	        // 	window.dragging = true
+	        //   pressTimer = window.setTimeout(function(){
+	        //     // console.log('enabling dragging');
+	        //     makeCurrentStep(element);
+	        //     $('.stepNode').draggable('enable');
+	        //   }, 500);
+	        //   return false;
+	        // });
+	      }
+
+		$('.stepNode').click(function(){
+			// only allow drag and drop when a step has already been selected
+			$('.stepNode').draggable('enable');
+		});
+
+		$('.stepNode').hover(function(e){
+			// remove titles from mobile view
+			$(this).removeAttr('title');
+		});
+
+		// remove highlight from current step if user clicks outside of the process map
+		$("body").bind('tap', function(e) {
+       	 if ($(e.target).closest('.stepNode').length) { 
+        	} else { 
+           		makeCurrentStep();
+           		$('.stepNode').css('opacity', 1.0);
+        	}
+        });
+    });
+
+</script>

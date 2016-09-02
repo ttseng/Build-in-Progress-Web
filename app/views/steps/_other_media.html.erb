@@ -87,7 +87,7 @@ $(document).ready(function(){
 
  function showPreview(){
     var soundcloud_url = $("#sound_embed_url").val();
-    console.log("soundcloud_url: " + soundcloud_url);
+    // console.log("soundcloud_url: " + soundcloud_url);
 
     if(soundcloud_url == ""){
        $('#soundcloud_submit').attr("disabled", 'disabled');
@@ -101,7 +101,7 @@ $(document).ready(function(){
       SC.oEmbed(soundcloud_url, {auto_play: false}, function(oembed){
         if(oembed!=null){
           $("form.sound .embedPreview").html(oembed['html']);
-          console.log("oembed['html']: " + oembed['html']);
+          // console.log("oembed['html']: " + oembed['html']);
           // enable the submit button
           $('#soundcloud_submit').removeAttr('disabled');
         }else{
@@ -116,11 +116,11 @@ $(document).ready(function(){
       $.get(
          'http://api.soundcloud.com/resolve.json?url=' + soundcloud_url + '&client_id='+sc_client_id+'', function (result){
           soundcloud_id = result['id'];
-          console.log("soundcloud_id: " + soundcloud_id);
+          // console.log("soundcloud_id: " + soundcloud_id);
           $('#soundcloud_id').val(soundcloud_id);
           // fetch the image associated with the track
             $.get('http://api.soundcloud.com/tracks/'+soundcloud_id+'.json?client_id='+sc_client_id+'', {limit: 1}, function(track){
-              console.log('track', track);
+              // console.log('track', track);
               if(track!=null){
                 // console.log("track artwork_url before: " + track['artwork_url']);
                 if(track['artwork_url']!=null){

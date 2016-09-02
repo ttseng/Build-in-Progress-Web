@@ -1,30 +1,118 @@
+<script type="text/javascript">
+	var firstLoaded = false;
+</script>
 <html>
 	<head>
-	  <title>Build in Progress</title>
+	  <title><%= ENV["APP_NAME"] %></title>
 	  <%= csrf_meta_tags %>
 	  <%= javascript_include_tag "application" %>
 	  <%= stylesheet_link_tag "application-all", :media => "all" %>
-	  <%= stylesheet_link_tag "application-v01", :media => "all" %>
+	  <style>
+	  .stepNode:not(.noHighlight):hover{
+	  	border: 3px solid #E6E6E6;
+	  }
+	  </style>
 	</head>
 	<body style="width:500px">
 		<div class="embedDiv">
-			<div class="embedTitle">
-				<%= link_to @project.title, project_path(@project) %> by <%= render :partial => "projects/author_byline", :locals => {:project => @project, :source=>"embed"} %> 
+			<div class="name">
+				<%= link_to @project.title, project_path(@project) %>
+				<% if @project.description.present? %>
+					<icon class="fa  fa-info-circle"></icon>
+				<% end %>
 			</div>
-			  <%= render :partial=> 'steps/step_detail_view', :locals=>{:step=>@project.steps.order("published_on").last} %>
-			<div class="embedLink">
-				<%= image_tag("build_in_progress_logo.png", :class=> "logo" )%>
-				<% tagline = "Check out all of " + @project.title + " at Build in Progress!" %>
-				<p> <%= link_to tagline, project_path(@project) %> </p>
-			</div>
+			<div class="description" style="display: none;"><%= @project.description %></div>
+
+		  <ul id="org" class="0" style="display:none" >
+		       <%= render :partial => 'steps/draw_list' %>
+		  </ul>   
+
+		  <div id="chart" class="orgChart">
+		  </div> 
+
+		  <script type="text/javascript">
+			$("#org").jOrgChart({
+		      chartElement : '#chart',
+		      dragAndDrop  : false
+			});
+
+			function setBackgrounds(){
+			    // console.log("setting backgrounds");
+			    var divs = document.getElementsByClassName("stepNode");
+			    for(var k=0; k< divs.length; k++){
+			    	$(divs[k]).addClass('embed');
+			      if($(divs[k]).data("image") != undefined){
+			          $(divs[k]).css("background", 'url(' + $(divs[k]).data("image") + ') center');
+			      }
+			    }
+			  }
+		  </script>
+
+  			<%= render :partial => 'images/embed_image_gallery'%>
+		  
+		  <icon class="fa fa-play-circle" style="opacity: 0.2"></icon>
+		</div>
+		<div class="embedLink">
+			<%= link_to image_tag("build_in_progress_logo.png" ), project_path(@project)%>
+			<p> <%= link_to "Check out the entire project on #{ENV["APP_NAME"]}!", project_path(@project) %> </p>
 		</div>
 	</body>
 	</html>
 
 	<script>
+
 	// remove the user's comments on the embed page
 	$(document).ready(function(){
-		$('.userComments').remove();
+
+		$('.stepLabel:not(".branchStepLabel")').remove(); // remove stepNames except for labels
+		$('.stepNode').removeAttr('title');
+
+		// scale process map to size of div
+		$('.jOrgChart').css('height', 'auto');
+		var processMapHeight = $('.jOrgChart').prop('scrollHeight');
+		var processMapWidth = $('.jOrgChart').prop('scrollWidth');
+		var embedHeight = $('.container').height();
+		var embedWidth = $('.container').width();
+
+		var zoom = Math.min(embedHeight/processMapHeight, embedWidth / processMapWidth);
+
+		// console.log('height ratio: ' + embedHeight/processMapHeight);
+		// console.log('width ratio: ' + embedWidth / processMapWidth);
+		// console.log('zoom: ' + zoom);
+
+		if(zoom < 1){
+			$('.jOrgChart').css('zoom', zoom);	
+		}
+
+		$('a:not(".restart"):not(".play_pause")').attr("target", "_blank");		
+
+		// show description
+        $('.fa-info-circle').click(function(){
+        	$('.description').fadeToggle('fast');
+        });
+
+        $('.fa-play-circle').hover(function(){
+        	if($('.fa-play-circle').is(':visible')){
+        		$('.fa-play-circle').fadeTo('fast', 1)	
+        	}
+        }, function(){
+        	if($('.fa-play-circle').is(':visible')){
+        		$('.fa-play-circle').fadeTo('fast', 0.2);
+        	}
+        });
+
+        $('.fa-play-circle').click(function(){
+        	$('.fa-play-circle').hide();
+        	$('.mainPhoto').fadeIn();
+        	$('.projectOverviewCarousel').carousel(); 
+        	$('.play_pause').removeClass('fa fa-play');
+        	$('.play_pause').addClass('fa fa-pause');
+        })
+
+        $('.stepNode.branch_label').each(function(){
+	      $(this).children('.stepLabel').css('background', $(this).attr('data-label-color'));
+	    });
+
 	});
 
 	</script>

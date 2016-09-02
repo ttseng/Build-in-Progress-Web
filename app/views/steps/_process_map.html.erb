@@ -1,15 +1,12 @@
-<%= stylesheet_link_tag "application-v01", :media => "all" %>
-
 <script>   
 var stepAncestry=""; // string for holding the ancestry of a step
-var parent; // string for holding the direct parent of a step
-var nestLevel; // string for holding how far nested a step is (to determine position)
-var returnValues = {}; // holds the step ancestry + nestLevel return values
+if("<%= @stepIDs %>".length > 0){
+  var stepIDs = JSON.parse("<%= @stepIDs %>"); // array of step ids in order of position  
+}
 var branches = []; // Array holding information about the branched step in the format [index, position, id]
 var returnedBranch = new Array(); // branch in which the user has returned to
 var reorderMode = false; // toggle for rearranging steps
 var originalStepOrder; // stores original step table when page is loaded
-var newProject; //boolean for determining if we're on a new project
 
 var editMode = Boolean(<%=source=='edit'%>); // boolean to determine if we're on an index page of an edit page
 var newMode = Boolean(<%=source=='new'%>);
@@ -17,202 +14,139 @@ var indexMode = Boolean(<%=source=='index'%>);
 var showMode = Boolean(<%=source=='show'%>);
 var newProject = parseInt("<%=@project.steps.count %>") == 0; // whether or not the project does not contain any steps
 
+if(newMode){
+  var newStepParentID = "<%=@parentID%>";  
+}
+
 var firstLoaded = true;  // boolean to store whether or not the original state of the process map should be saved (to originalStepOrder)
 var stepClick = false; // distinguish between mouse scroll, manual scroll, or jquery scroll
-var orderingHistory = []; // storing step ordering history
-historyInstance = []; // storing step ordering at a particular instance
+var clickedStep = ""; // used to determine what the parent of a step should be
+
 var historyIndex = 0; // indexing history instances
 var orgHistory = []; // save history for population the org chart
-var undoClick = 0; // save number of times undo has been clicked;
-var currentStep; // used for jupming to a particular step from the process map
 
-var zoomLevel =1; // zoom level of process map
-var labelThreshold = 0.75;  // zoom threshold for hiding step labels
-var zoomUpperThreshold = 1; // maximum zoom level
-var zoomLowerThreshold = 0.5; // minimum zoom level
-var authorLoggedIn;
+var currentStep; // used for jumping to a particular step from the process map
 
-var leftInit; // the initial left offset of the detailViewHandle 
-var windowWidth= 940; // width of browser window before horizontal scroll bars appear
+var authorLoggedIn; 
+
+// whether we need to rename the new step element for a branch
+var is_branch_label = "<%=params[:label]%>" == "true";
+
+var mouseInProcessMap = false;
+
+var PIN_TYPES = new Object();
+PIN_TYPES['exclamation'] = 'fa fa-exclamation-circle';
+PIN_TYPES['frown'] = 'fa fa-frown-o';
+PIN_TYPES['flag'] = 'fa fa-flag';
+PIN_TYPES['lightbulb'] = 'fa fa-lightbulb-o';
+PIN_TYPES['map'] = 'fa fa-map-pin';
+PIN_TYPES['smile'] = 'fa fa-smile-o';
+PIN_TYPES['thumbs_up'] = 'fa fa-thumbs-o-up';
+PIN_TYPES["thumbs_down"] = 'fa fa-thumbs-down';
 
 </script>
 
-  <% #Show Process Map Controls %>
-    <div class="processMapTitleBar">
-      <div class="btn-toolbar processMapTools" role="toolbar">
-        <% if @authorLoggedIn %>
-            <div class="btn-group btn-group-vertical icons processMapButtons">
-              <% if @project.steps.count > 0 %>
-                <% parentID = @project.steps.order(:created_at).last.id %>
-              <% else %>
-                <% parentID = "" %>
-              <% end %>
-                <%= link_to new_project_step_path(@project, :parent_id => parentID) do %>
-
-                <button class="btn addStepIcon" title="add step"><i class="fa fa-plus"></i></button>
-                <script type="text/javascript">
-                  if(newProject){
-                    $('.addStepIcon').attr('title', 'Click + to add your first step');
-                    $('.addStepIcon').tooltip({ 
-                      placement: 'right',
-                      trigger: 'manual'
-                    });
-                    $('.addStepIcon').tooltip('show');
-                    $('.addStepIcon').parent().children('.tooltip').css('left', '38px');
-                    
-                    $('.addStepIcon').hover(function(){
-                      $(this).parent().children('.tooltip').children('.tooltip-inner').css('background-color', '#025099');
-                      $(this).parent().children('.tooltip').children('.tooltip-arrow').css('border-right-color', '#025099');
-                    }, function(){
-                      $(this).parent().children('.tooltip').children('.tooltip-inner').css('background-color', '#045FB4');
-                      $(this).parent().children('.tooltip').children('.tooltip-arrow').css('border-right-color', '#045FB4');
-                    });
-                  }
-                </script>
-
-              <% end %>
-                <button class="btn undoIcon disabled" title="undo"><i class="fa fa-undo"></i></button>
-                <button class="btn reorderIcon" title="reorder steps"><%=image_tag("icons/reorder_icon.png")%></button>
-                <button class="btn helpIcon" title="help"><i class="fa fa-question"></i></button>
-            </div>
-          <% end %>
-
-          <% if false %>
-            <div class="btn-group btn-group zoom-fa fa-group">
-                <button class="btn zoomOutIcon" title="zoom out" style="border-bottom: 2px solid #ccc;"><i class="fa fa-zoom-out"></i></button>
-                <button class="btn zoomResetIcon" title="default zoom" style="border-bottom: 2px solid #ccc;"><i class="fa fa-reorder"></i></button>
-                <button class="btn zoomInIcon" title="zoom in"><i class="fa fa-zoom-in"></i></button>
-            </div>
-          <% end %>
-
-          <div id="reorderInstructions" style="display:none">Click and drag a step to reorder</div>
-          <div id="saved" style="display:none">saved</div>
-    </div>
-  </div>
-
-
-  <script type="text/javascript">
-    // hide the processMap Tools if we're in the new or edit mode
-    if(newMode || editMode){
-      $('.processMapButtons').hide();
-    }
-    if(newMode && !newProject && parseInt("<%=@project.steps.count %>") >1){
-      console.log('showing reordering instructions');
-      $('.processMapTitleBar').prepend('<div class="new_step_instructions">Click and drag the New Step block to reposition it</div>');
-    }
-  </script>
-
-      <% # Get branch structure using getBranches helper method %>
-      <%# getBranches %>
-
 <% #Draw Progress Map %>
-  <ul id="org" class="0" style="display:none" >
-       <%= render :partial => 'draw_list_b'%>
-  </ul>    
+<ul id="org" class="0" style="display:none" >
+     <%= render :partial => 'steps/draw_list'%>
+</ul>    
 
-  
-  <div id="chart" class="orgChart">
-  </div> 
+<div id="chart" class="orgChart">
+</div> 
 
 
  <script type="text/javascript">
 
- /* -------- PAGE RENDERING ---------- */
-
-    // size divs on page depending on the window height
-    function resizeDivs(windowHeight){
-
-        var bannerHeight = $('.projectOverviewPhoto').height();
-        var offset = 218;
-        
-        if(editMode || newMode){
-          offset = offset -21 ;
-        }
-
-        var height = windowHeight - bannerHeight + offset;
-        
-        $('.processBlog').css('height', height);    
-        
-        if($(window).scrollTop() == 0){
-          if(indexMode){
-            $('.shim').css('height', 0);
-            $('#chart').css('height', height-344);    
-          }else{
-            $('#chart').css('height', height-310);    
-          }
-        
-        }else{
-            $('#chart').css('height', height-40);    
-          
-        }
-    }
-
-  /* -------- PAGE RENDERING END ---------- */
-
-
-
+ var minimized = false;
 
  /* -------- RETRIEVE STEP ATTRIBUTES ---------- */
 
-        // find the ancesty of an element
-       function ancestry(id){
-          // console.log("id: " + id);
-          parent = $('li.'+id).parent('ul').attr('class');
-          if (stepAncestry.length==0){
-            stepAncestry = parent;
+    // function ancestry(id) - finds the ancestry of step given its id, using the $('#org') ul
+    function ancestry(id){
+      var step_ancestry = "";
+      var parents = $('li.'+id).parents('ul').not('.0').get().reverse();
+      if(parents.length==0){
+        step_ancestry = "0"
+      }else{
+        $(parents).each(function(){
+          if(step_ancestry.length == 0){
+            step_ancestry = $(this).attr('class');
+          }else{
+            step_ancestry = step_ancestry + "/" + $(this).attr('class');  
           }
-          else{
-            stepAncestry = parent + "/" + stepAncestry;
-          }
-          if($('li.'+parent).parent('ul').length>0 && $('li.'+parent).parent('ul').attr('class')!=0){
-            ancestry(parent);
-          }
-          children_li = $('#org').find('li');
-          nestLevel = parseInt(children_li.index($('li.'+id)));
-          // console.log('nestLevel: ' + nestLevel);
-          // console.log("stepAncestry: " + stepAncestry);
+        });
+      }
+      return step_ancestry
+    }
 
-          returnValues.stepAncestry = stepAncestry;
-          returnValues.nestLevel = nestLevel;
-          // console.log(" ");
-          return returnValues;
-        }
+    function position(id){
+      // get the position of the step
+      return parseInt($('#org').find('li').index($('li.'+id)));
+    }
+
+      // stepMapArray - creates an object with the format {step_id:[position,ancestry]} for all steps
+      function createStepMapArray(){
+        var stepArray = {};
+        $('#org').find('li').each(function(index,value){
+          var step_id = getID($(this).attr('class'));
+          var step_position = index;
+          var step_ancestry = ancestry(step_id);
+          // console.log('id: ' + step_id + ' position: ' + step_position + ' ancestry: ' + step_ancestry);
+          stepArray[step_id] = [step_position, step_ancestry];
+        });
+        return stepArray;
+      }
 
   /* -------- RETRIEVE STEP ATTRIBUTES END ---------- */
   
 
   /* -------- PROCESS MAP RENDERING, REORDERING, SAVING, REFRESHING ---------- */
 
-        // loadProcessMap - load / refresh the process map
+     // loadProcessMap - load / refresh the process map
         function loadProcessMap(){
+          // console.log('loadProcessMap');
           // add an 'Add New Step' box to the bottom of the process map if we're in edit mode
+          var numberSteps = parseInt("<%=@steps.length%>");
           if((editMode | showMode) && ("<%= @authorLoggedIn %>" == true)){
-              var numberSteps = parseInt("<%=@steps.length%>");
               newProject = numberSteps == 1;
             }
 
             // if we're on the new step page, add the add new step box to the correct location on the process map 
             else if($('#processMap').hasClass("new")){
-              var parentID = "<%=@parentID%>"
-              // console.log('parentID: '  + parentID);
-              if(parentID.length > 0){
-                if($('ul.'+parentID).length > 0){
-                      $('ul.'+parentID).append('<li class="newStep">New Step</li>');
+              var step_name = "";
+              // console.log('branch_label: ' + is_branch_label);
+              is_branch_label = "<%=params[:label]%>" == "true";
+              if(is_branch_label){
+                step_name = "New Branch Label";
+              }else{
+                step_name = "New Step";
+              }
+              // console.log('newStepParentID: '  + newStepParentID);
+              if(newStepParentID &&  newStepParentID.length > 0){
+                if($('ul.'+newStepParentID).length > 0){
+                    // console.log('adding ul');
+                      $('ul.'+newStepParentID).append('<li class="newStep">'+step_name+'</li>');
                  }
                  else{
-                     $('li.'+parentID).append('<ul><li class="newStep">New Step</li></ul>');
+                    // console.log('adding li');
+                     $('li.'+newStepParentID).append('<ul><li class="newStep">'+step_name+'</li></ul>');
                  }
               }else{
-                $('#org').append('<li class="newStep">New Step</li>');
+                // console.log('adding new step');
+                $('#org').append('<li class="newStep">'+step_name+'</li>');
               }
               
             }
 
-            if($('.detailView').length > 0 || (editMode || newMode)){
-              $("#org").jOrgChart({
+            if(numberSteps > 0 || (editMode || newMode)){
+              // console.log('loading jorgchart');
+                $("#org").jOrgChart({
                   chartElement : '#chart',
                   dragAndDrop  : true
-              });
+                });                
+
+              // append the parentID to the new step node
+              $('.stepNode.newStep').data('parentID', newStepParentID);
             }
 
             // turn off draggable from stepNodes
@@ -232,117 +166,112 @@ var windowWidth= 940; // width of browser window before horizontal scroll bars a
             }
           }
 
-          // remove extra ul elements from the clone
-          function cleanClone(clone){
-              // console.log("********Cleaning Clone************");
-              // console.log("ul children: " + clone.children('li').children('ul').length);
-              for(var i=1; i < clone.children('li').children('ul').length; i++){
-                //console.log("i: " + i);
-                //console.log(clone.children('ul li').html());
-                if($(clone.children('li').children('ul')[1]).attr("class")==undefined){
-                  $(clone.children('li').children('ul')[1]).detach();
-                }
-              }
-              // console.log(clone.children('ul li').html());
-              return clone;
-          }
-
-          // Change the border of the step box in the process map
-          function makeCurrentStep(element){
-             $('.currentStepNode').removeClass('currentStepNode')
-             $(element).addClass('currentStepNode');
-          }
-
-          // highlights active step in the process map
-          function highlightStep(){
-            if($('.detailView').length > 0){
-                // console.log("in highlightStep");
-                var $midElement;
-                var distance = null;
-                var currDistance;
-                var detailViews = $('.detailView');
-                var middleOffset = 100;
-
-                var detailViewTop = $('.processBlog').scrollTop();
-                var detailViewHeight = $('.processBlog').innerHeight();
-                var detailViewScrollHeight = $('.processBlog')[0].scrollHeight;
-                // console.log("stepDetailViewTop: " + detailViewTop);
-                var docViewBottom = $(window).height();
-                var docViewMiddle = docViewBottom/2 + middleOffset;
-                // console.log("docViewMiddle: " + docViewMiddle);
-
-                // console.log("scroll location: "+ ($('.processBlog').scrollTop() + $('.processBlog').height()));
-                // console.log("document height: " + ($(document).height()-200));
-
-                if(detailViewTop == 0){
-                  // at top of page - highlight project overview
-                  var stepID = getID($('.detailView').first().attr('id'));
-                }else if (Math.abs($('.processBlog')[0].scrollHeight - $('.processBlog').scrollTop() - $('.stepDetailView').outerHeight()) <= 5){
-                  // at bottom of the page - highlight last step
-                  var stepID = getID($('.detailView').last().attr('id'));
-                } 
-                else{
-                  // highlight the step closest to the middle of the page
-                  detailViews.each(function(index, element){
-                    // console.log("index: " + index);
-                    var currentDivTop = $(element).offset().top;
-                    // console.log("currentDivTop: " + currentDivTop);
-                    var currentDivBottom = $(element).offset().top + $(element).height();
-                    // console.log("currentDivBottom: " + currentDivBottom);
-                    var currentDivMiddle = (currentDivBottom-currentDivTop)/2+currentDivTop;
-                    // console.log('currentDivMiddle: ' + currentDivMiddle);
-                    currDistance = Math.abs(docViewMiddle-currentDivMiddle);
-                    // console.log("currDistance: " + currDistance);
-                    if(distance == null || currDistance < distance){
-                      midElement = $(element);
-                      distance = currDistance;
-                    }
-                  });
-                  var midElement_id = midElement.attr('id');
-                  var stepID = getID(midElement_id);
-                }
-                // console.log("stepID: "+ stepID);
-                makeCurrentStep($(".stepNode." + stepID));
-                // console.log(" ");
+          // function moveMap(element)
+          // Scrolls the process map so the selected step is in view
+          // element = stepNode
+          function moveMap(element){
+              // move the step into view if it's obscured behind the infoContainer
+             if( ($(element).offset().left + $(element).width()) > $('#infoContainer').offset().left ){
+                // console.log('scroll left');
+                var nodeLeft = $(element).offset().left + $('#processMap').scrollLeft() - ($(window).width() - $('#infoContainer').offset().left)/2;
+                // console.log('nodeLeft: ' + nodeLeft);
+                $('#processMap').animate({
+                  scrollTop: $(element).offset().top - $(element).height(),
+                  scrollLeft: nodeLeft
+                });
+            }else if( ($(element).offset().left - $(element).width()) < 0 ){
+              // move the step into view if it's obscured at the left edge
+              // console.log('scroll right');
+              var nodeLeft = $('#processMap').scrollLeft() - ($(element).offset().left + $(element).width())*-1 - ($(window).width() - $('#infoContainer').offset().left)/2;
+              // console.log('nodeLeft: ' + nodeLeft);
+              $('#processMap').animate({
+                scrollTop: $(element).offset().top - $(element).height(),
+                scrollLeft: nodeLeft
+              });
+            }else if($(element).offset().top < 0){
+              // move the step into view by scrolling down
+              // console.log('scroll down');
+              var nodeTop = $(element).offset().top*-1;
+              $('#processMap').animate({
+                scrollTop: nodeTop
+              })
+            }else if($(element).offset().top + $(element).height() > $(window).height()){
+              // move the step into view by scrolling up
+              // console.log('scroll up');
+              var nodeTop = $('#processMap').scrollTop() + $(element).offset().top + $(element).height() - $(window).height();
+                $('#processMap').animate({
+                scrollTop: nodeTop
+              });
             }
-        }
+          }
+
+          // Change the border of the step box in the process map and move into view if it's obscured
+          function makeCurrentStep(element){
+             $('.currentStepNode').removeClass('currentStepNode');
+             $(element).addClass('currentStepNode');  
+              if($(element).hasClass('branch_label')==false){
+               if(!mouseInProcessMap){
+                $(element).css('opacity', 1.0); 
+               }
+             }
+
+             if(!mouseInProcessMap){
+                $('.stepNode:not(.currentStepNode):not(.branch_label)').css('opacity', 0.5);
+                $('.stepNode.branch_label').css('opacity', 1.0);
+             }
+             if($('#mobileProcessMap').length == 0){
+                moveMap(element); 
+             }
+          }
+
+          // getCurrentStep - return the current step
+          function getCurrentStep(){
+            return $('.currentStepNode');
+          } 
 
   /* -------- PROCESS MAP RENDERING END ---------- */
 
    /* -------- Detail View Stuff ---------- */
 
-var detailViewVisible = true;
+  function showProjectInfo(){
+      $('.detailView').fadeOut().promise().done(function(){
+        $('#projectTitleBar').addClass('overview');
+        $('#projectTitleBar .stepName').hide();
+        $('#projectInfoContainer').fadeIn();  
+        // reset process map
+        $('.stepNode').fadeTo('fast', 1.0); 
+        $('.currentStepNode').removeClass('currentStepNode');
+        $('.fa-angle-double-down').addClass('fa-angle-double-up').removeClass('fa-angle-double-down');
+        minimized = false;
+        currentStep = "";
+      });
 
-  function hideDetailView(){
-    $('.stepDetailView').fadeOut(150);  
-     $('.processBlog').animate({width: '35px'}, 200, function(){
-           $('.detailViewHandle .fa-chevron-right').addClass('fa-chevron-left');
-           $('.detailViewHandle .fa-chevron-right').removeClass('fa-chevron-right');
-           $('#processMap').css('width', parseInt($('#processMap').css('width')) + 485+"px");
-           $('.editButtons').hide();
-           if( $('.detailViewHandle').css('left') != 'auto'){
-                $('.detailViewHandle').css('left', $('.processBlog').offset().left);  
-                $('.detailViewHandle').css('top', $('.processBlog').offset().top); 
-            }
-            detailViewVisible = false;
-        });
   }
 
-  function expandDetailView(){
-     $('.processBlog').animate({width: '518px'}, {queue: false, duration: 200});
-        $('.stepDetailView').fadeIn(150);
-        $('.detailViewHandle .fa-chevron-left').addClass('fa-chevron-right');
-        $('.detailViewHandle .fa-chevron-left').removeClass('fa-chevron-left');
-        $('#processMap').css('width', parseInt($('#processMap').css('width')) - 485+"px");
-        $('.editButtons').show();
-        $('.processBlog').promise().done(function(){
-        if( $('.detailViewHandle').css('left') != 'auto'){
-            $('.detailViewHandle').css('left', $('.processBlog').offset().left);  
-            $('.detailViewHandle').css('top', $('.processBlog').offset().top);  
-          }
-          });
-        detailViewVisible = true;
-  }
+      // function hideInfo()
+    // hide the project info / step info underneath the project title bar
+    function hideInfo(){
+        $('.stepInfo').slideUp();
+        $('.fa-angle-double-up').addClass('fa-angle-double-down').removeClass('fa-angle-double-up');
+        if($('#projectInfoContainer').css('display')!="none"){
+          $('#projectInfoContainer').slideUp();
+        }
+        $('.fa-angle-left').css('visibility', 'hidden');
+        $('.fa-angle-right').css('visibility', 'hidden');
+        minimized = true;
+    }
+
+    // function showInfo()
+    // show the project / step info underneath the project title bar
+    function showInfo(){
+      if($('.stepName').css('display') == "none" || $('.stepName').html().trim().length == 0){
+          $('#projectInfoContainer').slideDown();
+        }else{
+          $('.stepInfo').slideDown();    
+        }
+        $('.fa-angle-double-down').addClass('fa-angle-double-up').removeClass('fa-angle-double-down');
+        minimized = false;
+    }
 
   /* -------- Detail View Stuff End ---------- */
 
@@ -350,369 +279,263 @@ var detailViewVisible = true;
   /* -------- PROCESS MAP REORDERING ---------- */
 
 
-        // turn on reorder functionality
-        function turnOnReorder(){
-          reorderMode = true;
-          $('.reorderIcon').attr('disabled', false);
-          $('#reorderInstructions').css('display', 'visible');
-          $('#reorderInstructions').fadeIn('fast');
-          $('#reorderButtons').css("display", "visible");
-          $('.stepNode').draggable('enable');
+    // turn on reorder functionality
+    function turnOnReorder(){
+      // console.log('turn on reorder');
+      reorderMode = true;
+      $('.reorderIcon').addClass('active');
+      $('#reorderInstructions').css('display', 'visible');
+      $('#reorderInstructions').fadeIn('fast');
+      $('#reorderButtons').css("display", "visible");
+      $('.stepNode').draggable('enable');
+      $('.stepNode.newStep').removeClass('ui-droppable');
+    }
+
+    // turn off reorder functionality
+    function turnOffReorder(){
+      // console.log('turn off reorder');
+      reorderMode = false;
+      $('.reorderIcon').removeClass('active');
+      if(newProject){
+        $('.reorderIcon').attr('disabled', true);
+      }else{
+
+        if(parseInt("<%=@steps.length%>")>=3){
+          $('.reorderIcon').attr('disabled', false);  
+        }else{
+          $('.reorderIcon').attr('disabled', true);  
         }
+        
+        $('#reorderInstructions').fadeOut('fast');
+        $('#reorderButtons').css("display", "none");
+        $('.stepNode').not('.newStep').draggable("disable");
+      }
+      firstLoaded = true;
+    }
 
-        // turn off reorder functionality
-        function turnOffReorder(){
-          reorderMode = false;
-          firstLoaded = true;
-          $('.reorderIcon').attr('disabled', true);
-          $('#reorderInstructions').fadeOut('fast');
-          $('#reorderButtons').css("display", "none");
-          $('.stepNode').not('.newStep').draggable("disable");
-        }
+      // check if the process map has been rearranged
+      function stepsReordered(){
+        var reordered = !(orgHistory[historyIndex-1] == $('#org').children('li').children('ul:first').html());
+        return reordered;
+      }
 
-        // check if the process map has been rearranged
-        function stepsReordered(){
-          var reordered = !(originalStepOrder.children('li').children('ul:first').html() == $('#org').children('li').children('ul:first').html());
-          return reordered;
-        }
+      // save the new step order
+      function saveOrdering(){
+        if(!newMode || (newMode && !$('.update_step_button').prop('disabled'))){
+          // console.log("---------SAVING NEW ORDERING---------");
+          var newStepArray = createStepMapArray();
 
-        // save the new step order
-        function saveOrdering(){
-            // console.log("---------SAVING NEW ORDERING---------");
-            historyInstance = [];
+          $.ajax({
+            url: "/projects/<%=@project.id%>/steps/update_ancestry",
+            type: 'GET',
+            data: {stepMapArray: newStepArray}
+          });
 
-            // find the updated ancestry + position for each step
-            <% @steps.each do |step| %>
-                // console.log(" ");
-                // console.log("step.id: <%=step.id%>" );
-                // console.log("step.name: <%=step.name%>");
+          if(newMode){
+              var newStepPosition = position('newStep');
+              // console.log('newStepPosition: ' + newStepPosition);
 
-                // clear ancestry + parent variables
-                stepAncestry = "";
-                parent = "";
-                nestLevel="";
+              // set the position value for the new step
+              $('#step_position').val(newStepPosition);
 
-                var id = "<%=step.id%>";
-                var ancestryNestLevel = ancestry(id);
-                var stepName = "<%=step.name%>";
-                stepAncestry = ancestryNestLevel.stepAncestry;
-                nestLevel = ancestryNestLevel.nestLevel;
-
-                // console.log("stepAncestry: " + stepAncestry);
-                // console.log("position: " + nestLevel);
-
-                // save to orderingHistory : {step_id: , position: , ancestry: }
-                historyInstance[historyInstance.length]={id: id, position: nestLevel, ancestry: stepAncestry, stepName: stepName};
-
-                var project = <%=@project.id %>;
-
-                // replace ancestry of step                
-                $.ajax({
-                  url: "/projects/"+project+"/steps/update_ancestry",
-                  type: 'GET',
-                  data: {stepID: <%=step.id%>, stepAncestry: stepAncestry, position: nestLevel} 
-                });
-
-            <% end %>
-
-            orderingHistory[historyIndex] = historyInstance;
-            
-            var orgClone = cleanClone($('#org').clone());
-            orgHistory[historyIndex]=orgClone;
-            historyIndex++;
+              // console.log('submit form');
+              $('.formtastic.step').submit();
+              $('.update_step_button').prop("disabled",true);
           }
 
-           // undo a change to the process map
-          function undoOrdering(){
-            // console.log("---------UNDOING ORDERING---------");
-            //get the last series of steps
-            var lastOrdering = orderingHistory[orderingHistory.length-2];
-            var lastOrg = orgHistory[orgHistory.length-2];
-
-            for(var x=0; x<lastOrdering.length; x++){
-              // console.log(" ");
-              // console.log("stepID: "+lastOrdering[x].id);
-              // console.log("stepPosition: "+lastOrdering[x].position);
-              // console.log("stepAncestry: "+lastOrdering[x].ancestry);
-
-              var project = <%=@project.id %>;
-            $.ajax({
-              url: "/projects/"+project+"/steps/update_ancestry",
-              type: 'GET',
-              data: {stepID: lastOrdering[x].id, stepAncestry: lastOrdering[x].ancestry, position: lastOrdering[x].position} 
-            });
-            }
-
-            undoClick++;
-
-            $('#org').replaceWith(lastOrg.clone());
-
-            $('.jOrgChart').remove();
-            loadProcessMap();
-
-            if(orderingHistory[orderingHistory.length-2-undoClick]==undefined){
-                console.log("disabling undo");
-                $('.undoIcon').addClass('disabled');
-                undoClick = 0;
-              }
-              
-            orderingHistory.pop();
-            orgHistory.pop();
-            historyIndex--;
-
-            $('#saved').fadeIn(600).delay(800);
-                $('#saved').fadeOut(600);
-          }
+          orgHistory[historyIndex]=$('#org').clone(); // store any changes to orgHistory -> used to determine if logging is needed
+          historyIndex++;
+        }
+      }
 
     /* -------- PROCESS MAP ORDERING END ---------- */
 
 
-    /* -------- PROCESS MAP ZOOM IN / OUT ---------- */
-        // zoom into process map by 25%
-        function zoomIn(){
-            var currentZoom = parseFloat($('.jOrgChart').css('zoom'));
-            // console.log("currentZoom: " + currentZoom);
-            if(currentZoom < zoomUpperThreshold){
-              // zoom in by 25%
-              $('.jOrgChart').css('zoom', currentZoom + 0.25);
-              zoomLevel = currentZoom+0.25;
-              $('.zoomOutIcon').attr('disabled', false);
-              $('.zoomResetIcon').attr('disabled', false);
-            }
-            if($('.jOrgChart').css('zoom')>labelThreshold){
-              // show labels if the stepNodes are above the threshold
-              $('.stepLabel').show();
-            }
-            if($('.jOrgChart').css('zoom')>=zoomUpperThreshold){
-              // disable zooming under the zoomthreshold
-              $('.zoomInIcon').attr('disabled', true);
-              $('.zoomResetIcon').attr('disabled', true);
-            }
-            setTooltipFontSize();
-        }
+    /* -------- PROCESS MAP PANNING ---------- */
 
-        // zoom out of process map by 25%
-        function zoomOut(){
-            var currentZoom = parseFloat($('.jOrgChart').css('zoom'));
-            // console.log('currentZoom: ' + currentZoom);
-            if(currentZoom > zoomLowerThreshold){
-              // zoom out by 25%
-              $('.jOrgChart').css('zoom', currentZoom - 0.25);
-              zoomLevel = currentZoom-0.25;
-              $('.zoomInIcon').attr('disabled', false);
-              $('.zoomResetIcon').attr('disabled', false);
-            }
-            if($('.jOrgChart').css('zoom')<=labelThreshold){
-              // hide step labels if they're below the labelthreshold
-              $('.stepLabel').hide();
-              $('.stepNode.newStep .stepLabel').show();
-            }
-            if($('.jOrgChart').css('zoom')<=zoomLowerThreshold){
-              // disable the zoom out button if the zoom level is lower than the lowerthreshold
-               $('.zoomOutIcon').attr('disabled', true);
-            }
-            setTooltipFontSize();
-        }
+    var chartWidth;  // width of process map (to determine whether resize is necessary)
 
-        // reset zoom to 100%
-        function resetZoom(){
-           $('.jOrgChart').css('zoom', 1);
-          zoomLevel = 1;
-          $('.stepNode').tooltip('destroy');
-          createTooltips();
-          $('.zoomOutIcon').attr('disabled', false);
-          $('.zoomInIcon').attr('disabled', true);
-          $('.zoomResetIcon').attr('disabled', true);
-          $('.stepLabel').show();
-          setTooltipFontSize();
-        }
+    function setProcessMapSize(){
+      // console.log('setProcessMapSize');
 
-    /* -------- PROCESS MAP ZOOM IN / OUT END---------- */
+      var infoContainerRight = parseInt($('#infoContainer').css('right')) || parseInt($('.processBlog').css('right')); // how far the detail view is from the right of the page
+      // console.log('infoContainerRight: ' + infoContainerRight);
+      var processMapLeft = parseInt($('#chart').css('margin-left')); // how far the process map is from the left of the page
+      // console.log('processMapLeft: ' + processMapLeft);
+      var titleWidth = $('#projectTitleBar').width() || parseInt($('.processBlog').css('width'));
+      // console.log('titleWidth: ' + titleWidth);
+      var expanded = false;
+
+      if($('.jOrgChart table').length > 0){
+        if($('.jOrgChart table').first().width() + $('.jOrgChart table').first().position().left >= $(window).width()-titleWidth-infoContainerRight-processMapLeft){
+          // console.log("expand width");
+          
+          expanded = true;
+          // set width of chart to be larger than process map
+            if($('#chart').width() != chartWidth){
+                // console.log('resizing chart width');
+                $('#chart').css('width', parseInt(($('#chart table').first().width()+$('#chart table').first().offset().left)*1.7));
+                chartWidth = $('#chart').width();
+            }
+          }
+          if($('.jOrgChart table').first().height()+$('.jOrgChart table').first().offset().top >= $(window).height()-$('.navbar').height()){
+            // console.log('expand height');
+            expanded = true;
+            // set process map size
+            $('#processMap').css('max-height', $(window).height()-$('.navbar').height());  
+            $('#chart').css('height', parseInt($('#chart').css('height')));
+          }
+      }
+
+      $('#processMap').css('min-height', $(window).height() - $('.navbar').height());
+
+      // size step detail view
+      $('.stepDetailView').css('max-height', $(window).height() - $('.navbar').height()-$('#projectTitleBar').height() - 40);
+
+       // set left margin of process map for single branch projects
+       if($('.jOrgChart table').width() < 150){
+        $('.jOrgChart table').first().css('margin-left', '150px'); 
+        $('.jOrgChart table').first().css('margin-top', '20px'); 
+       }else{
+        $('.jOrgChart table').first().css('margin', '20px'); 
+       }
+    }
+
+    /* -------- PROCESS MAP PANNING END---------- */
+
 
     /* -------- PROCESS MAP TOOLTIPS ---------- */
 
-       // set the font size of tooltip depending on process map zoom level
-      function setTooltipFontSize(){
-        var currentZoom = $('.jOrgChart').css('zoom');
-
-        if(currentZoom == 0.75){
-           $('.tooltip').removeClass('smallest');
-           $('.tooltip').removeClass('smaller');
-
-          $('.stepNode').tooltip('destroy');
-
-          createTooltips("smaller");
-      
-        }else if (currentZoom == 0.5){
-          $('.tooltip').removeClass('smaller');
-          $('.tooltip').removeClass('smallest');
-         
-          $('.stepNode').tooltip('destroy');
-
-         createTooltips("smallest");
-        }else{
-          $('.tooltip').removeClass('smaller');
-          $('.tooltip').removeClass('smallest');
-        }
-      }
 
       // set placement of tooltip to bottom if the process map has more than one branch
       // otherwise, set placement of tooltip to bottom
-      function createTooltips(fontSize){
-        // console.log('in create tooltips');
-        // console.log('fontSize: ' + fontSize);
+      function createTooltips(){
+    
+        var process_map_width = $('.jOrgChart table').width();
         var single_branch_width_min = 100;
         var single_branch_width_max = 102;
-        var process_map_width = $('.jOrgChart table').width();
         var single_branch = (process_map_width >= single_branch_width_min && process_map_width <= single_branch_width_max);
 
         var end = $('.stepNode').length;
 
-        if(fontSize==undefined){
-           // place tooltip of all steps besides the add new step div
-            if(single_branch){
-              $('.stepNode').slice(0, end).tooltip({
-                placement: 'right',
-              });
-            }else{
-              $('.stepNode').slice(0, end).tooltip({
-                placement: 'bottom',
-              });
-            }
-        }else if(fontSize == "smaller"){
+         // place tooltip of all steps besides the add new step div
           if(single_branch){
-            $('.stepNode').slice(0, end).tooltip({
-              template: '<div class="tooltip smaller"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
-              placement: 'right'
-            });    
+            $('.stepNode').filter(function(){ return $(this).children('.stepLabel').text().indexOf('...')>0; }).slice(0, end).tooltip({
+              placement: 'right',
+            });
           }else{
-            $('.stepNode').slice(0, end).tooltip({
-              template: '<div class="tooltip smaller"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
-              placement: 'bottom'
-            });    
+            $('.stepNode').filter(function(){ return $(this).children('.stepLabel').text().indexOf('...')>0; }).tooltip({
+              placement: 'bottom',
+            });
           }
-        }else if (fontSize == "smallest"){
-          if(single_branch){
-             $('.stepNode').slice(0, end).tooltip({
-              template: '<div class="tooltip smallest"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
-              placement: 'right'
-            });    
-          }else{
-            $('.stepNode').slice(0, end).tooltip({
-              template: '<div class="tooltip smallest"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
-              placement: 'bottom'
-            });    
-          }
-        }
+          $('.stepNode').filter(function(){ return $(this).children('.stepLabel').text().indexOf('...')<0; }).removeAttr('title');
        }
 
     /* -------- PROCESS MAP TOOLTIPS END ---------- */
 
 
-    $(window).load(function() {
-
-      if(indexMode){
-        highlightStep();
-      }
-
-      // scroll to the new step if we're in the new step mode
-      if(newMode){
-          // scroll to the step in the process map
-          $('#chart').animate({
-            scrollTop: $('.stepNode.newStep').offset().top + $('#chart').scrollTop(),
-            scrollLeft: $('.stepNode.newStep').offset().left + $('#chart').scrollLeft()
-          }, 500);
-      }
+    window.addEventListener('load', function(){
+      // size project page based on browser dimensions
+      // resizeDivs($(window).width(), $(window).height());
 
       // add background image of all steps in the process map to their default image
       var divs = document.getElementsByClassName("stepNode");
       for(var k=0; k< divs.length; k++){
-        if($(divs[k]).data("image") != undefined){
-            $(divs[k]).css("background-image", 'url(' + $(divs[k]).data("image") + ')');
-        }
-      }
-
-      // Reveal zoom icons if the processmap has scrollbars
-      if(!newProject){
-        if( ($('.jOrgChart').get(0).scrollHeight > $('#processMap').height()) || ($('.jOrgChart').get(0).scrollWidth > $('.jOrgChart').get(0).clientWidth)){
-          if(indexMode){
-              $('.zoom-fa fa-group').show().css('display', 'inline-block');
-              $('.zoomInIcon').attr('disabled', true);
-              $('.zoomResetIcon').attr('disabled', true);
-          }
+        var element = $(divs[k]);
+        if(element.data("image") != undefined){
+          // console.log('data-image: ' + element.data('image'));
+          var image_rotation = element.data('rotation')
+          // console.log('data-rotation: ' + image_rotation);
+          if(image_rotation!=undefined){
+            // apply rotated image to step container
+            // console.log('applying rotated image to step container');
+            var node_id = getID(element.attr('class'));
+            // console.log('node_id: ' + node_id);
+            // apply before styling to page
+            $('head').append('<style> .step_'+node_id+':before {background: url("'+element.data('image')+'"); -webkit-transform: rotate(' + image_rotation+'deg); -mozkit-transform: rotate(' + image_rotation+'deg);}</style>');
+            element.addClass('transform');
+          }else{
+            element.css("background-image", 'url(' + $(divs[k]).data("image") + ')');
+          }          
         }
       }
     });
 
-    // Adjust the size of the detailView based on the browser window height
-    $(window).resize(function (){
-      resizeDivs($(window).height());
-    });
-
-    $(window).bind('scroll', function(){
-       resizeDivs($(window).height());
-     });
+// function setProjectName
+// adds project name to process map
+function setProjectName(){
+    if(indexMode && $('#projectNameNode').length==0){
+    $('.jOrgChart').first().prepend('<div id="projectNameNode"><%=@project.title%></div>');  
+    if($('.stepNode').length>0){
+        var projectNamePosition = $('.stepNode').first().offset().left-$('.stepNode').outerWidth()- ($('#projectNameNode').outerWidth() - $('.stepNode').outerWidth())/2 - $('#chart').position().left-3;
+        // console.log('projectNamePosition: ' + projectNamePosition);
+        $('#projectNameNode').css('margin-left', projectNamePosition);
+      }else{
+        $('#projectNameNode').hide();
+        $('#projectTitleBar .fa').hide();
+      }
+  }
+}
 
 
 $(document).ready(function(){
 
-  loadProcessMap();
+  if(parseInt("<%=@project.steps.length%>")>0){
+    newStepParentID = "<%=@parentID%>";  
+    loadProcessMap();  
+  }
 
-    /* -------- ------ DetailView Stuff -------------- */      
-
-  $('.detailViewHandle').click(function(){
-    if($('.detailViewHandle').children('.fa-chevron-right').length > 0){
-       hideDetailView();          
-    }else{
-      expandDetailView();           
-    }
-  });
+  setProjectName();
 
   /* -------- ------ DetailView Stuff End -------------- */   
 
+  /* -------- PROCESS MAP LABELS --------- */
+    $('.stepNode.branch_label').each(function(){
+      $(this).children('.stepLabel').css('background', $(this).attr('data-label-color'));
+      if(authorLoggedIn=="false"){
+        $(this).addClass('noHighlight');
+      }
+    });
+
+  /* -------- PROCESS MAP LABELS END---------- */
+
   /* -------- PROCESS MAP REORDERING ---------- */
 
-        // User starts dragging out add new step block
-        $('.newStep').hover(function(){
-          $('.stepNode').draggable('enable');
-        },
-        function(){
-          $('.stepNode').draggable("disable");
-        });
+      // User starts dragging out add new step block
 
-        $('.newStep').mousedown(function(){
-          $('.stepNode').draggable('enable');
-          $('.reorderIcon').addClass("active");
-        });
+      if($('#mobileProcessMap').length == 0){
+         $('.newStep').hover(function(){
+            $('.stepNode').draggable('enable');
+          },
+          function(){
+            $('.stepNode').draggable("disable");
+          });
+      }
 
-        $('.stepNode.newStep').bind("dragstart", function handleDragStart( event, ui ){
-          resetZoom();
-        });
+      $('.newStep').mousedown(function(){
+        $('.stepNode').draggable('enable');
+      });
 
-        $('.newStep').mouseup(function(){
-          $('.reorderIcon').removeClass("active");
-        });
+      // undo button clicked - undo reordering of the process map
+      $('.undoIcon').click(function(){
+        if(!$(this).hasClass('disabled')){
+          undoOrdering();
+        }
+      });
 
-        // undo button clicked - undo reordering of the process map
-        $('.undoIcon').click(function(){
-          if(!$(this).hasClass('disabled')){
-            undoOrdering();
-          }
-        });
-
-        // Edit Process Map Ordering
-        $('.reorderIcon').click(function(){
-          if (!reorderMode){
-            turnOnReorder();
-          }
-          else{
-            turnOffReorder();
-          }
-        });
-
-        if(parseInt("<%=@project.steps.count %>") < 2 ){
+      // Edit Process Map Ordering
+      $('.reorderIcon').click(function(){
+        if (!reorderMode){
+          turnOnReorder();
+        }
+        else{
           turnOffReorder();
         }
+      });
+
+      if(parseInt("<%=@project.steps.count %>") < 3 ){
+        turnOffReorder();
+      }
 
 
   /* -------- PROCESS MAP REORDERING END---------- */
@@ -723,58 +546,33 @@ $(document).ready(function(){
     window.open('<%=help_path%>');
   });
 
-  /* -------- PROCESS MAP ZOOMING IN / OUT ---------- */
+  createTooltips(); 
 
-        createTooltips(); 
-
-        // zoom in icon clicked - zoom in by 25%
-        $('.zoomInIcon').click(function(){
-            zoomIn();
-        });
-
-      // zoom out icon clicked - zoom out by 25%;
-      $('.zoomOutIcon').click(function(){
-          zoomOut();
-      });
-
-      // zoom reset icon clicked - return to zoom of 1;
-      $('.zoomResetIcon').click(function(){
-          resetZoom();
-      });
-
-    /* -------- PROCESS MAP ZOOMING IN / OUT END ---------- */
-
-});
+});  // end document load
 
  $(window).bind("refresh", function(){
-    console.log('refresh');
+    reorderMode = false;
+    setProcessMapSize();
+    setProjectName();
 
-    resizeDivs($(window).height());
+    // ensure label has the correct label styling when dropped
+    if(newMode && is_branch_label){
+      $('.stepNode.newStep').addClass('branch_label');
+      $('.stepNode.newStep').removeClass('short');
+    }
 
-     $('.jOrgChart').css('zoom', zoomLevel);
-
-     if($('.jOrgChart').css('zoom')<=labelThreshold){
-        // hide step labels if they're below the labelthreshold
-        $('.stepLabel').hide();
-        $('.stepNode.newStep .stepLabel').show();
-      }
-
-    $('.reorderIcon').removeClass("active");
-    $('#reorderInstructions').hide();
-
-    $('.stepNode.newStep').bind("dragstart", function handleDragStart( event, ui ){
-        resetZoom();
+    // reapply background colors to label
+    $('.stepNode.branch_label').each(function(){
+      $(this).children('.stepLabel').css('background', $(this).attr('data-label-color'));
     });
 
-    firstStepID = $('#org li:first').attr("class");
+    $('#reorderInstructions').hide();
 
-    if(newMode){
-      $('.stepNode:not(.newStep)').draggable('disable');
-    }
+    firstStepID = $('#org li:first').attr("class");
     
     authorLoggedIn = "<%=@authorLoggedIn%>";
 
-    if(authorLoggedIn=="true" && !newMode){
+    if(<%=@authorLoggedIn%> == true && indexMode){
       $('.stepNode').hover(function(){
         // console.log('enabling stepNode draggable');
         $('.stepNode').draggable('enable');
@@ -782,202 +580,194 @@ $(document).ready(function(){
       function(){
         $('.stepNode').draggable("disable");
       });
+    }else if(newMode){
+      $('.stepNode').not('.newStep').draggable("disable");
     }
 
-    // Jump to a step from the process map
-    $('.stepNode').click(function(){
-        console.log("in stepNode click");
-        var element = $(this);
-        if(!$(this).hasClass("newStep")){
-          if($('.detailViewHandle .fa-chevron-left').length > 0){
-            expandDetailView();  
-          }
-          $('.processBlog').promise().done(function(){
-             var stepID = getID(element.attr('class'));
-            goToStep(stepID);
-            currentStep = stepID;
-            makeCurrentStep($(".stepNode." + stepID));
-          });
-         
-        }
-    });
-
-    var mouseInProgressMap = false;
-    $('#processMap').hover(function(){
-         mouseInProgressMap = true;
-      }, function(){
-        mouseInProgressMap = false;
-    });
-
-    // Activated when user scrolls in the stepDetailView area and highlights the corresponding step that is in focus in the stepDetailView
-    $('.processBlog').scroll(function(e) {
-      if(indexMode && !mouseInProgressMap){       
-         highlightStep();
+    $('.branch_label').hover(function(){
+      if(<%=@authorLoggedIn %> == true ){
+        // console.log('changing to pointer');
+        $(this).css('cursor', 'pointer');
+      }
+    },function(){
+      if(<%=@authorLoggedIn%> == true ){
+        $(this).css('cursor', 'default');
       }
     });
 
-    // change border of step box to white if user hovers over step, set background of box to default image
-    $('.stepNode').hover(function(){
-        var onCurrentStep = parseInt(currentStep)==parseInt(getID($(this).attr('class')));
-        if($(this).hasClass("newStep")){
-             $(this).css("border", "3px dotted #FFF");
-             $(this).css("background-color", "#58D3F7");
-        }
-        }, function(){
-          var onCurrentStep = parseInt(currentStep)==parseInt(getID($(this).attr('class')));
-          if($(this).hasClass("newStep")){
-             $(this).css("border", "3px dotted #CCC");
-             $(this).css("background-color", "#CEECF5");
-          }
+    if($('#mobileProcessMap').length>0){
+        $('.stepNode').draggable('disable');
+    }
+ 
+    // Jump to a step from the process map
+    $('.stepNode').click(function(){
+      $('#processMapInstructions').hide();
+      $('#projectTitleBar').removeClass('overview');
+
+      // stop all videos
+      if(getCurrentStep().length > 0){
+       reset_videos($('.mainPhoto.' + getID(getCurrentStep().attr('class')))); 
+      }else{
+        // console.log('resetting project images carousel');
+        reset_videos($('.projectImages.carousel')); 
+      }
+      
+      var stepID = getID($(this).attr('class'));
+      clickedStep = stepID;
+      
+      $('.stepInfo').slideDown();  
+       if($(this).find('.stepLabel').hasClass('branchStepLabel') == false || ($(this).find('.stepLabel').hasClass('branchStepLabel') && authorLoggedIn=="true")){
+        $('.detailView').hide();
+        $('#step_'+stepID).fadeIn();      
+        $('#projectTitleBar').fadeIn();
+        $('#projectInfoContainer').hide();
+
+        // set the name of the step to the title bar
+        var stepName = $('#step_'+stepID).find('.detailViewStepName').text().trim();
+        // console.log('stepName: ' + stepName);
+        $('#projectTitleBar .stepName').show().html(' >> ' + stepName);
+      }
+
+      // highlight step in process map
+      makeCurrentStep($(this));
+      
+      
+      $('.fa-angle-double-down').addClass('fa-angle-double-up').removeClass('fa-angle-double-down');
+      minimized = false;
+      currentStep = parseInt(stepID);
+      if($('#mobileProcessMap').length == 0 && indexMode){
+        navArrowVisibility();  
+      }
+
+      // mobile process map specific stuff
+      if($('#mobileProcessMap').length > 0){
+          $('.stepNode').draggable('enable');
+
+          $("body").bind('tap', function(e) {
+             if ($(e.target).closest('.stepNode').length) { 
+              } else { 
+                // user tapped on background - remove focus on selected step
+                makeCurrentStep();
+                $('.stepNode').css('opacity', 1.0);
+            }
+          });
+      }
+
+
     });
+
+
+    // jump to project description
+    $('.projectName').click(function(event){
+      showProjectInfo();
+    });
+
+    $('#projectNameNode').click(function(){
+      showProjectInfo();
+      reset_videos($('.mainPhoto.' + getID(getCurrentStep().attr('class')))); 
+    })
+
+    $('.fa.toggle').click(function(e){
+        // console.log('clicked projectTitleBar with minimized ' + minimized);
+        if(minimized){
+          // show
+          showInfo();
+          minimized = false;
+        }else{
+          // hide
+          hideInfo();
+          minimized = true;
+        }
+        navArrowVisibility();
+        e.stopImmediatePropagation();
+   });
+
+    $('.fa-angle-left').click(function(){
+      // return to previous step
+      if(currentStep != stepIDs[0] && currentStep){
+        var currentStepIndex = stepIDs.indexOf(currentStep);
+        var prevStepID = stepIDs[currentStepIndex-1];
+        $('.stepNode.'+prevStepID).click();
+        // lazy load
+        lazyContainer($('#carousel-'+prevStepID));
+      }else if(currentStep == stepIDs[0]){
+        showProjectInfo();
+        currentStep = "";
+      }else{
+        // console.log('going to last step');
+        $('.stepNode.' + stepIDs[stepIDs.length-1]).click();
+      }
+      navArrowVisibility();
+    });
+
+    $('.fa-angle-right').click(function(){
+      // console.log('clicked right');
+
+      // go to next step
+      if(currentStep){
+          var currentStepIndex = stepIDs.indexOf(currentStep);
+          var nextStepID = stepIDs[currentStepIndex+1];
+          // console.log('nextStepID: ' + nextStepID);
+          $('.stepNode.'+nextStepID).click();
+          // lazy load
+          lazyContainer($('#carousel-'+nextStepID));
+          if(nextStepID == stepIDs[stepIDs.length-1]){
+            $('#projectTitleBar .fa-angle-right').css('visibility', 'hidden');
+          }
+      }else{
+        $('.stepNode.'+stepIDs[0]).click();
+        // console.log('nextStepID: ' + stepIDs[0]);
+      }
+      navArrowVisibility();
+    });
+
+
+    $('#processMap').hover(function(){
+      // console.log('hovering in processmap');
+         mouseInProcessMap = true;
+         if(indexMode){
+          $('.stepNode').fadeTo('fast', 1.0); 
+         }
+      }, function(){
+        mouseInProcessMap = false;
+        if($('.currentStepNode').length> 0 && indexMode){
+          $('.stepNode:not(.currentStepNode):not(.branch_label)').fadeTo('fast', 0.5);  
+        }
+    });
+
 
     // add question marker to steps that have questions
     $('.stepNode.question').each(function(){
       $(this).append('<div class="vert-ribbon"><div class="container"><div class="base">?</div><div class="left_corner"></div><div class="right_corner"></div></div></div>');
     });
 
-});
+    // add pin marker to steps that have pins
+    $('.stepNode.pin').each(function(){
+      var pin_type = $(this).attr('data-pin');
+      var pin_class = PIN_TYPES[pin_type];
+      // console.log('pin_type : ' + pin_type);
+      $(this).append("<div class=pin><icon class='fa fa-" + pin_class +  "'</div>")
+    });
+
+    if(parseInt("<%=@steps.length%>")>=3){
+      $('.reorderIcon').attr('disabled', false);  
+    }else{
+      $('.reorderIcon').attr('disabled', true);  
+    }
+    $('.reorderIcon').removeClass("active");  
+    
+}); // end window refresh
 
  /* -------- PAGE SCROLLING - SCROLL TO STEP, COMMENT ---------- */
 
-var maxShimHeight; // used to store the maximum shim height to determine if we're already on the last step in the stepdetailview
-
-   // Scroll to the correct step when its corresponding node is clicked in the process map
-    function goToStep(id){
-        // if we're on the index page, scroll to the right step
-        if(indexMode){
-          // don't scroll if user has selected the last step and we're already on it
-          if(id != getClassID('step', $('.detailView').last().attr('id')) || maxShimHeight == undefined ){
-              $('.shim').css('height', 0);
-              maxShimHeight = undefined;
-               if($('.detailViewHandle .fa-chevron-left').length> 0){
-                 expandDetailView();
-                }
-              var maxProcessBlogHeight = $('.processBlog')[0].scrollHeight - $('.processBlog').height();
-              console.log('maxProcessBlogHeight: ' + maxProcessBlogHeight);
-              var scrollPosition = $('#step_'+id).position().top + $('.processBlog').scrollTop();
-              console.log('scrollPosition: ' + scrollPosition);
-              console.log('maxProcessBlogHeight: ' + maxProcessBlogHeight);
-              
-              if(scrollPosition > maxProcessBlogHeight){
-                console.log('exceeded height of processBlog, adding shim');
-                
-                if(maxProcessBlogHeight>0){
-                  $('.shim').css('height', Math.abs(maxProcessBlogHeight-scrollPosition));  
-                }else{
-                  $('.shim').css('height', Math.abs($('.stepDetailView').height()+scrollPosition));  
-                }
-
-                console.log('shim height: ' + $('.shim').height());               
-                
-                if(id == getClassID('step', $('.detailView').last().attr('id'))){
-                  maxShimHeight = Math.abs(maxProcessBlogHeight-scrollPosition);
-                  console.log('maxShimHeight: '+maxShimHeight);
-                }
-              }else{
-                $('.shim').css('height', 0);
-              }
-
-              console.log('step id: '+id);
-              var scrollPosition = $('#step_'+id).position().top + $('.processBlog').scrollTop();
-              console.log('scrollPosition: ' + scrollPosition);
-              $('.processBlog').animate({
-                scrollTop: scrollPosition
-              }, 100);
-          }
-        }
-        else if(editMode){
-          // if we're on the edit page, open up the link to the edit page for that step
-        var project = <%=@project.id %>;
-        $.ajax({
-          url: "/projects/"+project+"/steps/edit_redirect",
-          type: 'GET',
-          data: {stepID: id},
-          success: function(data, status, xhr){
-            if(data.indexOf("window.location")==-1){            
-              console.log('creating modal');
-              $('#editing_conflict_modal .modal-body').append('User <strong>' + data+'</strong> is currently editing this step.  Are you sure you want to continue?');
-              $('#editing_conflict_modal').modal('show');
-            }
-          }
-         });
-      }
-      else if(showMode){
-        $.ajax({
-          url: "/projects/<%=@project.id%>/steps/show_redirect",
-          type: 'GET',
-          data: {stepID: id} 
-         });
-      }
-    }
-
-   // Scroll to the correct step when its corresponding node is clicked in the process map
-   // step_id: id of the step the comment belongs to
-   // comment_id: id of the comment being scrolled to
-
   function goToStepComment(step_id, comment_id){
-
-    $('.shim').css('height', 0);
-    
-    maxShimHeight = undefined;
-     if($('.detailViewHandle .fa-chevron-left').length> 0){
-       expandDetailView();
-      }
-    
-    var maxProcessBlogHeight = $('.processBlog')[0].scrollHeight - $('.processBlog').height();
-
-    if($('#step_'+step_id+" .ui-accordion-header").attr('aria-selected')=='false'){
-        // activate accordion
-        $('#step_'+step_id+" .accordion").accordion('option', 'active', 0); // activate accordion
-
-        // scroll to comment
-        $('#step_'+step_id+" .accordion").on("accordionactivate", function(event, ui){
-          var comment_top = $('#comment_'+comment_id).position().top;
-          var scrollPosition = comment_top + $('.processBlog').scrollTop() + $('#step_'+step_id).position().top;
-          
-          // adjust shim height of necessary
-          if(scrollPosition > maxProcessBlogHeight){
-    
-            if(maxProcessBlogHeight>0){
-              $('.shim').css('height', Math.abs(maxProcessBlogHeight-scrollPosition));  
-            }else{
-              $('.shim').css('height', Math.abs($('.processBlog').height()+scrollPosition));
-            }
-          }
-
-          $('.processBlog').animate({scrollTop: scrollPosition}, 100);
-          // highlight the correct comment (and stop highlighting any other ones)
-          $('.stepComment').not('#comment_'+comment_id).stop();
-          $('.stepComment').not('#comment_'+comment_id).css('background-color', 'rgba(230, 230, 230, 0)');
-          $("#comment_"+comment_id).animateHighlight("#E6E6E6", 5000);
-        });
-    }else{
-      // scroll to comment
-      var comment_top = $('#comment_'+comment_id).position().top;
-      var scrollPosition = comment_top + $('.processBlog').scrollTop() + $('#step_'+step_id).position().top;
-
-      // adjust shim height of necessary
-      if(scrollPosition > maxProcessBlogHeight){
-          if(maxProcessBlogHeight>0){
-              $('.shim').css('height', Math.abs(maxProcessBlogHeight-scrollPosition));  
-          }else{
-              $('.shim').css('height', Math.abs($('.processBlog').height()+scrollPosition));  
-          }
-      }
-
-      $('.processBlog').animate({scrollTop: scrollPosition}, 100);
-      $('.stepComment').not('#comment_'+comment_id).stop();
-      $('.stepComment').not('#comment_'+comment_id).css('background-color', 'rgba(230, 230, 230, 0)');
-      $("#comment_"+comment_id).animateHighlight("#E6E6E6", 5000);
-    }
+     $('.stepNode.step_'+step_id).click();
+     $(':animated').promise().done(function(){
+           // scroll to comment
+          $("#comment_"+comment_id).animateHighlight("#E6E6E6", 5000);  
+          $('.stepDetailView').animate({scrollTop: $('#comment_'+comment_id).position().top});
+     });
   }
-
-  $('.processBlog').bind('scroll', function(){
-    if($(this).is(':hover') && $(this).scrollTop() == 0){
-        $('.shim').css('height', 0);  
-    }
-  });
-
 
 
 </script>

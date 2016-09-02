@@ -1,0 +1,88 @@
+<% if current_user.projects.count == 1 %>
+  <div class="modal hide fade" role="dialog" aria-hidden="true" id="welcomeModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" style="text-align: center;">Welcome to <%= ENV["APP_NAME"] %></h3>
+        </div>
+        <div class="modal-body">
+            <div>
+                <div class="about_container">
+                  <%= image_tag("about/process.png") %>
+                  <h5>Process Over Product</h5>
+                  <p class="about_description">Share the development of your project as you're building it, including both what worked and what didn't work.</p>
+                </div>
+
+                <div class="about_container" style="width: 35%;">
+                  <%= image_tag("about/stories.png") %>
+                  <h5>Stories, Not Instructions</h5>
+                  <p class="about_description"><%= ENV["APP_NAME"] %> is not about creating instructions. It's about sharing the journey of how you created your design.</p>
+                </div>
+
+                <div class="about_container" style="margin-left: -14px;">
+                  <%= image_tag("about/remixes.png") %>
+                  <h5>Remix and Mod</h5>
+                  <p class="about_description">If you're inspired by another project on the site, build off it by remixing it. Personalize it, and share what you modify!</p>
+                </div>
+            </div>
+            <div style="clear: both;"></div>
+            <p style="color: #717171; text-align: center; margin-top: 10px;">Hover over the icons to learn more!</p>
+            <hr style="margin: 10px 0px">
+          <p style="font-size:14px; text-align: center;">Click <b><span style="color: rgb(0, 108, 204);">Start</span></b> to begin your first project!</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" aria-hidden="true" data-dismiss="modal" id="startTour">Start</button>
+        </div>
+      </div>
+  </div>
+<% end %>
+
+  <script type="text/javascript">
+
+$('#startTour, .tourIcon').click(function() {
+  $('.addStepIcon').tooltip('hide');  
+  $('.addStepIcon').attr('data-original-title', 'Add a step');
+  
+  var tour = new Tour({
+    storage: false, 
+    template:  "<div class='popover tour'><div class='arrow'></div><h3 class='popover-title'></h3><div class='popover-content'></div><div class='popover-navigation'><button class='btn btn-default endButton' data-role='end'>Close</button><button class='btn btn-default closeButton' data-role='prev'>« Prev</button><span data-role='separator'> </span><button class='btn btn-primary nextButton' data-role='next'>Next »</button></div></nav></div>",
+    onNext: function(tour){
+      $('.addStepIcon').attr('data-original-title', 'Add a step');
+    },
+    onEnd: function(){
+      console.log('adding tooltip');
+      $('.addStepIcon').attr('title', 'Click + to add your first step').tooltip('fixTitle').tooltip('show');
+    }
+  });
+
+  tour.addSteps([
+    {
+      element: "#projectName",
+      title: "Add a title",
+      content: "First, add a title for your project.",
+      placement: "left"
+    },
+    {
+      element: ".project_description",
+      title: "Add a project description",
+      content: "Next, add a description of your project.",
+      placement: "left"
+    },
+    {
+      element: ".addStepIcon",
+      title: "Add a step",
+      content: "Click the <b>+</b> button to add your first step.",
+      placement: "right"
+    }
+  ]);
+
+  tour.init();
+  tour.start();
+});
+
+$(window).load(function(){
+  if(<%=current_user.projects.count == 1 %> == true){
+    $('.addStepIcon').tooltip('hide');  
+  }
+  $('#welcomeModal').modal({backdrop:false});
+});
+  </script>

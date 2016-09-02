@@ -1,0 +1,27 @@
+<div class="fullRow" style="width:940px" class="search_results">
+  <div class="projectPage">
+
+  	<div style="padding:10px"></div>
+
+    <div class="searchContentTypeBar">
+    	<div class="row">
+    		<%= link_to raw('<div class="span1 searchContentType"><h6>Projects ('+@project_count+')</h6></div>'), search_path(:search => @search_term, :search_object => "project") %>
+    		<%= link_to raw('<div class="span1 searchContentType"><h6>Collections ('+@collection_count+')</h6></div>'), search_path(:search => @search_term, :search_object => "collection") %>
+    		<%= link_to raw('<div class="span1 searchContentType selected"><h6>Users ('+@user_count+')</h6></div>'), search_path(:search => @search_term, :search_object => "user") %>
+    		<div class="searchTerms">
+    			<h5>Search results for "<%= @search_term %>"</h5>
+       	</div>
+    	</div>
+    </div>
+
+	<div id="ExpProjects" style="width: 100%;">
+	  <% if !@users.nil? %>
+      <%= render :partial => "users/search_user", :collection => @users, as: :user %>
+	  <% else %>
+		  <div class="empty_search">
+		    There are no users that match your search...yet!
+		  </div>
+	  <% end %>
+	</div>
+  </div>
+</div>

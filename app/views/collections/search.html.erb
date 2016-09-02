@@ -1,0 +1,52 @@
+<div class="fullRow" style="width:940px" class="search_results">
+  <div class="projectPage">
+
+  	<div style="padding:10px"></div>
+
+    <div class="searchContentTypeBar">
+    	<div class="row">
+    		<%= link_to raw('<div class="span1 searchContentType"><h6>Projects ('+@project_count+')</h6></div>'), search_path(:search => @search_term, :search_object => "project") %>
+    		<%= link_to raw('<div class="span1 searchContentType selected"><h6>Collections ('+@collection_count+')</h6></div>'), search_path(:search => @search_term, :search_object => "collection") %>
+    		<%= link_to raw('<div class="span1 searchContentType"><h6>Users ('+@user_count+')</h6></div>'), search_path(:search => @search_term, :search_object => "user") %>
+    		<div class="searchTerms">
+    			<h5>Search results for "<%= @search_term %>"</h5>
+       	</div>
+    	</div>
+    </div>
+
+<!--Apply Project Filters-->
+    <% if !params[:type].blank?  %>
+      <% collection_type = params[:type] %>
+    <% else %>
+      <% collection_type = "All Collections" %>
+    <% end %>
+
+    <% if !params[:search].blank?  %>
+      <% collection_search = params[:search] %>
+    <% else %>
+      <% collection_search = "" %>
+    <% end %>
+
+	<div id="ExpProjects" style="width: 100%;">
+	  <% if !@collections.nil? && @collections.count > 0 %>
+      <%= render :partial => "collections/search_collection", :collection => @collections, as: :collection  %>
+	  <% else %>
+		  <div class="empty_search">
+		    There are no collections that match your search...yet!
+		  </div>
+	  <% end %>
+	</div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    // console.log("<%=collection_type%>");
+    // highlight collection type filter in dropdown
+    if("<%=collection_type%>"=="All Collections"){
+      $('li.all_collections').css("background-color", "#E0F2FD");
+    } else if ("<%=collection_type%>"=="Challenges"){
+      $('li.challenges').css("background-color", "#E0F2FD");
+    }
+  });
+</script>

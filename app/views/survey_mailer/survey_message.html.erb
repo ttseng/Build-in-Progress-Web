@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <style type='text/css'>
+    body{
+      font-family: 'helvetica';
+      font-size: 13px;
+    }
+    table{
+      width: 610px;
+    }
+    table p{
+      margin: 20px;
+      color: #565656;
+    }
+    .heading{
+      width: 100%;
+      height: 24px;
+      padding: 3px;
+      background-color: #A9E2F3;
+    }
+    .survey_header{
+      margin-left: 10px;
+    }
+    a{
+      color: #08C;
+      text-decoration:none;
+      font-weight: bold;
+    }
+    .survey_img{
+      width: 490px;
+      display: block;
+      margin: auto;
+    }
+    </style>
+  </head>
+
+  <table style="background: #A9E2F3">
+     <tr>
+        <td class="heading">
+           <%= image_tag("survey_header.png", :class=>"survey_header") %>
+         </td>
+       </tr>
+       <tr>
+  </table>
+
+   <table style="border: 1px solid #DEDEDE">
+        <tr>
+          <td>
+            <p>
+              Hi, <%=@user.username%>.
+            </p>
+            <p>
+               This is a final call to fill out the <a href="buildinprogress.media.mit.edu">Build in Progress</a> survey.</p>
+            <p>
+               Thanks in advance for your feedback.  If you have already filled out the survey, please ignore this email.
+             </p>           
+            <p style="background: #f8f8f8; margin-left: -1px; margin-right: -1px;">
+              <%= link_to image_tag("survey.png", :class=>"survey_img"), "https://docs.google.com/forms/d/1ECSPfTgdGXdzMqy7Njvkr-KxSlqLUMVCpnpkzrOzZd4/viewform" %>
+            </p>
+          </td>
+       </tr>
+    </table>
+
+  <body>

@@ -22,9 +22,9 @@
 <% all_images.each_with_index do |image, index| %>
   <% description = "" %>  
   <% if image.project.description %>
-    <% description = image.project.description %>
+    <% description = image.project.description.squish %>
   <% elsif image.project.steps.order(:position).first.description %>
-    <% description = image.project.steps.order(:position).first.description %>
+    <% description = image.project.steps.order(:position).first.description.squish %>
   <% end %>
 
   <% active = "" %> <%# stores whether or not image is active or first in carousel %>
@@ -44,6 +44,13 @@
     $('.thumbGallery.featureSlides').append("<%= j render :partial=> 'images/home_thumb_image', :locals=> {:image=>image, :step_id=>image.id, :index=> index} %>");         
     </script>
 
+<% end %>
+
+<% if all_images.length == 0 %>
+  <script type="text/javascript">
+    $('.carousel-control').hide();
+    $('.carousel-inner').append("<p style='margin-top:190px; color: #888; font-size: 30px;'><i>Featured Projects Will Go Here</i></p>");
+  </script>
 <% end %>
 
 <script>

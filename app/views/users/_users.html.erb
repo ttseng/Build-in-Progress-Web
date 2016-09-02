@@ -1,9 +1,9 @@
 <div class ="userFollowDisplay row span4" >
 	<div class="userFollowAvatar span2">  
 	    <% if user.avatar.length > 0 %>
-	        <%= link_to image_tag(user.avatar_url(:thumb), :class=>"avatar img-polaroid"), user_path(user) %>
+	        <%= link_to image_tag(user.avatar_url(:thumb), :class=>"avatar img-rounded"), user_path(user) %>
 	    <% else %>
-	        <%= link_to image_tag("default_avatar.png", :class=>"avatar img-polaroid"), user_path(user) %>
+	        <%= link_to image_tag("default_avatar.png", :class=>"avatar img-rounded"), user_path(user) %>
 	    <% end %>
 	</div>
 	<div class="followerText span2">

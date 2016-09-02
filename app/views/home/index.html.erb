@@ -1,67 +1,100 @@
-<div class="fullRow" style="width:940px; margin-top: 70px">
+<% title ENV["APP_NAME"] %>
+
+<div class="fullRow home" style="width:940px;">
 
     <div class="hero-unit">
-        <h1>Build in Progress</h1>
-        <p style="font-size: 14px">Build in Progress lets you share what you build as you’re building it.</p>
+        <h1><%= ENV["APP_NAME"] %></h1>
         <br>
-        <p><%= link_to 'Create a Project', new_project_path, :class=> "btn btn-info btn-large"%> </p>
+        <div style="margin-top: 25px;">
+            <%= link_to 'Create a Project', new_project_path, :class=> "btn btn-info btn-large"%> 
+        </div>
     </div>
+    
+    <% # update to collection_path(@challenge) %>
 
     <% if @latestNews && (@latestNews.id != cookies.signed[:hidden_announcement_id].to_i) %>
         <div class="news_announcement homeSection">
-            <div class="titleContainer announcementContainer">
-                <p class="updateTitle announcementTitle">Announcements</p>
-            </div>
             <div class= "announcementContent">
-                <icon class="fa fa-bullhorn"></icon> <span class="news_title"><%= link_to @latestNews.name, news_path %> </span> <br>
-                <p><%= link_to "Learn more", news_path, :class=>"announcement_link" %>  
-                    <% if user_signed_in? %> 
-                    |  <%= link_to "Hide", hide_announcement_path(@latestNews.id), :class=>"announcement_link", remote: true %> </p>
-                    <% end %>
+                <span class="announcementTitle">
+                    <icon class="fa fa-bullhorn"></icon> <span class="news_title"><%= link_to @latestNews.title, news_path %> </span>
+                </span>
+                <% if @latestNews.description %>
+                    <span style="margin-left: 10px;" class="announcementDescription"><%= @latestNews.description.html_safe %></span> 
+                <% end %>
             </div>
+            <div class="announcement_links">
+                <%= link_to "Learn More", news_path, :class=>"announcement_link" %>  
+                <% if user_signed_in? %> 
+                  <%= link_to "Hide", hide_announcement_path(@latestNews.id), :class=>"announcement_link", remote: true %> </p>
+                <% end %>
+            </div>
+   
         </div>
     <% end %>
 
-    <% if @featuredProjects.count > 0 %>
-        <%= render :partial => 'images/home_image_gallery' %>
-    <% end %>
+    <div class="featured_projects">
+            <%= render :partial => 'images/home_image_gallery' %>
+    </div>
+
+    <div class="homeSection quarter">
+
+        <% if @community_activity_array.length > 0 %>
+            <div class="activity">
+                <span class="label" style="margin-bottom: 10px">Recent Questions</span><% if @community_activity_array.length >1 %><icon class="fa fa-refresh"></icon><% end %>
+                <div class="activity_content"></div>
+                <div class="byline"></div>
+            </div>
+            <hr>
+        <% end %>
+
+        <p class="label label-info"><%= ENV["APP_NAME"] %> News</p>
+        <p class="view_all_link" style="margin-right: auto;"><%= link_to "View All", news_path %></p>
+        <%= render :partial => "home/short_news" %>
+    </div>
 
     <% if user_signed_in? %>
-        <div class="latestActivities homeSection">
-            <div class="titleContainer">
-                <p class="updateTitle">Activity Feed</p>
-                <% if @activities.length != 0 %>
-                    <p class="view_all_link"><%= link_to "View All", activity_feed_index_path %></p>
-                <% end %>
-            </div>
-            <div class="home_activities">
-                <% if @activities.length != 0 %>
-                    <% #list the last 4 news items %>
-                    <% @activities.each_with_index do |activity, index|%>
-                        <% if activity.trackable != nil && activity.trackable_id != @activities[index-1].trackable_id %>
-                            <% unless (render_activity activity).blank? %>
-                                <div class="activity_feed_activity">
-                                    <%= render_activity activity %>
-                                </div>
-                                <hr>
-                            <% end %>
+    <div class="latestActivities homeSection">
+        <p class="label label-info">Your Activity Feed</p>
+        <% if @activities.length != 0 %>
+            <p class="view_all_link"><%= link_to "View All", activity_feed_index_path %></p>
+        <% end %>
+
+        <div class="home_activities" style="margin-top: 20px;">
+            <% if @activities.length != 0 %>
+                <% #list the last 4 news items %>
+                <% @activities.first(5).each_with_index do |activity, index|%>
+                    <% if activity.trackable != nil  %>
+                        <% unless (render_activity activity).blank? || activity.is_private? %>
+                            <div class="activity_feed_activity">
+                                <%= render_activity activity %>
+                            </div>
+                            <hr>
                         <% end %>
                     <% end %>
-                <% else %>
-                    <p id="no_activity">You have no items in your activity feed... yet!</p>
                 <% end %>
-            </div>
+            <% else %>
+                <% if current_user.following_users.count == 0 %>
+                    <p id="no_activity">You have no items in your activity feed... yet!<br>
+                        Try following someone!
+                    </p>
+                <% else %>
+                    <p id="no_activity">No recent activity.  Tell your friends to come back to <%= ENV["APP_NAME"] %>!</p>
+                <% end %>
+
+            <% end %>
         </div>
+    </div>
     <% end %>
+
     <div class="latestUpdates homeSection">
-        <div class="titleContainer">
-            <p class="updateTitle">Latest Updates</p>
-            <p class="view_all_link"><%= link_to "View All", projects_path %></p>
-        </div>
+        <p class="label label-info ">Latest Updates</p>
+        <p class="view_all_link"><%= link_to "View All Projects", projects_path %></p>
+        <div style="clear: both;"></div>
+
         <div class="updates">
             <% #list the last 3 updated projects %>
             <% @latestProjects.each do |latestProject| %>
-                <%= render :partial => 'projects/projects', :locals => {:project => latestProject, :source=> "home"} %>
+                <%= render :partial => 'projects/home_projects', :locals => {:project => latestProject, :source=> "home"} %>
             <% end %>
         </div>
     </div>
@@ -70,6 +103,48 @@
 
 <script type="text/javascript">
 $('.featureSlides .image').last().css('margin-bottom', '0px');
+var community_activity = <%= raw @community_activity_array.to_json %>;
+// console.log('community_activity: ' + community_activity);
+var activity_index = 0;
+var comments = <%= raw @comments_array.to_json %>;
+
+$(document).ready(function(){
+    cycleContent();
+    
+    $('.fa-refresh').click(function(){
+       cycleContent();
+    });
+});
+
+// pick a random question to display
+function cycleContent(){
+    activity_index++;
+    if(activity_index >= community_activity.length){
+        activity_index = 0;
+    }
+    // console.log('activity_index: ' + activity_index);
+
+    var type = community_activity[activity_index][0];
+    var description = community_activity[activity_index][1].substring(0,150).trim().replace(/(\r\n|\n|\r)/gm," ");
+    var project_title = community_activity[activity_index][2];
+    var project_id = community_activity[activity_index][3];
+    var step_id = community_activity[activity_index][4];
+
+    if(type == "question"){
+        $('.activity').find('.label').removeClass('label-info').addClass('label-warning');
+        $('.activity').find('.label').html('Recent Question');
+    }else if(type == "comment"){
+        $('.activity').find('.label').removeClass('label-warning').addClass('label-info');
+        $('.activity').find('.label').html('Recent Comment');
+    }
+
+    var url = "<%=root_url.sub(/\/$/, '')%>"+"/projects/"+project_id+"/steps?step="+step_id;
+    $('.activity_content').hide().html('<a href=' + url + '>"' + description + '"</a>').fadeIn();
+    // http://0.0.0.0:3000/projects/3/steps?step=69
+    $('.byline').hide().html('from <a href='+url+">"+project_title+"</a>").fadeIn();
+}
+
+
 </script>
 
 

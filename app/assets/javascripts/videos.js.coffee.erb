@@ -19,8 +19,6 @@ jQuery ->
             data.submit()
         else if (size > size_limit)
             alert("Your video is larger than 50 MB and cannot be uploaded.  Please upload to Youtube or Vimeo and embed your video instead.")
-        else
-            alert("#{file.name} is not a supported video format")
     progress: (e, data) ->
         if data.context
             progress = parseInt(data.loaded / data.total * 100, 10)         
@@ -31,5 +29,7 @@ jQuery ->
                     ), 2000
                 $('.placeholder').show();
                 document.getElementById("images").scrollTop = document.getElementById("images").scrollHeight                    
+    error: (jqXHR, textStatus, errorThrown) ->
+        alert("Whoops, look like your video is taking a while to process!  You can save your step – the video will appear when the upload is complete.")
     
 

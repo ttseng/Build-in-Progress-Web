@@ -1,22 +1,25 @@
 <div class="fullRow" style="margin-top:60px">
 	<div class="fullRow">
 		<div class="pwPage">
-		<h2>Change your password</h2>
+			<div class="form_container">
 
-		<%= semantic_form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f| %>
-		  <%= devise_error_messages! %>
-		  <%= f.hidden_field :reset_password_token %>
+				<h3 class="form_heading change_pw">Change your password</h3>
 
-		  <div class="formField"><%= f.label :password, "New password", :class=>"label" %><br />
-		  <%= f.password_field :password, :autofocus => true %></div>
+				<%= semantic_form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f| %>
+				  <%= devise_error_messages! %>
+				  <%= f.hidden_field :reset_password_token %>
 
-		  <div class="formField"><%= f.label :password_confirmation, "Confirm new password", :class=> "label" %><br />
-		  <%= f.password_field :password_confirmation %></div>
+				  <div class="formField"><%= f.label :password, "New password", :class=>"label label-info" %><br />
+				  <%= f.password_field :password, :autofocus => true %></div>
 
-		  <div><%= f.submit "Change my password", :class=>"btn btn-primary" %></div>
-		<% end %>
+				  <div class="formField"><%= f.label :password_confirmation, "Confirm new password", :class=> "label label-info" %><br />
+				  <%= f.password_field :password_confirmation %></div>
 
-		<%= render "devise/shared/links" %>
+				  <div style="margin-top: 10px;"><%= f.submit "Change my password", :class=>"btn btn-info" %></div>
+				<% end %>
+
+				<%= render "devise/shared/links" %>
+			</div>
 
 		</div>
 	</div>

@@ -1,0 +1,63 @@
+  <script type="text/javascript">
+
+    var newProject = parseInt("<%=@project.steps.count %>") == 0; // whether or not the project does not contain any steps
+
+  </script>
+
+    <% #Show Process Map Controls %>
+    <div class="processMapTitleBar">
+      <div class="new_step_instructions"></div>
+      <% if source == "index" %>
+
+      <div class="btn-toolbar processMapTools" role="toolbar">
+        <% if @authorLoggedIn %>
+            <div class="btn-group btn-group-vertical icons processMapButtons">
+
+              <a class="addStepButton">
+
+                <button class="btn addStepIcon" title="add step" data-placement="right"><i class="fa fa-plus"></i></button>
+                <script type="text/javascript">
+                  if(newProject){
+                    if(<%=@authorLoggedIn%> && <%=current_user.projects.count%> > 0){
+                      $('.addStepIcon').attr('title', 'Click + to add your first step');  
+                    }
+                    $('.addStepIcon').tooltip({ 
+                      placement: 'right',
+                      trigger: 'manual'
+                    });
+                    $('.addStepIcon').tooltip('show');
+                    $('.addStepIcon').parent().children('.tooltip').css('left', '38px');
+                    
+                    $('.addStepIcon').hover(function(){
+                      $(this).parent().children('.tooltip').children('.tooltip-inner').css('background-color', '#025099');
+                      $(this).parent().children('.tooltip').children('.tooltip-arrow').css('border-right-color', '#025099');
+                    }, function(){
+                      $(this).parent().children('.tooltip').children('.tooltip-inner').css('background-color', '#045FB4');
+                      $(this).parent().children('.tooltip').children('.tooltip-arrow').css('border-right-color', '#045FB4');
+                    });
+                  }
+                </script>
+              </a>
+
+              <% if @project.steps.count > 0 %>
+
+                <a class="addLabelButton" style="display:block;">
+                   <button class="btn" title="add label" style="border-radius: 0px"><i class="fa fa-font"></i></button>
+                </a>
+                
+              <% end %>
+               
+              <button class="btn reorderIcon" title="reorder steps"><%=image_tag("icons/reorder_icon.png")%></button>
+              
+              <% if @project.steps.count == 0 %>
+                <button class="btn tourIcon" title="start tour"><i class="fa fa-map-signs"></i></button>
+              <% end %>
+              
+              <button class="btn helpIcon" title="help"><i class="fa fa-question"></i></button>
+            </div>
+          <% end %>
+
+          <div id="reorderInstructions" style="display:none">Click and drag a step to reorder</div>
+    </div>
+    <% end %>
+  </div>

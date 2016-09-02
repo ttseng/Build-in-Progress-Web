@@ -20,7 +20,9 @@ class DesignFilesController < ApplicationController
   # POST /design_files
   def create
     if params[:design_file]
-      @designFile = DesignFile.create(params[:design_file])
+      @designFile = DesignFile.new(params[:design_file])
+      authorize! :create, @designFile
+      @designFile.save
     end
   
     # update the corresponding project
@@ -35,6 +37,7 @@ class DesignFilesController < ApplicationController
   # DELETE /design_files/1
   def destroy
     @designFile = DesignFile.find(params[:id])    
+    authorize! :destroy, @designFile
 
     if @designFile.user == current_user
       Rails.logger.debug("destroying design file")

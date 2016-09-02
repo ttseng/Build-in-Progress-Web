@@ -1,0 +1,69 @@
+    <div class="modal hide fade" role="dialog" aria-hidden"true" id="branchesModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" style="text-align: center; font-weight: normal;">Pro Tip: Organize your project into branches!</h3>
+        </div>
+        <div class="modal-body" style="text-align: center; overflow: hidden;">
+          <p>Use branches to organize iterations, different types of steps (such as electronics and fabrication), or different parts of your design process (such as brainstorming and prototyping).</p>
+          <p><b>Click and drag steps to arrange them into branches.</b></p>
+            
+            <div id="optionsCarousel" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+              <li data-target="optionsCarousel" data-slide-to="0" class="active"></li>
+              <li data-target="optionsCarousel" data-slide-to="1"></li>
+            </ol>
+            <div class="carousel-inner" role="listbox">
+              <div class="item active">
+                <%= link_to "http://buildinprogress.media.mit.edu/projects/1341/steps", :target => "blank" do %>
+                  <%= image_tag "branch_example.png", :class => "help_gif", :style=> "margin: 0 auto;" %>
+                <% end %>
+              </div>
+              <div class="item">
+                <div class="gif_container">
+                  <h4 style="text-align:center">Rearrange Steps</h4>
+                  <%= image_tag "help/create_branch.gif", :class => "help_gif", :style=> "margin: 0 auto;" %>
+                </div>
+              </div>
+              <div class="item">
+                <div class="gif_container">
+                  <h4 style="text-align:center">Add a Label</h4>
+                  <%= image_tag "help/create_branch_label.gif", :class => "help_gif", :style=> "margin: 0 auto;" %>
+                </div>
+              </div>              
+            </div>
+
+            <!-- Left and right controls -->
+            <a class="left carousel-control" href="#optionsCarousel" role="button" data-slide="prev" style="top:50%">&lsaquo;</a>
+            <a class="right carousel-control" href="#optionsCarousel" role="button" data-slide="next" style="top:50%">&rsaquo;</a>
+          </div>
+
+        </div><!-- end modal body -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+
+<script type="text/javascript">
+  $(window).load(function(){
+    $('#branchesModal').modal();
+  });
+
+    $('#branchesModal').on('show', function(){
+      $(this).find('.modal-body').css({
+              width:'auto', //probably not needed
+              height:'auto', //probably not needed 
+              'max-height':'100%'
+       });
+    });
+
+</script>
+
+<style>
+  #branchesModal .item{
+    height: 450px;
+  }
+  .item .gif_container{
+    padding-top: 65px;
+  }
+</style>

@@ -1,5 +1,6 @@
 class SoundsController < ApplicationController
 	before_filter :authenticate_user!, except: [:embed_code]
+	
 	def create
 		@project = Project.find(params[:sound][:project_id])
 		@sound = Sound.create(params[:sound])
@@ -22,4 +23,5 @@ class SoundsController < ApplicationController
 			end
 		end
 	end
+	
 end

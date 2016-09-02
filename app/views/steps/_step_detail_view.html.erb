@@ -1,13 +1,24 @@
-<div class="detailView" id="step_<%=step.id%>">
+<% if step.label != true %>
+  <div class="detailView" id="step_<%=step.id%>">
+<% else %>
+  <div class="detailView branchLabel" id="step_<%=step.id%>" style="background-color: <%=step.label_color%>">
+<% end %>
+
+
+<div class="stepInfo" id="stepInfo_<%=step.id%>">
     
     <% if step.images.count > 0 %>
       <%= render :partial => 'images/step_image_gallery', :locals => {:step=> step, :source=>"index"} %>
     <% end %>
 
-    <div class="detailViewStepName">
-      <p class="name">
-      <%= link_to step.name, project_step_path(@project, step) %>
-      </p>
+    <% if step.label != true %>
+      <div class="detailViewStepName">
+    <% else %>
+      <div class="detailViewStepName labelName">
+    <% end %>
+
+    <%= link_to step.name, project_steps_url(@project, :step=>step.id), :class=>"name" %>
+
     </div>
 
     <% if @authorLoggedIn %>
@@ -15,10 +26,11 @@
     <% end %>  
     <% if step.images.count == 0 %>
       <script type="text/javascript">
-        $('.editButton:last').css('top', '7px');
+        $('.editButton:last').css('top', '12px');
       </script>
     <% end %>
 
+    <% if step.label != true %>
       <div class="detailViewText">
         <% if step.description.blank? && @project.users.include?(current_user)%>
             <p class = "emptyStepDescription">
@@ -82,12 +94,18 @@
         <div class="clear"></div>
         <div class="ribbonContent">
           <% step.design_files.each_with_index do |design_file, index| %>
-            <%= link_to File.basename(design_file.design_file_path.to_s), design_file.design_file_path.to_s if design_file %><%= "," unless index == step.design_files.count - 1%>
+            <%= link_to truncate(File.basename(design_file.design_file_path.to_s), :length=>35), design_file.design_file_path.to_s if design_file %><%= "," unless index == step.design_files.count - 1%>
           <% end %>
         </div>
       </div>
       <% end %>
-      <div class="detailViewStepDate"><icon class="fa fa-time"></icon><%= step.published_on.strftime "%A, %B %-d at %-I:%M %p" %></div>
+      <div class="detailViewStepDate"><icon class="fa fa-clock-o"></icon>
+        <% if !step.project.is_remix?%>
+          <%= step.published_on.strftime "%B %-d, %Y at %-I:%M %p" %>
+        <% else %>
+          <%= step.edits.last.created_at.strftime "%B %-d, %Y at %-I:%M %p" %>
+        <% end %>
+      </div>
 
     <% if @project.is_remix? && step.original_authors %>
           <div class="detailViewStepAuthors remix">Created by <%= render :partial => "steps/remix_step_author_byline", :locals => {:original_authors => step.original_authors} %>
@@ -101,51 +119,61 @@
     <% end %>
 
 
-    <% if user_signed_in? && @project.users.include?(current_user) %>
-        <%=link_to raw('<i class="btn btn-danger fa fa-trash-o deleteStepButton"></i>'), project_step_path(@project, step), :method => :delete, :confirm=>  "Are you sure you want to delete this step?", :title=> "Delete Step"%>
+    <% if @authorLoggedIn %>
+        <%=link_to raw('<i class="btn btn-danger btn-sm fa fa-trash-o deleteStepButton"></i>'), project_step_path(@project, step, :step_id=> step.id), :method => :delete, :confirm=>  "Are you sure you want to delete this step?", :title=> "Delete Step"%>
     <% end %>
     
      <div class="userComments">
       <div class="accordion" id="comments_<%=step.id%>">
-        <h5> Comments (<%=step.comment_threads.count%>) <icon class="fa fa-comment"></icon></h5>
+        <h5 style="margin-bottom: 0px"> Comments (<%=step.comment_threads.count%>) <icon class="fa fa-comment"></icon></h5>
         <div class="comment">  
-          <% if user_signed_in?%>
-          <div class="userIcon">
-            <% if current_user.avatar_url != nil %>
-              <%= image_tag(current_user.avatar_url(:thumb), :class=>"commentAvatar img-polaroid")%>
-            <% else %>
-               <%= image_tag("default_avatar.png", :class=>"commentAvatar img-polaroid") %>
-            <% end %>
-          </div class="addComment">
-             <%= semantic_form_for([@project, step, step.comment_threads.build]) do |f| %>
-              <div class="field">
-                <%= f.text_area :body %>
-              </div>
-          <div class="submit">
-            <%= f.actions do %>
-              <%= f.action :submit, :label=>"Comment", :button_html => {:class=> "btn btn-small btn-primary commentSubmit", :disable_with => "Comment"} %>
-            <% end %>
-          </div>
-          <% end %>
-          <% else %>
-            <p> Please <span style="font-weight: bold" data-toggle="modal" data-target="#signInModal">sign in</span> to leave comments </p>
-          <% end %>
-   
-           <div class="clear"></div>
         <div class="stepComments">
           <% if step.comment_threads.count >0 %>
-            <% step.comment_threads.each do |stepComment| %>
+            <% step.comment_threads.order('created_at ASC').each do |stepComment| %>
               <% if stepComment.body.length>0 %>
                 <%= render :partial => 'comments', :locals => {:comment=> stepComment, :step=>step} %>
               <% end %>
             <% end %>
           <% end %>
         </div>
-      </div>
+        <% # add user comment area %>
+        <div class="addCommentContainer">
+           <% if user_signed_in?%>
+              <div class="userIcon">
+                <% if current_user.avatar_url != nil %>
+                  <%= image_tag(current_user.avatar_url(:thumb), :class=>"commentAvatar img-rounded")%>
+                <% else %>
+                   <%= image_tag("default_avatar.png", :class=>"commentAvatar img-rounded") %>
+                <% end %>
+              </div>
+              <div class="addComment">
+                 <%= semantic_form_for([@project, step, step.comment_threads.build]) do |f| %>
+                  <div class="field">
+                    <%= f.text_area :body, :placeholder =>"Leave a comment..." %>
+                  </div>
+                  <div class="submit">
+                    <%= f.actions do %>
+                      <%= f.action :submit, :label=>"Comment", :button_html => {:class=> "btn btn-small btn-primary commentSubmit", :disable_with => "Comment"} %>
+                    <% end %>
+                  </div>
+                </div>
+            <% end %>
+            <% else %>
+              <p> Please <span style="font-weight: bold" data-toggle="modal" data-target="#signInModal">sign in</span> to leave comments </p>
+            <% end %>
+             <div class="clear" style="margin: 5px;"></div>
+
+        </div>
+          </div>
         </div>
       </div>
+      
+      <% end %>
 
   </div>
+  </div>
+
+  <script>hljs.initHighlightingOnLoad();</script>
 
   <script type="text/javascript">
     var editButton; // used to hold the object of the edit button that is clicked
@@ -160,6 +188,7 @@
       }
     }); 
 
+
     $('.answered_checkbox').on('click', function(){
         if($('.answered_checkbox').is(':checked')){
           var step_id = getID($(this).parents('.detailView').attr('id'));
@@ -171,6 +200,51 @@
           });
         }
     });
+
+    $(window).load(function(){
+      $('.userIcon a').attr('target', '_self');   
+      $('.detailViewText a').attr('target', '_blank');
+      $('.commentBodyText a').attr('target', '_blank');
+
+      $('.stepNode').on('click', function(){
+        var step_id = getID($(this).attr('class'));
+        lazyContainer($('#carousel-'+step_id));
+      });   
+    });
+
+    function lazyContainer(searchNode) {
+      // lazy load images
+     $(searchNode).find('img.lazy').each(function() {
+       var imgSrc = $(this).attr('data-src');
+       if (imgSrc) {
+          $(this).hide();
+           $(this).attr('src',imgSrc);
+           $(this).attr('data-src','');
+           $(this).fadeIn();
+       }
+      });
+
+     $(searchNode).find('video.lazy').each(function(){
+      var sources = $(this).find('source');
+      sources.each(function(){
+        var videoSrc = $(this).attr('data-src');  
+        // console.log(videoSrc);
+        if(videoSrc){
+           $(this).hide();
+           $(this).attr('src', videoSrc);
+           $(this).attr('data-src', '');
+           $(this).parent().load();
+           $(this).fadeIn();
+        }
+      })
+     })
+    }
+
+    $('.step_link').hover(function(){
+      $(this).css('cursor', 'pointer');
+    }, function(){
+      $(this).css('cursor', 'default');
+    })
 
     // });
   </script>

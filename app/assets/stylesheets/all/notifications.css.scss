@@ -46,6 +46,7 @@ $hovercolor: #E9E9F1;
 
 	icon{
      width:11px;
+     font-size: 14px;
 		 color: #969696;
 		 float: left;
 		 margin-right:15px;
@@ -72,8 +73,6 @@ $hovercolor: #E9E9F1;
 
     img, .blank-image{
       height:40px;
-      -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, .25);
-      box-shadow: 0 1px 4px rgba(0, 0, 0, .25);
     }
 
   }
@@ -138,6 +137,7 @@ li.notification{
   }
   icon{
     width:11px;
+    font-size: 14px;
     color: #969696;
     float: left;
     margin-right:8px;
@@ -154,6 +154,7 @@ li.notification{
     width: 68%;
     max-height:36px;
     overflow:hidden;
+    line-height: 15px;
 
   }
   .notification-image{
@@ -163,11 +164,9 @@ li.notification{
     margin-bottom:0px !important;
   
       img, .blank-image{
-        width: 40px;
-        height:40px;
+        width: 35px;
+        margin-top: 1px;
         display: inline-block;
-        -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, .25);
-        box-shadow: 0 1px 4px rgba(0, 0, 0, .25);
       }
   }
   .notification-all{
@@ -217,4 +216,12 @@ li.navbar_login, li.navbar_notification{
 .notifications_mark_read{
   font-weight:bold;
   color: #EC9700;
+}
+
+// Mailer Styling
+.notification_container{
+
+}
+.notification_avatar{
+
 }

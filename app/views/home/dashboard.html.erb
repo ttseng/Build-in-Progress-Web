@@ -1,0 +1,209 @@
+<% title "Dashboard | #{ENV["APP_NAME"]}" %>
+<div class="fullRow" style="margin-top:50px;width:940px" id="dashboard">
+	<div class="centeredContainer" style="padding: 30px">
+		<h1>Dashboard <%=Time.now.strftime("%B %d, %Y %H:%M") %></h1>
+		<hr>
+		<h4>Registration</h4>
+			<% new_users = User.where("created_at >?", 24.hours.ago).where("confirmed_at IS NOT NULL") %>
+			<p><b><%=User.where("sign_in_count > ?", 0).count%></b> confirmed users</p>
+			<p><b><%= new_users.count %></b> users created today</p>
+
+			<% if new_users.count > 0 %>
+				<div class="section">
+									
+					<div class="column"><b>USERNAME</b></div>
+					<div class="column" style="width: 300px;"><b>EMAIL</b></div>
+					<div class="column"><b>PROVIDER</b></div>
+					<div style="clear: both;"></div>
+
+					<% new_users.each do |user| %>
+						<div class="column"><%= link_to user.username, user_path(user) %> </div>
+						<div class="column" style="width: 300px;"><%= user.email %></div>
+						<div class="column"><% if user.provider.present? %><%= user.provider %><% else %>none<%end%></div>
+						<div style="clear: both;"></div>
+					<% end %>
+				</div>
+			<% end %>
+		<hr><!-- end registration section -->
+
+		<h4>Projects</h4>
+			<p><b><%=Project.all.count%></b> total projects | <b><%=Project.public_projects.count + Project.private_projects.count + Project.unlisted_projects.count %></b> public, private, or unlisted projects| <b><%=Project.public_projects.count %></b>  public | <b><%=Project.private_projects.count %></b> private | <b><%=Project.unlisted_projects.count %></b> unlisted</p>
+
+			<% new_projects = Project.where("created_at >?", 24.hours.ago) %>
+			<p><b><%= new_projects.count %></b> projects created today</p>
+			
+			<% if new_projects.count > 0 %>
+				<div class="section">
+					<div class="column" style="width: 40%;"><b>USERS</b></div>
+					<div class="column" style="width: 40%;"><b>PROJECT</b></div>
+					<div style="clear: both;"></div>
+
+				<% new_projects.each do |project| %>
+					<div class="column" style="width: 40%;"><%= project.users.order("username ASC").map { |u| "<a href='#{user_path(u)}'>#{u.username}</a>" }.to_sentence.html_safe %></div>
+					<div class="column" style="width: 40%;"><%=link_to project.title, project_path(project) %></div>
+					<div style="clear: both;"></div>
+				<% end %>
+
+				</div>
+			<% end %>
+
+			<% updated_projects = Project.where("updated_at > ?", 24.hours.ago).where("created_at <?", 24.hours.ago) %>
+			<p><b><%= updated_projects.count %></b> projects updated today</p>
+
+			<% if updated_projects.count > 0 %>
+				<div class="section">
+					<div class="column" style="width: 40%;"><b>USERS</b></div>
+					<div class="column" style="width: 40%;"><b>PROJECT</b></div>
+					<div style="clear: both;"></div>
+
+				<% updated_projects.each do |project| %>
+					<div class="column" style="width: 40%;"><%= project.users.order("username ASC").map { |u| "<a href='#{user_path(u)}'>#{u.username}</a>" }.to_sentence.html_safe %></div>
+					<div class="column" style="width: 40%;"><%=link_to project.title, project_path(project) %></div>
+					<div style="clear: both;"></div>
+				<% end %>
+
+				</div>
+			<% end %>
+
+
+		<hr><!-- end projects section -->
+
+		<h4>Comments</h4>
+			<% new_comments = Comment.where("created_at >?", 24.hours.ago) %>
+			<p><b><%=new_comments.count %></b> comments created today </p>
+
+			<% if new_comments.count > 0 %>
+				<div class="section">
+						<div class="column"><b>USER</b></div>
+						<div class="column" style="width:500px;"><b>BODY</b></div>
+						<div style="clear: both;"></div>
+
+					<% new_comments.each do |comment| %>
+						<%=link_to user_path(comment.user) do %>
+							<div class="column"><%=comment.user.username%></div>
+						<% end %>
+						<div class="column" style="width: 500px;"><%= link_to comment.body, project_steps_path(comment.commentable.project, :comment_id => comment.id, :step => comment.commentable.id)%></div>
+						<div style="clear: both;"></div>
+					<% end %>
+				</div>
+			<% end %>
+		<hr><!-- end comment section -->
+
+
+		<h4>Collections</h4>
+			<p><b><%=Collection.all.count%></b> total collections | <b><%=Collection.public_collections.count %></b>  public | <b><%=Collection.private_collections.count %></b> private | <b><%=Collection.unlisted_collections.count %></b> unlisted</p>
+
+			<% new_collections = Collection.where("created_at >?", 24.hours.ago) %>
+			<p><b><%= new_collections.count %></b> collections created today</p>
+			<% if new_collections.count > 0 %>
+				<div class="section">
+					<div class="column" style="width: 40%;"><b>USER</b></div>
+					<div class="column" style="width: 40%;"><b>COLLECTION</b></div>
+					<div style="clear: both;"></div>
+
+				<% new_collections.each do |collection| %>
+					<div class="column" style="width: 40%;"><%= link_to collection.user.username, collection_path(collection)%></div>
+					<div class="column" style="width: 40%;"><%=link_to collection.name, collection_path(collection) %></div>
+					<div style="clear: both;"></div>
+				<% end %>
+
+				</div>
+			<% end %>
+
+			<% updated_collections = Collection.where("created_at <?", 24.hours.ago).where("updated_at >?", 24.hours.ago) %>
+			<p><b><%= updated_collections.count %></b> collections updated today</p>
+			<% if updated_collections.count > 0 %>
+				<div class="section">
+					<div class="column" style="width: 40%;"><b>USER</b></div>
+					<div class="column" style="width: 40%;"><b>COLLECTION</b></div>
+					<div style="clear: both;"></div>
+
+				<% updated_collections.each do |collection| %>
+					<div class="column" style="width: 40%;"><%= link_to collection.user.username, collection_path(collection)%></div>
+					<div class="column" style="width: 40%;"><%=link_to collection.name, collection_path(collection) %></div>
+					<div style="clear: both;"></div>
+				<% end %>
+
+				</div>
+			<% end %>
+
+		<hr><!-- end projects section -->
+
+	<div class="charts">
+		<h4>User registrations - Cumulative (<%=User.where("sign_in_count>?", 0).count%>)</h4>
+			<%= line_chart users_charts_path %>
+		<h4>User registrations - By month</h4>
+			<%= line_chart users_by_month_charts_path %>
+			<% users_count_array = User.group_by_month(:created_at).count.values.last(12) %>
+		<p>Average user registrations per month in last year: <%= (users_count_array.sum / users_count_array.size.to_f).round(1) %></p>
+		<hr>
+
+		<h4>Projects - Cumulative (<%=Project.all.count%>)</h4>
+			<% public_sum = 0 %>
+			<% public_data = Project.public_projects.group_by_month(:created_at).count.map { |x,y| { x => (public_sum+=y)} }.reduce({}, :merge) %>
+
+			<% private_sum = 0 %>
+			<% private_data = Project.private_projects.group_by_month(:created_at).count.map { |x,y| { x => (private_sum+=y)} }.reduce({}, :merge) %>
+
+			<% unlisted_sum = 0 %>
+			<% unlisted_data = Project.unlisted_projects.group_by_month(:created_at).count.map { |x,y| { x => (unlisted_sum+=y)} }.reduce({}, :merge) %>
+
+			<% unpublished_sum = 0 %>
+			<% unpublished_data = Project.where(:privacy => nil).group_by_month(:created_at).count.map { |x,y| { x => (unpublished_sum+=y)} }.reduce({}, :merge) %>
+
+			<%= line_chart [
+				{name: "Public (" + Project.public_projects.count.to_s + ")", data: public_data},
+				{name: "Private (" + Project.private_projects.count.to_s + ")", data: private_data},
+				{name: "Unlisted (" + Project.unlisted_projects.count.to_s + ")", data: unlisted_data},
+				{name: "Unpublished (" + Project.where(:privacy => nil).count.to_s + ")", data: unpublished_data}
+			] %>
+
+			<h4>Projects - By Month </h4>
+			<% public_sum = 0 %>
+			<% public_data = Project.public_projects.group_by_month(:created_at).count %>
+
+			<% private_sum = 0 %>
+			<% private_data = Project.private_projects.group_by_month(:created_at).count %>
+
+			<% unlisted_sum = 0 %>
+			<% unlisted_data = Project.unlisted_projects.group_by_month(:created_at).count %>
+
+			<% unpublished_sum = 0 %>
+			<% unpublished_data = Project.where(:privacy => nil).group_by_month(:created_at).count %>
+
+			<%= line_chart [
+				{name: "Public (" + Project.public_projects.count.to_s + ")", data: public_data},
+				{name: "Private (" + Project.private_projects.count.to_s + ")", data: private_data},
+				{name: "Unlisted (" + Project.unlisted_projects.count.to_s + ")", data: unlisted_data},
+				{name: "Unpublished (" + Project.where(:privacy => nil).count.to_s + ")", data: unpublished_data}
+			] %>
+
+			<% projects_count_array = Project.public_projects.group_by_month(:created_at).count.values.last(12) %>
+		<p>Average public projects per month in last year: <%= (projects_count_array.sum / projects_count_array.size.to_f).round(1) %></p>
+
+			<hr>
+
+		<h4>Steps - Cumulative (<%= Step.all.count %>)</h4>
+			<%= line_chart steps_charts_path %>
+
+		<h4>Steps - By Month </h4>
+			<%= line_chart steps_by_month_charts_path %>
+			<% steps_count_array = Step.group_by_month(:created_at).count.values.last(12) %>
+		<p>Average steps per month in last year: <%= (steps_count_array.sum / steps_count_array.size.to_f).round(1) %></p>
+		<hr>
+
+		<h4>Comments - Cumulative (<%= Comment.all.count %>)</h4>
+			<%= line_chart comments_charts_path %>
+
+		<h4>Comments - By Month</h4>
+			<%= line_chart comments_by_month_charts_path %>
+			<% comments_count_array = Comment.group_by_month(:created_at).count.values.last(12) %>
+		<p>Average comments per month in last year: <%= (comments_count_array.sum / comments_count_array.size.to_f).round(1) %></p>
+		<hr>
+		
+	</div>
+	
+	</div><!-- end centeredContainer -->
+
+</div><!-- end fullRow -->
+

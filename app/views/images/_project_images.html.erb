@@ -1,0 +1,160 @@
+<div class="detailViewPhoto projectImages fullWidth">
+
+<div class="mainPhoto carousel slide projectImages" id="carousel-projectImages" style="margin-left: -20px; height: 307px; width: 109.2%; margin-top: -20px;">
+
+<% if step.images.count == 1 %>
+  <script type="text/javascript">
+    $('.mainPhoto.<%=step.id%>').addClass('singleImage');
+  </script>
+<% end %>
+  <div class="carousel-inner projectImages" style="height: 100%;"></div>
+  <%# carousel controls %>
+     <a class="carousel-control left" href="#carousel-projectImages" data-slide="prev" style="display: none;">&lsaquo;</a>
+     <a class="carousel-control right" href="#carousel-projectImages" data-slide="next" style="display: none;">&rsaquo;</a>
+
+     <div class="step_title">
+      from <%= link_to_function @project.last_step_with_images.name, "$('.stepNode.step_'+#{@project.last_step_with_images.id}).click();" %>
+    </div>
+</div>
+
+
+</div>
+
+<% image_step_id = step.id %>
+
+<% step.images.each_with_index do |image, index| %>
+  <% # add a check to make sure new images (with step_id -1) don't appear if they're not associated with the project %>
+    <% remix = false %>
+
+    <% active = "" %> <%# stores whether or not image is active or first in carousel %>
+    <% if index==0 %>
+      <% active = "active" %>
+    <% end %>
+    
+    <% image_record = image %>
+
+    <script type="text/javascript">
+      var img_id = "<%=image.id%>";
+    </script>
+
+    <% # check if the image is from a remix %>
+    <% if image.is_remix_image? && !image.original_image.blank? %>
+      <%# draw the original asset %>
+      <% remix = true %>
+      <% image = image.original_image %>
+    <% end %>
+
+    <% if image.has_video? %>
+      <% if !image.video.embed_url.blank? %>
+        <% # add iframe video to carousel %>
+          <script>
+            var video_embed_code = carousel_video_iframe("<%=image.video.embed_url%>", "projectImages", "<%= image_record.id %>", "<%=active%>");
+             $('.carousel-inner.projectImages').append(video_embed_code); 
+             $('.projectImages iframe.<%=image_record.id%>').attr('id',  $('.projectImages iframe.<%=image_record.id%>').attr('id')+"_projectImages");
+          </script>
+      <% else %>
+        <% # add html5 video player%>   
+        <% if index==0 %>
+          <script type="text/javascript">
+            var video_embed_code = carousel_video_player("<%=Video.find(image.video_id).video_path%>", "projectImages", "<%= image_record.id%>", "<%=active%>");
+            $('.carousel-inner.projectImages').append(video_embed_code); 
+            </script>
+        <% else %>
+          <%# add video with lazyloading %>
+            <script type="text/javascript">
+            var video_embed_code = carousel_video_player_lazy("<%=Video.find(image.video_id).video_path%>", "projectImages", "<%= image_record.id%>", "<%=active%>");
+            $('.carousel-inner.projectImages').append(video_embed_code); 
+            </script>
+        <% end %>
+      <% end %>
+    <% else %>
+      <% if image.image_path? == false || image.rotation != nil%>
+       <% # add placeholder s3 direct upload image %>
+       <% if index == 0 %>
+           <script type="text/javascript">
+             $('.carousel-inner.projectImages').append('<div class="item <%=active%>"><a class="fancybox" href="<%=image.s3_filepath%>" id="img_link_' +img_id +'" data-rotation = "<%=image.rotation%>" rel="gallery projectImages" data-fancybox-type="image"> <%=image_tag(image.s3_filepath, :width => "100%", :class=> image_record.id, :data => {:rotation => image.rotation })%></a></div>');    
+           </script>
+       <% else %>
+            <script type="text/javascript">
+             $('.carousel-inner.projectImages').append('<div class="item <%=active%>"><a class="fancybox" href="<%=image.s3_filepath%>" id="img_link_' +img_id +'" data-rotation = "<%=image.rotation%>" rel="gallery projectImages" data-fancybox-type="image"> <%=image_tag("blank.png", :width => "100%", :class=> [image_record.id, "lazy"], :data => {:rotation => image.rotation, :src => image.s3_filepath })%></a></div>');    
+           </script>
+       <% end %>
+      <% else %>
+        <% # add already uploaded image to carousel %>
+        <% if index == 0 %>
+           <script type="text/javascript">
+             $('.carousel-inner.projectImages').append('<div class="item <%=active%>"><a class="fancybox" id="img_link_'+ img_id + '" href="<%=image.image_path_url%>" rel="gallery projectImages" data-fancybox-type="image"> <%=image_tag(image.image_path_url(:preview), :width => "100%", :class=> image_record.id)%></a></div>');
+           </script>
+          <% else %>
+            <% # add lazy-load class %>
+              <script type="text/javascript">
+                $('.carousel-inner.projectImages').append('<div class="item <%=active%>"><a class="fancybox" id="img_link_'+ img_id + '" href="<%=image.image_path_url%>" rel="gallery projectImages" data-fancybox-type="image"> <%=image_tag("blank.png", :width => "100%", :class=> [image_record.id, "lazy"], :data => {:src => image.image_path_url(:preview)} )%></a></div>');
+              </script>
+          <% end %>
+      <% end %>
+    <% end %> <%# adding carousel images ends %>
+
+    
+    <% # check if image has to be rotated on the page %>
+    <% if image.rotation != nil && image.image_path? == false  %>
+      <script type="text/javascript">
+          console.log('image id: ' + img_id);
+          var carousel_image = $($('#img_link_'+img_id).children('img'));
+          var thumbnail_image = $($('#image_'+img_id).find('img'));
+          var rotation = parseInt("<%=image.rotation %>");
+          applyImageRotation(carousel_image, thumbnail_image, rotation, "<%=source%>");
+      </script>
+    <% end %>
+
+
+<% end %> <%# end looping through step images %>
+
+<% # reveal carousel controls on mainPhoto hover %>
+<script type="text/javascript">
+  $('.mainPhoto').hover(function(){
+    if($(this).find('.item').length > 1){
+      $(this).find('.carousel-control').fadeIn();
+    }
+    }, function(){
+       if($(this).find('.item').length > 1){
+          $(this).find('.carousel-control').fadeOut();
+      }else{
+          $(this).find('.carousel-control').hide();
+      }
+    });
+
+  $('.carousel.projectImages').on('slid', function(){
+    lazyContainer($(this));
+  });
+
+  $('.thumbGallery .image').last().css('margin-bottom', '0px');
+
+  ////// ROTATE IMAGE //////
+  $(document.body).on('click', '.rotate_img_btn', function(){
+    var img_id = getClassID('img_link', $(this).parent().find('.fancybox').attr('id'));
+    console.log('img_id: ' + img_id);
+    var rotation = getRotation($($('#img_link_'+img_id).find('img'))).toString();
+    
+    $.ajax({
+      url: "/images/"+img_id+"/rotate",
+      type: 'GET',
+      data: {image_id: img_id, rotation: rotation}
+    });
+    
+    // update the carousel + thumbnail images with the current rotation value
+    rotation = rotation-90;
+    var carousel_image = $($(this).parent().find('img'));
+    var thumbnail_image = $($('#image_'+img_id).children('.stepImage').children('img'));
+    applyImageRotation(carousel_image, thumbnail_image, rotation, "edit");
+  });
+
+  $('.item a').hover(function(){
+    $(this).attr('org_title', $(this).attr('title'));
+    $(this).attr('title', '');
+  }, function(){
+    $(this).attr('title', $(this).attr('org_title'));
+  });
+  
+
+
+</script>

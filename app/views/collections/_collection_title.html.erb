@@ -1,0 +1,207 @@
+<div id="collectionInfoContainer">
+  
+  <div id="collectionAvatar">
+    <% if @authorLoggedIn %>
+      <script type="text/javascript">
+      $('#collectionAvatar').css('margin-bottom', '105px');
+      </script>
+      <%= form_for @collection, remote: true, :html => {:id => "collection_avatar_form", :multipart => true } do |f| %>
+          <div id="uploadImageWrapper" title="Edit Avatar">
+        <% if @collection.image.length > 0%>
+              <%= image_tag(@collection.image_url(:thumb), :class=>"img-rounded") %>
+              <div id="editAvatarIcon"><icon class="fa fa-pencil"></icon></div>
+      <% else %>
+          <%= image_tag("default_collection.png", :class=>"collectionAvatar img-rounded") %>
+            <div id="editAvatarIcon"><icon class="fa fa-pencil"></icon></div>
+        <% end %>
+        <%= f.file_field :image %>
+      </div>
+      <% end %> <%# end form %>
+    <% else %>
+      <% if @collection.image.length > 0%>
+          <%= image_tag(@collection.image_url(:thumb), :class=>"img-rounded") %>
+      <% else %>
+          <%= image_tag("default_collection.png", :class=>"collectionAvatar img-rounded") %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="clear"></div>
+
+  <div id="collectionName">
+    <% if @authorLoggedIn %>
+    <span id="collectionNameBIP">
+      <%= best_in_place @collection, :name, :type => :textarea, :value => @collection.name,  :html_attrs => {:maxlength => 30}  %>
+    </span>
+    <% else %>
+      <%=@collection.name%>
+    <% end %>
+  </div>
+
+  <div id="collectionDescription">
+    <% if @collection.description.present? %>
+      <% if @authorLoggedIn %>
+        <span id="collectionDescriptionBIP">
+          <%= best_in_place @collection, :description, :type => :textarea, :sanitize => false, :value => @collection.description, :place_holder => "Click to add a description to your collection",  :html_attrs => {:maxlength => 80} %>
+        </span>
+      <% else %>
+        <%= @collection.description %>
+      <% end %>
+    <% elsif current_user == @collection.user %>
+      <%= best_in_place @collection, :description, :type => :textarea, :nil => @collection.description, :sanitize => false, :value => "Click to add a description to your collection", :place_holder => "Click to add a description to your collection",  :html_attrs => {:maxlength => 80} %>
+    <% end %>
+  </div>
+
+  <div id="collectionInfo">
+    <%= @collection.projects.count %> <i class="fa fa-folder-open"></i> &nbsp;|&nbsp; <%= link_to @collection.user.username, user_path(@collection.user), :class=>"username" %>
+    
+    <div id="collectionPrivacy">
+      <% if @collection.user == current_user %>
+        <div class="btn-group">
+             <% if @collection.public? %>
+                <button type="button" class="btn btn-xs currentPrivacy"><icon class="fa fa-globe"></icon> Public</button>
+                <button type="button" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" style="border-top-right-radius: 4px;">
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li>
+                    <%= link_to raw('<icon class="fa fa-unlock-alt"></icon> Unlisted'), update_privacy_collection_url(@collection, :privacy => "unlisted") %>
+                  </li>
+                  <li>
+                    <%= link_to raw('<icon class="fa fa-lock"></icon> Private'), update_privacy_collection_url(@collection, :privacy => "private") %>
+                  </li>
+                </ul>          
+          <% elsif @collection.unlisted? %>
+                <button type="button" class="btn btn-xs currentPrivacy"><icon class="fa fa-unlock-alt"></icon> Unlisted</button>
+                <button type="button" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" style="border-top-right-radius: 4px;">
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li>
+                    <%= link_to raw('<icon class="fa fa-lock"></icon> Private'), update_privacy_collection_url(@collection, :privacy => "private") %>
+                  </li>
+                  <% if @collection.published? %>
+                    <li>
+                       <%= link_to raw('<icon class="fa fa-globe"></icon> Public'), update_privacy_collection_url(@collection, :privacy => "public") %>
+                    </li>
+                  <% end %>
+                </ul>     
+          <% elsif @collection.private? %>
+             <button type="button" class="btn btn-xs currentPrivacy"><icon class="fa fa-lock"></icon> Private</button>
+                <button type="button" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" style="border-top-right-radius: 4px;">
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li>
+                    <%= link_to raw('<icon class="fa fa-unlock-alt"></icon> Unlisted'), update_privacy_collection_url(@collection, :privacy => "unlisted") %>
+                  </li>
+                  <% if @collection.published? %>
+                    <li>
+                      <%= link_to raw('<icon class="fa fa-globe"></icon> Public'), update_privacy_collection_url(@collection, :privacy => "public") %>
+                    </li>
+                  <% end %>
+                </ul>  
+          <% else %>  <%# project is not yet published %>
+            <button type="button" class="btn btn-xs currentPrivacy"><icon class="fa fa-unlock-alt"></icon> Unlisted</button>
+                <button type="button" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" style="border-top-right-radius: 4px;">
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li>
+                    <%= link_to raw('<icon class="fa fa-lock"></icon> Private'), update_privacy_collection_url(@collection, :privacy => "private") %>
+                  </li>
+                </ul>     
+          <% end %>
+      </div>
+    <% else %>
+      <% if @collection.public? %>
+        <icon class="fa fa-globe"></icon> Public
+      <% elsif @collection.private? %>
+        <icon class="fa fa-lock"></icon> Private
+      <% else %>
+        <icon class="fa fa-unlock-alt"></icon> Unlisted
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<% if @authorLoggedIn %>
+ <%=link_to raw('<i class="btn btn-danger fa fa-trash-o" style="height: 20px; font-size: 18px; position: absolute; top: 28px; right: 20px;"></i>'), @collection, :method=> :delete, :data=> {:confirm=>  "Are you sure you want to delete this collection?"}, :class=>"deleteCollectionButton"%>
+ <% end %>
+
+
+</div>
+
+<script type="text/javascript">
+  $('#collectionName').hover(function(){
+    if("<%=@authorLoggedIn%>" == "true"){
+      $(this).css('background', '#7a7a7a');
+       }
+    }, function(){
+      if("<%=@authorLoggedIn%>"=="true"){
+        $(this).css('background', 'none');
+      }
+    });
+
+  $('#collectionDescription').hover(function(){
+        if("<%=@authorLoggedIn%>" == "true"){
+      $(this).css('background', '#7a7a7a');
+       }
+    }, function(){
+      if("<%=@authorLoggedIn%>"=="true"){
+        $(this).css('background', 'none');
+      }
+  });
+
+  $('#collectionAvatar').hover(function(){
+    if("<%=@authorLoggedIn%>"=="true"){
+      $(this).addClass('editing');
+      $('#editAvatarIcon').show();
+    }
+  }, function(){
+    $(this).find('img').css('border', '3px solid rgba(97, 97, 97, 0.8)');
+    $(this).removeClass('editing');
+    $('#editAvatarIcon').hide();
+  });
+
+
+  $('#s3-image-uploader').bind("ajax:success", function(e, data){
+    console.log('uploaded new avatar to s3 at url: ' + content.url);
+    $('#uploadImageWrapper').find('img').attr('src', content.url);
+  });
+
+  $('#collection_image').change(function(){
+    var F = this.files;
+
+    var reader = new FileReader();
+    var image  = new Image();
+    reader.readAsDataURL(F[0]);  
+    reader.onload = function(_file){
+        image.src    = _file.target.result;              // url.createObjectURL(file);
+        image.onload = function() {
+            $('#collectionAvatar').find('img').attr('src', this.src);
+        };
+    }
+
+    $.ajax({
+          type: "POST",
+          url: $('#collection_avatar_form').attr('action'), //sumbits it to the given url of the form
+          data: new FormData($('#collection_avatar_form')[0]),
+          processData: false,
+          contentType: false,          
+          dataType: "JSON" // you want a difference between normal and ajax-calls, and json is standard
+      }).success(function(json){
+          console.log("success", json);
+    });
+
+  });
+
+  $('.best_in_place').keydown(function(e){
+        if(e.keyCode == 13){
+          e.preventDefault();
+          // console.log('pressed enter key');
+          return false;
+        }
+  });
+  
+</script>

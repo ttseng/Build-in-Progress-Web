@@ -1,5 +1,6 @@
 class ImagesController < ApplicationController
   include NewRelic::Agent::Instrumentation::ControllerInstrumentation
+  include CarrierWave::MiniMagick
 
   before_filter :authenticate_user!
 
@@ -27,11 +28,13 @@ class ImagesController < ApplicationController
       imageObj["saved"]=false
       imageObj["user_id"]=params[:user_id].to_f
       s3_image_url = params[:image][:image_path]
-      image_url = s3_image_url.gsub('%2F', '/')
       Rails.logger.debug("s3_image_url: #{s3_image_url}")
-      Rails.logger.debug("image_url: #{image_url}")
+      image_url = s3_image_url.gsub('%2F', '/')
       imageObj["s3_filepath"] = image_url
-      @image = Image.create(imageObj)
+      @image = Image.new(imageObj)
+      authorize! :create, @image
+      @image.save
+      Rails.logger.debug("STARTING IMAGE UPLOADER WORKER FOR #{@image.id}")
       # do this task in the background with sidekiq
       CarrierwaveImageUploaderWorker.perform_async(@image.id, s3_image_url)
     else # image sent from android app
@@ -57,8 +60,14 @@ class ImagesController < ApplicationController
     @image.project.touch
 
     respond_to do |format|
-      format.html {render nothing: true}
-      format.js
+      if request.format.xhr?
+        format.js
+      else
+        image_info = @image.id, @image.s3_filepath
+        format.html{ render :json => image_info.to_json}
+        format.js { render :json => image_info.to_json}
+        format.xml { render :json => image_info.to_json}
+      end
     end
 
   end
@@ -67,6 +76,19 @@ class ImagesController < ApplicationController
   # GET /images/1/edit
   def edit
     @image = Image.find(params[:id])
+  end
+
+  # rotate an image 90 degrees counter clockwise
+  def rotate
+    @image = Image.find(params[:id])
+    @rotation = params[:rotation]
+    if @rotation == "8"
+      @rotation = 270
+    end
+    @image.update_column(:rotation, @rotation)
+    respond_to do |format|
+       format.js { render :nothing => true }
+    end
   end
 
   # PUT /images/1
@@ -86,36 +108,43 @@ class ImagesController < ApplicationController
   # DELETE /images/1
   def destroy
     if(params[:s3_filepath])
-      cleaned_filepath = params[:s3_filepath].gsub('%2F', '/').gsub(" ", "+")
-      @image = Image.where(:s3_filepath => cleaned_filepath).first
+      # cleaned_filepath = params[:s3_filepath].gsub('%2F', '/').gsub(" ", "+")
+      # @image = Image.where(:s3_filepath => cleaned_filepath).first
+      @image = Image.where(:s3_filepath => params[:s3_filepath]).first
     else
       @image = Image.find(params[:id])    
-    end
+      authorize! :destroy, @image
 
-    # delete any references to this image
-    if !@image.is_remix_image?
-      @image.remix_images.each do |image|
-        if image.has_video?
-          image.video.destroy
-        end
-        image.destroy
-      end
-    end
-
-    if @image.step_id != -1
-      if @image.position < @image.step.images.count
-        @image.step.images.order(:position).where("position > ?", @image.position).each do |image|
-          Rails.logger.debug "image position before: #{image.position}"
-            image.update_attributes(:position => image.position-1)
-          Rails.logger.debug "image position after: #{image.position}"
+      # delete any references to this image
+      if !@image.is_remix_image?
+        @image.remix_images.each do |image|
+          if image.has_video?
+            image.video.destroy
+          end
+          image.destroy
         end
       end
-    else
-      remix_images = @image.project.images.where(:step_id=>-1)
-      if @image.position < remix_images.count
-        remix_images.order(:position).where("position > ? ", @image.position).each do |image|
-          image.update_attributes(:position=> image.position-1)
+
+      if @image.step_id != -1
+        if @image.position < @image.step.images.count
+          @image.step.images.order(:position).where("position > ?", @image.position).each do |image|
+            Rails.logger.debug "image position before: #{image.position}"
+              image.update_attributes(:position => image.position-1)
+            Rails.logger.debug "image position after: #{image.position}"
+          end
         end
+      else
+        remix_images = @image.project.images.where(:step_id=>-1)
+        if @image.position < remix_images.count
+          remix_images.order(:position).where("position > ? ", @image.position).each do |image|
+            image.update_attributes(:position=> image.position-1)
+          end
+        end
+      end
+
+      # set project to new unlisted if necessary
+      if @image.project.images.count == 0
+        @image.project.update_attributes(:privacy => nil)
       end
     end
 
@@ -135,5 +164,28 @@ class ImagesController < ApplicationController
     render nothing: true
   end
 
+  # finds the id of an image based on the s3 path url
+  def find_image_id
+    s3_url = params[:s3_url]
+    image = Image.where("s3_filepath = ? ", s3_url).first
+    if image != nil
+      Rails.logger.debug("image.id : #{image.id}")
+    end
+    respond_to do |format|
+      format.js { 
+        if image != nil
+          render :json => image.id 
+        else
+          render :nothing => true
+        end
+      }
+    end
+  end
+
+  # export images
+  def export
+    image = Image.find(:params[:id])
+    send_file(image.image_path_url, :type => 'image/jpeg')
+  end
 
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140131223016) do
+ActiveRecord::Schema.define(:version => 20160408163114) do
 
   create_table "activities", :force => true do |t|
     t.integer  "trackable_id"
@@ -31,6 +31,24 @@ ActiveRecord::Schema.define(:version => 20140131223016) do
   add_index "activities", ["owner_id", "owner_type"], :name => "index_activities_on_owner_id_and_owner_type"
   add_index "activities", ["recipient_id", "recipient_type"], :name => "index_activities_on_recipient_id_and_recipient_type"
   add_index "activities", ["trackable_id", "trackable_type"], :name => "index_activities_on_trackable_id_and_trackable_type"
+
+  create_table "admin_users", :force => true do |t|
+    t.string   "email",                  :default => "", :null => false
+    t.string   "encrypted_password",     :default => "", :null => false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          :default => 0
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
+  end
+
+  add_index "admin_users", ["email"], :name => "index_admin_users_on_email", :unique => true
+  add_index "admin_users", ["reset_password_token"], :name => "index_admin_users_on_reset_password_token", :unique => true
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -62,14 +80,18 @@ ActiveRecord::Schema.define(:version => 20140131223016) do
 
   create_table "collections", :force => true do |t|
     t.string   "name"
-    t.string   "description"
+    t.text     "description"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
     t.integer  "user_id"
     t.boolean  "published",   :default => false
     t.string   "image"
     t.boolean  "challenge"
+    t.string   "slug"
+    t.string   "privacy"
   end
+
+  add_index "collections", ["slug"], :name => "index_collections_on_slug"
 
   create_table "comments", :force => true do |t|
     t.integer  "commentable_id",   :default => 0
@@ -83,6 +105,7 @@ ActiveRecord::Schema.define(:version => 20140131223016) do
     t.integer  "rgt"
     t.datetime "created_at",                       :null => false
     t.datetime "updated_at",                       :null => false
+    t.boolean  "featured"
   end
 
   add_index "comments", ["commentable_id", "commentable_type"], :name => "index_comments_on_commentable_id_and_commentable_type"
@@ -134,6 +157,17 @@ ActiveRecord::Schema.define(:version => 20140131223016) do
   add_index "follows", ["followable_id", "followable_type"], :name => "fk_followables"
   add_index "follows", ["follower_id", "follower_type"], :name => "fk_follows"
 
+  create_table "friendly_id_slugs", :force => true do |t|
+    t.string   "slug",                         :null => false
+    t.integer  "sluggable_id",                 :null => false
+    t.string   "sluggable_type", :limit => 40
+    t.datetime "created_at"
+  end
+
+  add_index "friendly_id_slugs", ["slug", "sluggable_type"], :name => "index_friendly_id_slugs_on_slug_and_sluggable_type", :unique => true
+  add_index "friendly_id_slugs", ["sluggable_id"], :name => "index_friendly_id_slugs_on_sluggable_id"
+  add_index "friendly_id_slugs", ["sluggable_type"], :name => "index_friendly_id_slugs_on_sluggable_type"
+
   create_table "images", :force => true do |t|
     t.integer  "step_id"
     t.string   "image_path"
@@ -149,19 +183,39 @@ ActiveRecord::Schema.define(:version => 20140131223016) do
     t.integer  "sound_id"
     t.integer  "user_id"
     t.string   "s3_filepath"
+    t.integer  "rotation"
+  end
+
+  create_table "news", :force => true do |t|
+    t.string   "title"
+    t.string   "description"
+    t.integer  "step_id"
+    t.string   "news_type"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  create_table "placements", :force => true do |t|
+    t.integer  "step_id"
+    t.integer  "position"
+    t.string   "ancestry"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "projects", :force => true do |t|
     t.string   "title"
-    t.datetime "created_at",                          :null => false
-    t.datetime "updated_at",                          :null => false
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
     t.integer  "user_id"
     t.boolean  "built"
     t.string   "remix_ancestry"
-    t.boolean  "published",        :default => false
     t.boolean  "featured"
     t.datetime "featured_on_date"
     t.text     "description"
+    t.integer  "village_id"
+    t.string   "privacy"
+    t.integer  "cover_image"
   end
 
   create_table "projects_users", :id => false, :force => true do |t|
@@ -177,7 +231,27 @@ ActiveRecord::Schema.define(:version => 20140131223016) do
     t.boolean  "answered",    :default => false
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
+    t.boolean  "featured"
   end
+
+  create_table "remarks", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "source_url"
+    t.text     "content"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "settings", :force => true do |t|
+    t.string   "var",         :null => false
+    t.text     "value"
+    t.integer  "target_id",   :null => false
+    t.string   "target_type", :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "settings", ["target_type", "target_id", "var"], :name => "index_settings_on_target_type_and_target_id_and_var", :unique => true
 
   create_table "sounds", :force => true do |t|
     t.string   "embed_url"
@@ -203,12 +277,15 @@ ActiveRecord::Schema.define(:version => 20140131223016) do
     t.boolean  "last"
     t.integer  "user_id"
     t.text     "original_authors"
+    t.boolean  "label"
+    t.string   "label_color"
+    t.string   "pin"
   end
 
   add_index "steps", ["ancestry"], :name => "index_steps_on_ancestry"
 
   create_table "users", :force => true do |t|
-    t.string   "email",                   :default => "", :null => false
+    t.string   "email",                   :default => ""
     t.string   "encrypted_password",      :default => "", :null => false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
@@ -230,8 +307,13 @@ ActiveRecord::Schema.define(:version => 20140131223016) do
     t.datetime "updated_at",                              :null => false
     t.string   "username"
     t.string   "avatar"
-    t.string   "about_me"
+    t.text     "about_me"
     t.datetime "notifications_viewed_at"
+    t.string   "provider"
+    t.string   "uid"
+    t.string   "access_token"
+    t.boolean  "admin"
+    t.boolean  "banned"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
@@ -262,6 +344,7 @@ ActiveRecord::Schema.define(:version => 20140131223016) do
     t.integer  "image_id"
     t.string   "video_path"
     t.integer  "user_id"
+    t.integer  "rotation"
   end
 
 end

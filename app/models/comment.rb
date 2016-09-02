@@ -6,9 +6,9 @@ class Comment < ActiveRecord::Base
   validates :body, :presence => true
   validates :user, :presence => true
 
-  default_scope :order=> 'created_at DESC'
+  attr_accessible :body, :user, :commentable, :user_id, :featured
 
-  attr_accessible :body, :user, :commentable, :user_id
+  scope :featured, where(:featured => nil)
 
   # NOTE: install the acts_as_votable plugin if you
   # want user to vote on the quality of comments.

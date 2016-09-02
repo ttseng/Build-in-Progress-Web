@@ -8,7 +8,11 @@ $halfPageWidth: $pageWidth/1.7;
 	left:0;
 	top:0;
 	z-index: 100;
-
+	.avatar{
+		max-height: 30px;
+		margin-top: -5px;
+		margin-right: 5px;
+	}
 }
 .navbar .brand{
 	font-family:'Sketch Rockwell';
@@ -31,7 +35,7 @@ $halfPageWidth: $pageWidth/1.7;
 }
 
 body{
-	font-size: 13px !important;
+	font-size: 12px !important;
 }
 
 // Build-in Progress Styling
@@ -60,7 +64,7 @@ a:hover{
 }
 
 .navbar .nav li.dropdown.open>.dropdown-toggle{
-	background-color: #DFFBFF !important;
+	
 }
 
 .label{

@@ -14,7 +14,7 @@ Build::Application.configure do
   config.action_controller.perform_caching = false
 
   # Don't care if the mailer can't send
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
 
   # Print deprecation notices to the Rails logger
   config.active_support.deprecation = :log
@@ -32,15 +32,19 @@ Build::Application.configure do
   # Do not compress assets
   config.assets.compress = false
 
-  config.serve_static_assets = false
+  config.serve_static_assets = true
 
   config.assets.precompile << /(^[^_\/]|\/[^_])[^\/]*$/
+  config.assets.precompile += ['ckeditor/*']
   
   # Expands the lines which load the assets
   config.assets.debug = true
 
   # Default URL option for devise
   config.action_mailer.default_url_options = { :host => ENV['DEV_HOST_URL'] }
+
+  config.action_controller.asset_host = "http://" + ENV['DEV_HOST_URL']
+  config.action_mailer.asset_host = config.action_controller.asset_host
 
   config.action_mailer.perform_deliveries = true
   

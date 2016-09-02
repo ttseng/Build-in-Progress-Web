@@ -1,0 +1,37 @@
+==== Build in Progress Notification ====
+
+<% # COMMENT %>
+<% if @type == "comment" %>
+<%= @activity.trackable.user.username %> commented on your project "<%= @activity.trackable.commentable.project.title %>": "<%= @activity.trackable.body %>"
+  
+<% # FEATURED %>
+<% elsif @type == "featured" %>
+Your project "<%= @activity.trackable.title %>" has been featured! 
+
+<% # COLLABORATOR %>
+<% elsif @type == "collaborator" %>
+<%= @activity.owner.username %> added you as a collaborator on the project "<%= @activity.trackable.title%>"
+
+<% # FAVORITED %>
+<% elsif @type == "favorited" %>
+<%= @activity.owner.username %> favorited your project "<%= Project.find_by_id(FavoriteProject.find_by_id(@activity.trackable.id).project_id).title %>"
+  
+<% # COLLECTION - RECIPIENT%>
+<% elsif @type == "collectify_recipient" %>
+<%= @activity.owner.username %> added your project "<%= Project.find(Collectify.find(@activity.trackable_id).project_id).title %>" to the collection "<%=Collectify.find(@activity.trackable_id).collection.name %>"
+  <% notification_link = collection_url(Collectify.find(@activity.trackable_id).collection, :notification_id => @activity.id) %>
+  <% notification_link_text = "View Collection" %>
+
+<% # COLLECTION - OWNER%>
+<% elsif @type == "collectify_owner" %>
+<%= @activity.owner.username %> updated the collection "<%=Collectify.find(@activity.trackable_id).collection.name %>" with the project "<%=Project.find(Collectify.find(@activity.trackable_id).project_id).title %>"
+
+<% # FOLLOWED %>
+<% elsif @type == "followed" %>
+<%= @activity.owner.username %> followed you
+
+<% # REMIXED %>
+<% elsif @type == "remixed" %>
+<%= @activity.owner.username %> remixed your project "<%= Project.find(@activity.trackable.root).title%>"
+
+<% end %>

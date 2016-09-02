@@ -1,4 +1,7 @@
 function resetCategoriesForm() {
+
+  var num_categories = 6;
+
   if (<%= @project.categories.include?(Category.where(:name => 'Arts & Crafts').first) %>){
     $(".arts_and_crafts_checkbox input").prop("checked", true);
     $(".arts_and_crafts_icon_div").show();
@@ -6,6 +9,7 @@ function resetCategoriesForm() {
   else{
     $(".arts_and_crafts_checkbox input").prop("checked", false);
     $(".arts_and_crafts_icon_div").hide();
+    num_categories = num_categories - 1;
   }
 
   if (<%= @project.categories.include?(Category.where(:name => 'Clothing').first) %>){
@@ -15,6 +19,7 @@ function resetCategoriesForm() {
   else{
     $(".clothing_checkbox input").prop("checked", false);
     $(".clothing_icon_div").hide();
+    num_categories = num_categories - 1;
   }
 
   if (<%= @project.categories.include?(Category.where(:name => 'Cooking').first) %>){
@@ -24,6 +29,7 @@ function resetCategoriesForm() {
   else{
     $(".cooking_checkbox input").prop("checked", false);
     $(".cooking_icon_div").hide();
+    num_categories = num_categories - 1;
   }
 
   if (<%= @project.categories.include?(Category.where(:name => 'Electronics').first) %>){
@@ -33,6 +39,7 @@ function resetCategoriesForm() {
   else{
     $(".electronics_checkbox input").prop("checked", false);
     $(".electronics_icon_div").hide();
+    num_categories = num_categories - 1;
   }
 
   if (<%= @project.categories.include?(Category.where(:name => 'Mechanical').first) %>){
@@ -42,6 +49,7 @@ function resetCategoriesForm() {
   else{
     $(".mechanical_checkbox input").prop("checked", false);
     $(".mechanical_icon_div").hide();
+    num_categories = num_categories - 1;
   }
 
   if (<%= @project.categories.include?(Category.where(:name => 'Other').first) %>){
@@ -51,7 +59,21 @@ function resetCategoriesForm() {
   else{
     $(".other_checkbox input").prop("checked", false);
     $(".other_icon_div").hide();
+    num_categories = num_categories - 1;
   }
+
+  // console.log('num_categories: ' + num_categories);
+  if(num_categories > 0){
+      // console.log('edit project categories');
+      $('.edit_categories').children('a').css('color', '#5AB6D1');
+      $('.edit_categories').children('a').css('font-weight', 'normal');
+      $('.category_text').remove();
+  }else{
+      // console.log('add project categories');
+      $('.edit_categories').children('a').css('color', '#5AB6D1');
+      $('.edit_categories').children('a').css('font-weight', 'bold');
+  }
+
 }
 
 resetCategoriesForm();
@@ -59,7 +81,7 @@ resetCategoriesForm();
 $('#editCategoriesModal').modal('hide');
 
 $('#editCategoriesModal').on('hidden', function(){
-  console.log('closed modal');
+  // console.log('closed modal');
 });
 
 //$('.category_icon icon').tooltip();

@@ -1,9 +1,9 @@
 class Image < ActiveRecord::Base
 
-  attr_accessible :project_id, :step_id, :image_path, :caption, :position, :saved, :remote_image_path_url, :video_id, :original_id, :sound_id, :user_id, :s3_filepath
+  attr_accessible :project_id, :step_id, :image_path, :caption, :position, :saved, :remote_image_path_url, :video_id, :original_id, :sound_id, :user_id, :s3_filepath, :rotation
 
   belongs_to :step
-  belongs_to :project, :touch => true
+  belongs_to :project
   belongs_to :user, :touch=> true
 
   has_one :video, :dependent => :destroy
@@ -16,6 +16,11 @@ class Image < ActiveRecord::Base
 
   before_create :default_name
 
+  scope :ordered_by_position, :order => "position ASC"
+  scope :images_only,  where("video_id IS NULL")
+
+  default_scope :order => "position ASC"
+
   # validates :image_path, :presence => true
 
   def default_name
@@ -23,7 +28,7 @@ class Image < ActiveRecord::Base
   end
 
   def has_video?
-    return !video.blank?
+    return !video_id.blank?
   end
 
   def has_sound?
@@ -35,7 +40,11 @@ class Image < ActiveRecord::Base
   end
 
   def author
-    Image.find(original_id).user.username
+    if Image.find(original_id).user
+      Image.find(original_id).user.username
+    else
+      return ""
+    end
   end
 
   # script to add user id to each image after running migration
@@ -67,15 +76,18 @@ class Image < ActiveRecord::Base
     if video_id
       if video == nil
         logger.debug("VIDEO ID : #{video_id}")
+        
         # get remix video
         original_video = Video.find(video_id)
+
         if original_video.embedded?
           video_hash['embed_url'] = original_video.embed_url
+        
         else
           video_hash['embed_url'] = ""
           video_paths = Hash.new
+          video_paths['rotation'] = original_video.rotation
           video_paths['url'] = original_video.video_path_url
-          video_paths['webm'] = {:url => original_video.video_path_url(:webm)}
           video_hash['video_path'] = video_paths
         end
       else
@@ -83,9 +95,10 @@ class Image < ActiveRecord::Base
         if video.embedded?
           video_hash['embed_url'] = video.embed_url
         else
+          video_hash['embed_url'] = ""
           video_paths = Hash.new
+          video_paths['rotation'] = video.rotation
           video_paths['url'] = video.video_path_url
-          video_paths['webm'] = {:url => video.video_path_url(:webm)}
           video_hash['video_path'] = video_paths
         end
       end

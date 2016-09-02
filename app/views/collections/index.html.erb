@@ -1,36 +1,27 @@
-<div class="fullRow" style="width:940px">
+  <style>
+  .loadingGIF{
+    margin-left: 50%;
+  }
+  </style>
+  
+<% title "Collections | #{ENV["APP_NAME"] }" %>
+
+<div class="fullRow" style="width:980px; margin-top: 0px">
     <div class="projectPage">
-      
-      <% if current_page?(:action=>"index") %>
-        <% page_source = "All Collections" %>
-      <% elsif current_page?(:action=>"challenges") %>
-        <% page_source = "Challenges" %>
-      <% end %>
 
       <div class="projectTitleBar">
         <h3 class="projectHeading">
-        <%= page_source %>
+        All Collections
         </h3>
-          <div id="projectFilter">
-            <div class="addCollectionButton">
-              <%= link_to 'Create a Collection', new_collection_path, :class=> "btn btn-info"%>
-            </div>
 
-            <div class="btn-group">
-              <a class="btn dropdown-toggle" data-toggle="dropdown" href="#" id="expDropdown">
-                <%= page_source %>
-                <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                <li class="all_collections"><%= link_to "All Collections", collections_path %></li>
-                <li class="challenges"><%= link_to "Challenges", challenges_collections_path %></li>
-              </ul>
-            </div>
-          </div>
       </div>
 
-      <div id = "ExpCollections">
-        <%= render :partial => "collections/explore_collection", :collection => @collections, as: :collection  %>
+      <div id = "ExpCollections" style="width: 100%;">
+        <% if @collections.length > 0 %>
+          <%= render :partial => "collections/explore_collection", :collection => @collections, as: :collection  %>
+        <% else %>
+          <p style="margin-left: 15px;">There are no collections...yet!</p>
+        <% end %>
       </div>
 
       <div class="clear"></div>
@@ -42,14 +33,6 @@
 
 <script type="text/javascript">
   $('.loadingGIF').hide();
-  // highlight current page in dropdown menu
-  $(document).ready(function(){
-    if("<%=page_source%>"=="All Collections"){
-      $('li.all_collections').css('background-color', "#E0F2FD");
-    }else if ("<%=page_source%>"=="Challenges"){
-      $('li.challenges').css('background-color', "#E0F2FD");
-    }
 
-  });
 </script>
 

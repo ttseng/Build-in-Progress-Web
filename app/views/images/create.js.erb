@@ -1,6 +1,7 @@
 <% if @image.new_record? %>
   alert("Failed to upload image: <%= j @image.errors.full_messages.join(', ').html_safe %>");
 <% else %>
+
   // hide modal
   $(".embedModal").modal('hide');
 
@@ -22,7 +23,7 @@
 
   // hide blankPhoto 
   if($('#blankPhoto').is(':visible')){
-      console.log('hiding blank photo');
+      // console.log('hiding blank photo');
       $('#blankPhoto').hide();
   }
 
@@ -31,11 +32,9 @@
   <% if @image.has_video? %>
       $("#images").append("<%= j render :partial=> 'images/edit_image', 
               :locals=> {:image=>@image, :remix=> false, :overview=> false, :step_id=>@image.step_id, :index=>stepImagesCount} %>").hide().fadeIn(500);
-      <% if @image.video.video_path %>
          if($('.placeholder.video').length>=0){
             $('.placeholder').first().remove();
           }
-      <% end %>
   <% else %>
     // replace the placeholder loading image for images uploaded to amazon s3
     $("<%= j render :partial=> 'images/edit_image', 
@@ -51,7 +50,7 @@
     <% active = "active" %>
     // move media form buttons to the right gallery
     $('.rightGallery').append($('#new_image'));
-    addImageButton("right");
+    addImageButton("right");    
   } else{
     // get rid of currently active image
     $('.carousel .active').removeClass('active');
@@ -65,21 +64,19 @@
       $('.carousel-inner.<%=@image.step_id%>').append(video_embed_code).hide().fadeIn(500);
     <% else %>
       // add HTML5 video player
-      var video_embed_code = carousel_video_player("<%=@image.video.video_path%>", "<%=@image.video.video_path_url(:webm)%>", "<%=@image.step_id%>", "<%= @image.id%>", "<%=active%>");
+      var video_embed_code = carousel_video_player("<%=@image.video.video_path%>", "<%=@image.step_id%>", "<%= @image.id%>", "<%=active%>");
       $('.carousel-inner.<%=@image.step_id%>').append(video_embed_code).hide().fadeIn(500);
     <% end %>
-  <% elsif @image.has_sound? %>
-    // add soundcloud iframe to carousel 
-    var sound_embed_code = carousel_soundcloud_iframe("<%=@image.sound.embed_url%>", "<%=@image.step_id%>", "<%= @image.id%>", "<%=active%>");
-    $('.carousel-inner.<%=@image.step_id%>').append(sound_embed_code).hide().fadeIn(500);
   <% else %>
     // add image to carousel
-    $('.carousel-inner.<%=@image.step_id%>').append('<div class="item active"><a class="fancybox" href="<%=@image.image_path_url%>" rel="gallery <%=@image.step_id%>" data-fancybox-type="image"> <%=image_tag(@image.image_path_url(:preview), :width => "100%", :class=>@image.id)%></a></div>').hide().fadeIn(500);    
+    $('.carousel-inner.<%=@image.step_id%>').append('<div class="item active"><a class="fancybox" href="<%=@image.image_path_url%>" rel="gallery <%=@image.step_id%>" id= "img_link_<%=@image.id%>" data-fancybox-type="image"> <%=image_tag(@image.image_path_url(:preview), :width => "100%", :class=>@image.id)%></a></div>').hide().fadeIn(500);    
+    // add image rotation button
+    $('#img_link_<%=@image.id%>').parent().append('<div class="btn btn-mini rotate_img_btn"><i class="fa fa-rotate-left"></i></div>');
   <% end %>
 
   if(stepImagesCount == 0 ){
     $('.mainPhoto').fadeIn(500);    
-  }else{
+  }else if (stepImagesCount > 1){
     // reveal carousel controls
     $('.carousel-control').fadeIn(500);
   }
@@ -90,6 +87,8 @@
 
   // remove progress bars
   $('.upload').remove();
+
+  triggerDynamicFancybox(); // trigger fancybox for dynamically added element
 
 <% end %>
 

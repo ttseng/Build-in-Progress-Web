@@ -1,0 +1,963 @@
+
+{ 
+  "success":true, 
+  "info":"ok", 
+  "data":
+    {"project":
+      {
+  "description": "My friend is getting married!  I'm designing an interactive card for them as part of my present.  The idea is that there will be some LEDs arranged in a heart that will light up when you press a button.",
+  "title": "Electronic Wedding Card",
+  "collaborative?": false,
+  "remix?": false
+}
+      ,
+    "steps":
+      [
+  {
+    "ancestry": "0",
+    "description": "<p>My friend is getting married! &nbsp;I&#39;m designing an interactive card for them as part of my present. &nbsp;The idea is that there will be some LEDs arranged in a heart that will light up when you press a button.&nbsp;</p>\r\n",
+    "id": 12,
+    "last": false,
+    "name": "Project Overview",
+    "position": 0,
+    "published_on_formatted": "03/10/2014 11:47:28",
+    "images": [
+
+    ]
+  },
+  {
+    "ancestry": "12",
+    "description": "<p>The general idea is to have a laser cut card with a blinking LED heart. &nbsp;I&#39;d like to do 3 concentric hearts that light up in a sequence, so I started off by designing the card on paper and then moving to Illustrator to design the circuit.</p>\r\n",
+    "id": 13,
+    "last": false,
+    "name": "Sketching out the card",
+    "position": 1,
+    "published_on_formatted": "03/10/2014 11:48:00",
+    "images": [
+      {
+        "id": 22,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/22/uploads_2Foazs438g7thdunmi-a5cdce378ba20545c96c1462a9fb19e7_2F2013-06-18%2B08.24.07.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/22/preview_uploads_2Foazs438g7thdunmi-a5cdce378ba20545c96c1462a9fb19e7_2F2013-06-18%2B08.24.07.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/22/preview_large_uploads_2Foazs438g7thdunmi-a5cdce378ba20545c96c1462a9fb19e7_2F2013-06-18%2B08.24.07.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/22/thumb_uploads_2Foazs438g7thdunmi-a5cdce378ba20545c96c1462a9fb19e7_2F2013-06-18%2B08.24.07.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/22/square_thumb_uploads_2Foazs438g7thdunmi-a5cdce378ba20545c96c1462a9fb19e7_2F2013-06-18%2B08.24.07.jpg"
+          }
+        },
+        "position": 0
+      },
+      {
+        "id": 21,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/21/uploads_2Fui26d6jsv2t9-a5cdce378ba20545c96c1462a9fb19e7_2F2013-06-18%2B08.25.02.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/21/preview_uploads_2Fui26d6jsv2t9-a5cdce378ba20545c96c1462a9fb19e7_2F2013-06-18%2B08.25.02.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/21/preview_large_uploads_2Fui26d6jsv2t9-a5cdce378ba20545c96c1462a9fb19e7_2F2013-06-18%2B08.25.02.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/21/thumb_uploads_2Fui26d6jsv2t9-a5cdce378ba20545c96c1462a9fb19e7_2F2013-06-18%2B08.25.02.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/21/square_thumb_uploads_2Fui26d6jsv2t9-a5cdce378ba20545c96c1462a9fb19e7_2F2013-06-18%2B08.25.02.jpg"
+          }
+        },
+        "position": 1
+      },
+      {
+        "id": 20,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/20/uploads_2F5t9zyfjnogu2qpvi-a5cdce378ba20545c96c1462a9fb19e7_2FScreen%2BShot%2B2013-06-18%2Bat%2B8.28.15%2BAM.png",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/20/preview_uploads_2F5t9zyfjnogu2qpvi-a5cdce378ba20545c96c1462a9fb19e7_2FScreen%2BShot%2B2013-06-18%2Bat%2B8.28.15%2BAM.png"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/20/preview_large_uploads_2F5t9zyfjnogu2qpvi-a5cdce378ba20545c96c1462a9fb19e7_2FScreen%2BShot%2B2013-06-18%2Bat%2B8.28.15%2BAM.png"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/20/thumb_uploads_2F5t9zyfjnogu2qpvi-a5cdce378ba20545c96c1462a9fb19e7_2FScreen%2BShot%2B2013-06-18%2Bat%2B8.28.15%2BAM.png"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/20/square_thumb_uploads_2F5t9zyfjnogu2qpvi-a5cdce378ba20545c96c1462a9fb19e7_2FScreen%2BShot%2B2013-06-18%2Bat%2B8.28.15%2BAM.png"
+          }
+        },
+        "position": 2
+      }
+    ]
+  },
+  {
+    "ancestry": "12",
+    "description": "<p>Oops, actually, I just have one day to build this thing, so I&#39;m just going to do one heart that flashes. ( :</p>\r\n",
+    "id": 14,
+    "last": false,
+    "name": "Switching to one heart",
+    "position": 2,
+    "published_on_formatted": "03/10/2014 11:48:39",
+    "images": [
+      {
+        "id": 23,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/23/uploads_2Fx8r5t2tzooluwhfr-8979f73853255df2f30489fd09db82d6_2FScreen%2BShot%2B2013-06-18%2Bat%2B8.26.58%2BAM.png",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/23/preview_uploads_2Fx8r5t2tzooluwhfr-8979f73853255df2f30489fd09db82d6_2FScreen%2BShot%2B2013-06-18%2Bat%2B8.26.58%2BAM.png"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/23/preview_large_uploads_2Fx8r5t2tzooluwhfr-8979f73853255df2f30489fd09db82d6_2FScreen%2BShot%2B2013-06-18%2Bat%2B8.26.58%2BAM.png"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/23/thumb_uploads_2Fx8r5t2tzooluwhfr-8979f73853255df2f30489fd09db82d6_2FScreen%2BShot%2B2013-06-18%2Bat%2B8.26.58%2BAM.png"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/23/square_thumb_uploads_2Fx8r5t2tzooluwhfr-8979f73853255df2f30489fd09db82d6_2FScreen%2BShot%2B2013-06-18%2Bat%2B8.26.58%2BAM.png"
+          }
+        },
+        "position": 1
+      },
+      {
+        "id": 24,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/24/uploads_2Fnok5gpa4ictbj4i-8979f73853255df2f30489fd09db82d6_2F2013-06-18%2B08.25.02.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/24/preview_uploads_2Fnok5gpa4ictbj4i-8979f73853255df2f30489fd09db82d6_2F2013-06-18%2B08.25.02.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/24/preview_large_uploads_2Fnok5gpa4ictbj4i-8979f73853255df2f30489fd09db82d6_2F2013-06-18%2B08.25.02.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/24/thumb_uploads_2Fnok5gpa4ictbj4i-8979f73853255df2f30489fd09db82d6_2F2013-06-18%2B08.25.02.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/24/square_thumb_uploads_2Fnok5gpa4ictbj4i-8979f73853255df2f30489fd09db82d6_2F2013-06-18%2B08.25.02.jpg"
+          }
+        },
+        "position": 0
+      }
+    ]
+  },
+  {
+    "ancestry": "12/14",
+    "description": "<p>I love using Illustrator, so I used it to design my card. &nbsp;I put all the different parts of the card in different layers to help myself organize the different components. &nbsp;</p>\r\n\r\n<p>One tricky thing was figuring out how to make laser-cutterable letters. &nbsp;The issue is that when you laser cut letters, any letters with enclosed forms (like o&#39;s, a&#39;s, etc.) will look funny because the centers will be cut out (unless you use stencil fonts, most of which I find to be really ugly).&nbsp; To get around this, I followed this excellent tutorial for adding material around letter openings:</p>\r\n\r\n<p><a href=\"http://www.instructables.com/id/Laser-Cut-Stencil-Letters/\" style=\"word-wrap: break-word; color: rgb(0, 136, 204) !important;\" target=\"_blank\">http://www.instructables.com/id/Laser-Cut-Stencil-Letters/</a></p>\r\n",
+    "id": 15,
+    "last": false,
+    "name": "Designing the card",
+    "position": 3,
+    "published_on_formatted": "03/10/2014 11:49:11",
+    "images": [
+      {
+        "id": 26,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/26/uploads_2Fo0h78594214np14i-88e5a84021c855f7ef5b00bc2b01650f_2FScreen%2BShot%2B2013-07-14%2Bat%2B5.55.41%2BPM.png",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/26/preview_uploads_2Fo0h78594214np14i-88e5a84021c855f7ef5b00bc2b01650f_2FScreen%2BShot%2B2013-07-14%2Bat%2B5.55.41%2BPM.png"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/26/preview_large_uploads_2Fo0h78594214np14i-88e5a84021c855f7ef5b00bc2b01650f_2FScreen%2BShot%2B2013-07-14%2Bat%2B5.55.41%2BPM.png"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/26/thumb_uploads_2Fo0h78594214np14i-88e5a84021c855f7ef5b00bc2b01650f_2FScreen%2BShot%2B2013-07-14%2Bat%2B5.55.41%2BPM.png"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/26/square_thumb_uploads_2Fo0h78594214np14i-88e5a84021c855f7ef5b00bc2b01650f_2FScreen%2BShot%2B2013-07-14%2Bat%2B5.55.41%2BPM.png"
+          }
+        },
+        "position": 0
+      },
+      {
+        "id": 25,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/25/uploads_2Flryjq6ur737ynwmi-88e5a84021c855f7ef5b00bc2b01650f_2FScreen_Shot_2013-06-18_at_10.20.28_PM.png",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/25/preview_uploads_2Flryjq6ur737ynwmi-88e5a84021c855f7ef5b00bc2b01650f_2FScreen_Shot_2013-06-18_at_10.20.28_PM.png"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/25/preview_large_uploads_2Flryjq6ur737ynwmi-88e5a84021c855f7ef5b00bc2b01650f_2FScreen_Shot_2013-06-18_at_10.20.28_PM.png"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/25/thumb_uploads_2Flryjq6ur737ynwmi-88e5a84021c855f7ef5b00bc2b01650f_2FScreen_Shot_2013-06-18_at_10.20.28_PM.png"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/25/square_thumb_uploads_2Flryjq6ur737ynwmi-88e5a84021c855f7ef5b00bc2b01650f_2FScreen_Shot_2013-06-18_at_10.20.28_PM.png"
+          }
+        },
+        "position": 1
+      }
+    ]
+  },
+  {
+    "ancestry": "12/14/15",
+    "description": "<p>I started off by doing a bunch of test cuts to make sure that I could score the card (at the bend); I found that last time I made a card, it was hard to fold by hand since the card stock is thick. &nbsp;</p>\r\n\r\n<p>BUT I found that the laser cutter cut all the way through despite my test cuts! &nbsp;I think it&#39;s because the laser cutter was on a raster setting and did multiple passes. &nbsp;So instead, I just did a very light vector cut.</p>\r\n",
+    "id": 16,
+    "last": false,
+    "name": "Laser Cutting the Card",
+    "position": 4,
+    "published_on_formatted": "03/10/2014 11:49:48",
+    "images": [
+      {
+        "id": 28,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/28/uploads_2Fguk5xylupwdbo6r-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B10.00.51.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/28/preview_uploads_2Fguk5xylupwdbo6r-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B10.00.51.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/28/preview_large_uploads_2Fguk5xylupwdbo6r-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B10.00.51.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/28/thumb_uploads_2Fguk5xylupwdbo6r-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B10.00.51.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/28/square_thumb_uploads_2Fguk5xylupwdbo6r-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B10.00.51.jpg"
+          }
+        },
+        "position": 0
+      },
+      {
+        "id": 29,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/29/uploads_2Fnpg8mp514wrssjor-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B09.53.34.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/29/preview_uploads_2Fnpg8mp514wrssjor-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B09.53.34.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/29/preview_large_uploads_2Fnpg8mp514wrssjor-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B09.53.34.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/29/thumb_uploads_2Fnpg8mp514wrssjor-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B09.53.34.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/29/square_thumb_uploads_2Fnpg8mp514wrssjor-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B09.53.34.jpg"
+          }
+        },
+        "position": 2
+      },
+      {
+        "id": 27,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/27/uploads_2Fyh567vnwftq8semi-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B09.45.54.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/27/preview_uploads_2Fyh567vnwftq8semi-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B09.45.54.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/27/preview_large_uploads_2Fyh567vnwftq8semi-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B09.45.54.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/27/thumb_uploads_2Fyh567vnwftq8semi-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B09.45.54.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/27/square_thumb_uploads_2Fyh567vnwftq8semi-9e74121c81d9e4f15634720a1bc3e55b_2F2013-06-18%2B09.45.54.jpg"
+          }
+        },
+        "position": 1
+      }
+    ]
+  },
+  {
+    "ancestry": "12/14/15/16",
+    "description": "<p>I found some images on Google and put them together to form the graphic on the inside of the card. &nbsp;I then traced over the image using some vellum and markers; it turned out better than I thought it would be!</p>\r\n",
+    "id": 17,
+    "last": false,
+    "name": "Designing the Interior",
+    "position": 5,
+    "published_on_formatted": "03/10/2014 11:50:17",
+    "images": [
+      {
+        "id": 30,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/30/uploads_2F2i8ob1w8m5ay8pvi-3df4394b05804a97b5158da4c63d228a_2FScreen%2BShot%2B2013-06-18%2Bat%2B6.21.35%2BPM.png",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/30/preview_uploads_2F2i8ob1w8m5ay8pvi-3df4394b05804a97b5158da4c63d228a_2FScreen%2BShot%2B2013-06-18%2Bat%2B6.21.35%2BPM.png"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/30/preview_large_uploads_2F2i8ob1w8m5ay8pvi-3df4394b05804a97b5158da4c63d228a_2FScreen%2BShot%2B2013-06-18%2Bat%2B6.21.35%2BPM.png"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/30/thumb_uploads_2F2i8ob1w8m5ay8pvi-3df4394b05804a97b5158da4c63d228a_2FScreen%2BShot%2B2013-06-18%2Bat%2B6.21.35%2BPM.png"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/30/square_thumb_uploads_2F2i8ob1w8m5ay8pvi-3df4394b05804a97b5158da4c63d228a_2FScreen%2BShot%2B2013-06-18%2Bat%2B6.21.35%2BPM.png"
+          }
+        },
+        "position": 0
+      },
+      {
+        "id": 31,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/31/uploads_2Fd4wsxkn1pc01wcdi-3df4394b05804a97b5158da4c63d228a_2F2013-06-18%2B16.47.29.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/31/preview_uploads_2Fd4wsxkn1pc01wcdi-3df4394b05804a97b5158da4c63d228a_2F2013-06-18%2B16.47.29.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/31/preview_large_uploads_2Fd4wsxkn1pc01wcdi-3df4394b05804a97b5158da4c63d228a_2F2013-06-18%2B16.47.29.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/31/thumb_uploads_2Fd4wsxkn1pc01wcdi-3df4394b05804a97b5158da4c63d228a_2F2013-06-18%2B16.47.29.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/31/square_thumb_uploads_2Fd4wsxkn1pc01wcdi-3df4394b05804a97b5158da4c63d228a_2F2013-06-18%2B16.47.29.jpg"
+          }
+        },
+        "position": 1
+      }
+    ]
+  },
+  {
+    "ancestry": "12/14/15/16/17",
+    "description": "<p>After designing the circuit in Illustrator (and printing out the image to double-check the dimensions), I cut the circuit on the vinyl cutter. &nbsp;One thing that I learned from last time I made a card is that it&#39;s worth cutting out the outline for the card on the vinyl cutter itself. &nbsp;That makes it much easier to align the circuit on the card.</p>\r\n",
+    "id": 18,
+    "last": false,
+    "name": "Vinyl cutting the card",
+    "position": 6,
+    "published_on_formatted": "03/10/2014 11:50:37",
+    "images": [
+      {
+        "id": 32,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/32/uploads_2Fne2gj05b4ylanhfr-fadcca9c24eae402f093b2e376cda8d1_2FScreen%2BShot%2B2013-06-18%2Bat%2B6.23.31%2BPM.png",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/32/preview_uploads_2Fne2gj05b4ylanhfr-fadcca9c24eae402f093b2e376cda8d1_2FScreen%2BShot%2B2013-06-18%2Bat%2B6.23.31%2BPM.png"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/32/preview_large_uploads_2Fne2gj05b4ylanhfr-fadcca9c24eae402f093b2e376cda8d1_2FScreen%2BShot%2B2013-06-18%2Bat%2B6.23.31%2BPM.png"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/32/thumb_uploads_2Fne2gj05b4ylanhfr-fadcca9c24eae402f093b2e376cda8d1_2FScreen%2BShot%2B2013-06-18%2Bat%2B6.23.31%2BPM.png"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/32/square_thumb_uploads_2Fne2gj05b4ylanhfr-fadcca9c24eae402f093b2e376cda8d1_2FScreen%2BShot%2B2013-06-18%2Bat%2B6.23.31%2BPM.png"
+          }
+        },
+        "position": 0
+      },
+      {
+        "id": 33,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/33/uploads_2F0oi7ojsxvq5b3xr-fadcca9c24eae402f093b2e376cda8d1_2F2013-06-18%2B17.52.08.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/33/preview_uploads_2F0oi7ojsxvq5b3xr-fadcca9c24eae402f093b2e376cda8d1_2F2013-06-18%2B17.52.08.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/33/preview_large_uploads_2F0oi7ojsxvq5b3xr-fadcca9c24eae402f093b2e376cda8d1_2F2013-06-18%2B17.52.08.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/33/thumb_uploads_2F0oi7ojsxvq5b3xr-fadcca9c24eae402f093b2e376cda8d1_2F2013-06-18%2B17.52.08.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/33/square_thumb_uploads_2F0oi7ojsxvq5b3xr-fadcca9c24eae402f093b2e376cda8d1_2F2013-06-18%2B17.52.08.jpg"
+          }
+        },
+        "position": 1
+      }
+    ]
+  },
+  {
+    "ancestry": "12/14/15/16/17",
+    "description": "<p>Whoops, it turns out that somehow things got scaled in my Illustrator file, and the footprint for the different electronic components were too big. &nbsp;Always good to double check with a print out! &nbsp;Now that it&#39;s properly designed, I&#39;m cutting out the circuit again. &nbsp;Good thing the vinyl cutter is pretty quick!</p>\r\n",
+    "id": 19,
+    "last": false,
+    "name": "Vinyl cutting the circuit...again",
+    "position": 7,
+    "published_on_formatted": "03/10/2014 11:51:03",
+    "images": [
+      {
+        "id": 34,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/34/uploads_2Fakubcpelavukrzfr-31a4635da1287cb80cf5b4acee6f2226_2F2013-06-18%2B18.51.07.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/34/preview_uploads_2Fakubcpelavukrzfr-31a4635da1287cb80cf5b4acee6f2226_2F2013-06-18%2B18.51.07.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/34/preview_large_uploads_2Fakubcpelavukrzfr-31a4635da1287cb80cf5b4acee6f2226_2F2013-06-18%2B18.51.07.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/34/thumb_uploads_2Fakubcpelavukrzfr-31a4635da1287cb80cf5b4acee6f2226_2F2013-06-18%2B18.51.07.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/34/square_thumb_uploads_2Fakubcpelavukrzfr-31a4635da1287cb80cf5b4acee6f2226_2F2013-06-18%2B18.51.07.jpg"
+          }
+        },
+        "position": 0
+      }
+    ]
+  },
+  {
+    "ancestry": "12/14/15/16/17/19",
+    "description": "<p>I programmed an ATTiny45 using the programmer I made last time:</p>\r\n\r\n<p><a href=\"http://buildinprogress.herokuapp.com/projects/8/steps/4\" style=\"word-wrap: break-word; color: rgb(0, 136, 204) !important;\" target=\"_blank\">http://buildinprogress.herokuapp.com/projects/8/steps/4</a></p>\r\n\r\n<p>My program is just the basic Arduino blink example so that all the lights in the heart blink repeatedly.&nbsp;</p>\r\n",
+    "id": 20,
+    "last": false,
+    "name": "Programming the Arduino",
+    "position": 8,
+    "published_on_formatted": "03/10/2014 11:51:34",
+    "images": [
+      {
+        "id": 36,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/36/uploads_2Fns1ifj1ukxbnjyvi-2c90b89630eb1a27cec344c3644785cb_2F2013-06-18%2B19.39.19.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/36/preview_uploads_2Fns1ifj1ukxbnjyvi-2c90b89630eb1a27cec344c3644785cb_2F2013-06-18%2B19.39.19.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/36/preview_large_uploads_2Fns1ifj1ukxbnjyvi-2c90b89630eb1a27cec344c3644785cb_2F2013-06-18%2B19.39.19.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/36/thumb_uploads_2Fns1ifj1ukxbnjyvi-2c90b89630eb1a27cec344c3644785cb_2F2013-06-18%2B19.39.19.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/36/square_thumb_uploads_2Fns1ifj1ukxbnjyvi-2c90b89630eb1a27cec344c3644785cb_2F2013-06-18%2B19.39.19.jpg"
+          }
+        },
+        "position": 1
+      },
+      {
+        "id": 35,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/35/uploads_2Fahpu1z8k4oswcdi-2c90b89630eb1a27cec344c3644785cb_2F2013-06-18%2B19.39.15.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/35/preview_uploads_2Fahpu1z8k4oswcdi-2c90b89630eb1a27cec344c3644785cb_2F2013-06-18%2B19.39.15.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/35/preview_large_uploads_2Fahpu1z8k4oswcdi-2c90b89630eb1a27cec344c3644785cb_2F2013-06-18%2B19.39.15.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/35/thumb_uploads_2Fahpu1z8k4oswcdi-2c90b89630eb1a27cec344c3644785cb_2F2013-06-18%2B19.39.15.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/35/square_thumb_uploads_2Fahpu1z8k4oswcdi-2c90b89630eb1a27cec344c3644785cb_2F2013-06-18%2B19.39.15.jpg"
+          }
+        },
+        "position": 0
+      }
+    ]
+  },
+  {
+    "ancestry": "12/14/15/16/17/19/20",
+    "description": "<p>Weeding the circuit took some time, but in the end, it turned out pretty clean.&nbsp; I&#39;m happy with it!</p>\r\n",
+    "id": 21,
+    "last": false,
+    "name": "Putting together the circuit",
+    "position": 9,
+    "published_on_formatted": "03/10/2014 11:52:01",
+    "images": [
+      {
+        "id": 37,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/37/uploads_2Fbvynkceg66r-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B18.26.57.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/37/preview_uploads_2Fbvynkceg66r-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B18.26.57.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/37/preview_large_uploads_2Fbvynkceg66r-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B18.26.57.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/37/thumb_uploads_2Fbvynkceg66r-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B18.26.57.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/37/square_thumb_uploads_2Fbvynkceg66r-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B18.26.57.jpg"
+          }
+        },
+        "position": 0
+      },
+      {
+        "id": 39,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/39/uploads_2F875jxzeg2w7sc3di-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B18.28.56.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/39/preview_uploads_2F875jxzeg2w7sc3di-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B18.28.56.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/39/preview_large_uploads_2F875jxzeg2w7sc3di-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B18.28.56.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/39/thumb_uploads_2F875jxzeg2w7sc3di-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B18.28.56.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/39/square_thumb_uploads_2F875jxzeg2w7sc3di-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B18.28.56.jpg"
+          }
+        },
+        "position": 2
+      },
+      {
+        "id": 40,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/40/uploads_2F88stp8hb1vj6pqfr-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B19.36.28.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/40/preview_uploads_2F88stp8hb1vj6pqfr-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B19.36.28.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/40/preview_large_uploads_2F88stp8hb1vj6pqfr-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B19.36.28.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/40/thumb_uploads_2F88stp8hb1vj6pqfr-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B19.36.28.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/40/square_thumb_uploads_2F88stp8hb1vj6pqfr-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B19.36.28.jpg"
+          }
+        },
+        "position": 3
+      },
+      {
+        "id": 38,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/38/uploads_2Fjdchm6kehk0rudi-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B19.19.26.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/38/preview_uploads_2Fjdchm6kehk0rudi-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B19.19.26.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/38/preview_large_uploads_2Fjdchm6kehk0rudi-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B19.19.26.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/38/thumb_uploads_2Fjdchm6kehk0rudi-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B19.19.26.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/38/square_thumb_uploads_2Fjdchm6kehk0rudi-f5ca196d5ad40be072b0f6f150559c60_2F2013-06-18%2B19.19.26.jpg"
+          }
+        },
+        "position": 1
+      }
+    ]
+  },
+  {
+    "ancestry": "12/14/15/16/17/19/20/21",
+    "description": "<p>I really didn&#39;t like how my battery holder looked last time (I used a binder clip to hold the battery in place), so I went ahead and designed a new holder for the battery. &nbsp;I wrapped the circuit around the back of the card and used neodymium magnets to hold the battery in place. &nbsp;It worked surprisngly well! &nbsp;To hide the messiness, I made a little door cover for the battery. &nbsp;</p>\r\n\r\n<p>I&#39;ve gotta tell Jie about this...</p>\r\n",
+    "id": 22,
+    "last": false,
+    "name": "Designing a battery holder",
+    "position": 10,
+    "published_on_formatted": "03/10/2014 11:52:31",
+    "images": [
+      {
+        "id": 44,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/44/uploads_2Fhlckm00pbfenrk9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.42.46.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/44/preview_uploads_2Fhlckm00pbfenrk9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.42.46.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/44/preview_large_uploads_2Fhlckm00pbfenrk9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.42.46.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/44/thumb_uploads_2Fhlckm00pbfenrk9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.42.46.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/44/square_thumb_uploads_2Fhlckm00pbfenrk9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.42.46.jpg"
+          }
+        },
+        "position": 3
+      },
+      {
+        "id": 45,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/45/uploads_2F4ki2flzd2cvj9k9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.50.13.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/45/preview_uploads_2F4ki2flzd2cvj9k9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.50.13.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/45/preview_large_uploads_2F4ki2flzd2cvj9k9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.50.13.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/45/thumb_uploads_2F4ki2flzd2cvj9k9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.50.13.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/45/square_thumb_uploads_2F4ki2flzd2cvj9k9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.50.13.jpg"
+          }
+        },
+        "position": 4
+      },
+      {
+        "id": 41,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/41/uploads_2Fue6p3vtcvegkfbt9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.42.42.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/41/preview_uploads_2Fue6p3vtcvegkfbt9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.42.42.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/41/preview_large_uploads_2Fue6p3vtcvegkfbt9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.42.42.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/41/thumb_uploads_2Fue6p3vtcvegkfbt9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.42.42.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/41/square_thumb_uploads_2Fue6p3vtcvegkfbt9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.42.42.jpg"
+          }
+        },
+        "position": 0
+      },
+      {
+        "id": 43,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/43/uploads_2Fjd1b3zw7mv2kpgb9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.59.10.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/43/preview_uploads_2Fjd1b3zw7mv2kpgb9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.59.10.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/43/preview_large_uploads_2Fjd1b3zw7mv2kpgb9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.59.10.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/43/thumb_uploads_2Fjd1b3zw7mv2kpgb9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.59.10.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/43/square_thumb_uploads_2Fjd1b3zw7mv2kpgb9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.59.10.jpg"
+          }
+        },
+        "position": 2
+      },
+      {
+        "id": 42,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/42/uploads_2Fe5f67xvrkyt1q0k9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.50.20.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/42/preview_uploads_2Fe5f67xvrkyt1q0k9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.50.20.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/42/preview_large_uploads_2Fe5f67xvrkyt1q0k9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.50.20.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/42/thumb_uploads_2Fe5f67xvrkyt1q0k9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.50.20.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/42/square_thumb_uploads_2Fe5f67xvrkyt1q0k9-d73a869b86e6f331e7cddcf7ea800d8b_2F2013-06-18%2B19.50.20.jpg"
+          }
+        },
+        "position": 1
+      }
+    ]
+  },
+  {
+    "ancestry": "12/14/15/16/17/19/20/21/22",
+    "description": "<p>My switch ended up being a little bit of a last minute addition, so unfortunately, I had to manually cut a hole by hand through the different layers of the card. &nbsp;For the switch, I backed a piece of paper with copper tape that would help close the circuit.</p>\r\n",
+    "id": 23,
+    "last": false,
+    "name": "Adding the switch",
+    "position": 11,
+    "published_on_formatted": "03/10/2014 11:53:14",
+    "images": [
+      {
+        "id": 48,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/48/hqdefault.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/48/preview_hqdefault.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/48/preview_large_hqdefault.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/48/thumb_hqdefault.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/48/square_thumb_hqdefault.jpg"
+          }
+        },
+        "position": 2,
+        "video": {
+          "embed_url": "http://www.youtube.com/embed/qi6CnW_eE5I",
+          "rotation": null,
+          "video_path": {
+            "url": null,
+            "webm": {
+              "url": null
+            },
+            "thumb": {
+              "url": null
+            },
+            "square_thumb": {
+              "url": null
+            }
+          }
+        }
+      },
+      {
+        "id": 46,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/46/uploads_2F9c0wrrswn1xlxr-0dfb8f8fae0c799f712ec6492c5e1470_2F2013-06-18%2B20.03.42.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/46/preview_uploads_2F9c0wrrswn1xlxr-0dfb8f8fae0c799f712ec6492c5e1470_2F2013-06-18%2B20.03.42.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/46/preview_large_uploads_2F9c0wrrswn1xlxr-0dfb8f8fae0c799f712ec6492c5e1470_2F2013-06-18%2B20.03.42.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/46/thumb_uploads_2F9c0wrrswn1xlxr-0dfb8f8fae0c799f712ec6492c5e1470_2F2013-06-18%2B20.03.42.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/46/square_thumb_uploads_2F9c0wrrswn1xlxr-0dfb8f8fae0c799f712ec6492c5e1470_2F2013-06-18%2B20.03.42.jpg"
+          }
+        },
+        "position": 0
+      },
+      {
+        "id": 47,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/47/uploads_2Fy6qpqaatu1tyy14i-0dfb8f8fae0c799f712ec6492c5e1470_2F2013-06-18%2B20.03.47.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/47/preview_uploads_2Fy6qpqaatu1tyy14i-0dfb8f8fae0c799f712ec6492c5e1470_2F2013-06-18%2B20.03.47.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/47/preview_large_uploads_2Fy6qpqaatu1tyy14i-0dfb8f8fae0c799f712ec6492c5e1470_2F2013-06-18%2B20.03.47.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/47/thumb_uploads_2Fy6qpqaatu1tyy14i-0dfb8f8fae0c799f712ec6492c5e1470_2F2013-06-18%2B20.03.47.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/47/square_thumb_uploads_2Fy6qpqaatu1tyy14i-0dfb8f8fae0c799f712ec6492c5e1470_2F2013-06-18%2B20.03.47.jpg"
+          }
+        },
+        "position": 1
+      }
+    ]
+  },
+  {
+    "ancestry": "12/14/15/16/17/19/20/21/22/23",
+    "description": "<p>And then it all came together...</p>\r\n\r\n<p>My assembly order (from back to front) was as follows:</p>\r\n\r\n<ol>\r\n\t<li>vinyl cut circuit layer</li>\r\n\t<li>mask layer (with holes for the LED)</li>\r\n\t<li>vellum layer (with graphic)</li>\r\n\t<li>frame (to hide the messiness on the edges)</li>\r\n</ol>\r\n\r\n<p>I miraculously finished before 10 PM! &nbsp;Hurrah!</p>\r\n",
+    "id": 24,
+    "last": false,
+    "name": "Assembling Everything",
+    "position": 12,
+    "published_on_formatted": "03/10/2014 11:53:34",
+    "images": [
+      {
+        "id": 50,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/50/uploads_2Fco9lvdeg6erbpgb9-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.45.26.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/50/preview_uploads_2Fco9lvdeg6erbpgb9-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.45.26.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/50/preview_large_uploads_2Fco9lvdeg6erbpgb9-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.45.26.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/50/thumb_uploads_2Fco9lvdeg6erbpgb9-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.45.26.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/50/square_thumb_uploads_2Fco9lvdeg6erbpgb9-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.45.26.jpg"
+          }
+        },
+        "position": 1
+      },
+      {
+        "id": 51,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/51/uploads_2Ftwisf8lhwefjemi-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.39.18.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/51/preview_uploads_2Ftwisf8lhwefjemi-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.39.18.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/51/preview_large_uploads_2Ftwisf8lhwefjemi-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.39.18.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/51/thumb_uploads_2Ftwisf8lhwefjemi-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.39.18.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/51/square_thumb_uploads_2Ftwisf8lhwefjemi-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.39.18.jpg"
+          }
+        },
+        "position": 2
+      },
+      {
+        "id": 49,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/49/uploads_2F2bodlt7anibsatt9-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.25.35.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/49/preview_uploads_2F2bodlt7anibsatt9-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.25.35.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/49/preview_large_uploads_2F2bodlt7anibsatt9-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.25.35.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/49/thumb_uploads_2F2bodlt7anibsatt9-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.25.35.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/49/square_thumb_uploads_2F2bodlt7anibsatt9-291dd411e54079b6ee545a09f4738e4e_2F2013-06-18%2B21.25.35.jpg"
+          }
+        },
+        "position": 0
+      }
+    ]
+  },
+  {
+    "ancestry": "12/14/15/16/17/19/20/21/22/23/24",
+    "description": "<p>Yay, the card is done! &nbsp;I&#39;m really happy with how it turned out. &nbsp;I feel like I&#39;ve learned a lot since doing my first card. &nbsp;Here are some helpful tips for putting together your own card:</p>\r\n\r\n<ul>\r\n\t<li>make sure you print out your circuit to scale before you cut it on the vinyl cutter. &nbsp;This will save you the hassle of realizing things aren&#39;t in the right place!</li>\r\n\t<li>when creating your circuit on the vinyl cutter, cut out the entire outline that you hope to place the circuit on (this makes it easy to align)</li>\r\n\t<li>magnets work really well for holding batteries into place (and are much easier to hide than binder clips!)</li>\r\n\t<li>any mask that you make (to hide the circuitry) should span the entire width and height of the card interior &ndash; this makes the card look much cleaner!</li>\r\n</ul>\r\n",
+    "id": 25,
+    "last": false,
+    "name": "It's done!",
+    "position": 13,
+    "published_on_formatted": "03/10/2014 11:54:14",
+    "images": [
+      {
+        "id": 53,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/53/uploads_2Fcqvunx7eqypq4cxr-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.11.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/53/preview_uploads_2Fcqvunx7eqypq4cxr-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.11.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/53/preview_large_uploads_2Fcqvunx7eqypq4cxr-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.11.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/53/thumb_uploads_2Fcqvunx7eqypq4cxr-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.11.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/53/square_thumb_uploads_2Fcqvunx7eqypq4cxr-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.11.jpg"
+          }
+        },
+        "position": 1
+      },
+      {
+        "id": 55,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/55/uploads_2Fxrb6rblkjz41jor-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.37.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/55/preview_uploads_2Fxrb6rblkjz41jor-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.37.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/55/preview_large_uploads_2Fxrb6rblkjz41jor-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.37.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/55/thumb_uploads_2Fxrb6rblkjz41jor-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.37.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/55/square_thumb_uploads_2Fxrb6rblkjz41jor-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.37.jpg"
+          }
+        },
+        "position": 3
+      },
+      {
+        "id": 54,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/54/uploads_2F7v9o6jkdflohto6r-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.52.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/54/preview_uploads_2F7v9o6jkdflohto6r-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.52.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/54/preview_large_uploads_2F7v9o6jkdflohto6r-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.52.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/54/thumb_uploads_2F7v9o6jkdflohto6r-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.52.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/54/square_thumb_uploads_2F7v9o6jkdflohto6r-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.45.52.jpg"
+          }
+        },
+        "position": 2
+      },
+      {
+        "id": 52,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/52/uploads_2Fjpc5k4wdb05rvn29-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.49.26.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/52/preview_uploads_2Fjpc5k4wdb05rvn29-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.49.26.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/52/preview_large_uploads_2Fjpc5k4wdb05rvn29-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.49.26.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/52/thumb_uploads_2Fjpc5k4wdb05rvn29-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.49.26.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/52/square_thumb_uploads_2Fjpc5k4wdb05rvn29-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.49.26.jpg"
+          }
+        },
+        "position": 0
+      },
+      {
+        "id": 56,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/56/uploads_2F4u3iln1cualcjtt9-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.46.11.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/56/preview_uploads_2F4u3iln1cualcjtt9-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.46.11.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/56/preview_large_uploads_2F4u3iln1cualcjtt9-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.46.11.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/56/thumb_uploads_2F4u3iln1cualcjtt9-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.46.11.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/56/square_thumb_uploads_2F4u3iln1cualcjtt9-c6fd45c96fd16dd17fc8d0adf52d6f11_2F2013-06-18%2B21.46.11.jpg"
+          }
+        },
+        "position": 4
+      },
+      {
+        "id": 57,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/57/hqdefault.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/57/preview_hqdefault.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/57/preview_large_hqdefault.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/57/thumb_hqdefault.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/57/square_thumb_hqdefault.jpg"
+          }
+        },
+        "position": 5,
+        "video": {
+          "embed_url": "http://www.youtube.com/embed/lC1EZuFdPoc",
+          "rotation": null,
+          "video_path": {
+            "url": null,
+            "webm": {
+              "url": null
+            },
+            "thumb": {
+              "url": null
+            },
+            "square_thumb": {
+              "url": null
+            }
+          }
+        }
+      },
+      {
+        "id": 58,
+        "image_path": {
+          "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/58/hqdefault.jpg",
+          "preview": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/58/preview_hqdefault.jpg"
+          },
+          "preview_large": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/58/preview_large_hqdefault.jpg"
+          },
+          "thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/58/thumb_hqdefault.jpg"
+          },
+          "square_thumb": {
+            "url": "https://buildinprogresstest.s3.amazonaws.com/image/image_path/58/square_thumb_hqdefault.jpg"
+          }
+        },
+        "position": 6,
+        "video": {
+          "embed_url": "http://www.youtube.com/embed/EAtqKVOtR3Q",
+          "rotation": null,
+          "video_path": {
+            "url": null,
+            "webm": {
+              "url": null
+            },
+            "thumb": {
+              "url": null
+            },
+            "square_thumb": {
+              "url": null
+            }
+          }
+        }
+      }
+    ]
+  }
+]
+      
+    } 
+}

@@ -1,0 +1,54 @@
+<div class ="project search">
+	<% #show default image for project overview if the project has an image uploaded %>
+	<% project = Project.find(project) %>
+	<div class="exploreRibbon-wrapper">
+	<% if project.images.count > 0 %>
+			<%= link_to image_tag(project.default_image.image_path_url(:preview), :width=>"100%"), project  %>
+	<% else %>
+		<%= link_to(project) do %>
+			<div class = "blankImage"></div>
+		<% end %>
+	<% end %>
+	<% if project.built %>
+		<div class='exploreRibbon'>built!</div>
+	<% end %>
+	<% step_with_question = project.step_with_question %>
+	<% if step_with_question != "" %>
+		<%= link_to project_steps_path(project, :step=>step_with_question) do %>
+				<div class="vert-ribbon">
+					<div class="container">
+						<div class="base">?</div>
+						<div class="left_corner"></div>
+						<div class="right_corner"></div>
+					</div>
+				</div>
+			<% end %>
+	<% end %>
+
+	<div class="projectInfo">
+		<div class="exploreFavorite">
+			<icon class="fa fa-star"> </icon> <span class="exploreFavoriteCount"><%=project.favorited_by.length%></span>
+		</div>
+		<div class="exploreComment">
+			<icon class="fa fa-comment"></icon>
+			<span class="exploreCommentCount"><%=project.comment_count%></span>
+		</div>
+		<div class="exploreRemix">
+			<icon class="fa fa-code-fork"></icon>
+				<span class="exploreRemixCount"><%=project.remix_count%></span>
+		</div>
+	</div>
+	
+
+	</div>
+
+	<div class="name"><%=link_to project.title, project %> </div>
+	<div class="author">by <%= render :partial => "projects/author_byline", :locals => {:project => project, :source=>"explore"} %> </div>
+	<div class="clear"></div>
+	<% if !@projects_text[project.id.to_s].blank? %>
+		<div class="textMatch"><%= sanitize(truncate(@projects_text[project.id.to_s], :length => 115), :tags=> %w(b) ).html_safe %> </div>
+	<% else %>
+		<div class="textMatch">(No Project Description)</div>
+	<% end %>
+
+</div>

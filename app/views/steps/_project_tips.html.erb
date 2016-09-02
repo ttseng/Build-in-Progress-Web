@@ -1,0 +1,51 @@
+    <div class="modal hide fade" role="dialog" aria-hidden"true" id="optionsModal" style="width: 475px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" style="text-align: center; font-weight: normal;">Congrats on creating your first step!</h3>
+        </div>
+        <div class="modal-body" style="text-align: center; overflow: hidden;">
+          <p>Here are some additional things you can do on your project page.</p>
+          
+          <div id="optionsCarousel" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+              <li data-target="optionsCarousel" data-slide-to="0" class="active"></li>
+              <li data-target="optionsCarousel" data-slide-to="1"></li>
+            </ol>
+            <div class="carousel-inner" role="listbox">
+              <div class="item active">
+                <h4 style="text-align:center">1. Go to Project Overview</h4>
+                <%= image_tag "help/show_project_overview.gif", :class=>"help_gif", :style=>"margin:0 auto" %>
+              </div>
+              <div class="item">
+                <h4 style="text-align:center">2. Add Project Categories</h4>
+                <%= image_tag "help/edit_categories.gif", :class=>"help_gif", :style=>"margin:0 auto" %>
+              </div>
+              <div class="item">
+                <h4 style="text-align:center">3. Add collaborators</h4>
+                <%= image_tag "help/edit_collaborators.gif", :class=>"help_gif", :style=>"margin:0 auto" %>
+              </div>
+            </div>
+
+            <!-- Left and right controls -->
+            <a class="left carousel-control" href="#optionsCarousel" role="button" data-slide="prev" style="top:50%">&lsaquo;</a>
+            <a class="right carousel-control" href="#optionsCarousel" role="button" data-slide="next" style="top:50%">&rsaquo;</a>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+
+<style>
+  #optionsCarousel h4{
+    font-weight: normal;
+    margin: 20px 0px;
+  }
+</style>
+<script type="text/javascript">
+  $(window).load(function(){
+    $('#optionsModal').modal({backdrop:false});
+  });
+
+</script>

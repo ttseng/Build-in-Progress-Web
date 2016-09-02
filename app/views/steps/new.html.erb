@@ -1,28 +1,132 @@
-<script type="text/javascript">
-  var newStepSlideVisible = false;
-</script>
+<style>
+body{
+    overflow: hidden;
+  }
+  .tooltip.left .tooltip-arrow{
+  	border-left-color: #6497DA;
+  }
+  .tooltip-inner{
+  	background-color: #6497DA;
+  }
+</style>
 
-<div class="fullRow" style="width:940px">
+<% if params[:label] == "true" %>
+	<% title "New Branch Label in #{@project.title}" %>
+<% else %>
+	<% title "New Step in #{@project.title}" %>
+<% end %>
 
- 	<%= render :partial => 'images/project_overview_image_gallery', :locals => {:source=>"new"} %>
+<div class="fullRow">
+
+	<%= render :partial => "process_map_tools", :locals => {:source => "new"} %>
 
 	<div id="processMap" class="new">
     	<%= render :partial => 'process_map', :locals=> {:source=> "new"} %>
 	</div>
     
-    <div class="processBlog">
-    	<div class = "detailViewHandle"><icon class="fa fa-chevron-right" style="margin-left: 3px; font-size: 23px;"></i><icon class="fa fa-file-text" style="display: block; margin-top: 6px; font-size: 24px; margin-left: 1px;"></i></div>
+    <div class="processBlog new" id="infoContainer">
 		<%= render :partial => 'step_form', :locals=> {:source => "new"} %>
 	</div>
 
-
 </div>
+
+<!-- the video embed modal form -->
+<%= render :partial => 'steps/video' %>
+
+<!-- editing conflict modal -->
+<%= render :partial => "editing_conflict_modal" %>
 
 <script type="text/javascript">
 	$(document).ready(function(){
+
+		setProcessMapSize();	
+		moveMap($('.stepNode.newStep'));
+
+		// moveMap($('.stepNode.newStep'));
+		
        // hide footer
         $('#footer').hide();
+
+        loadCarousels("new");
+
+		$('.thumbGallery').on('click', '.image', function(){
+			setCarousel(getImageID($(this).attr('id')));
+		});
+
+		$('.carousel').bind('slid', function(){
+ 			var step_carousel = $('.mainPhoto:not(.projectOverviewCarousel)');
+ 			if(step_carousel.find('.item.active').length == 0){
+                step_carousel.find('.item').first().addClass('active');
+              }
+      	});
+
+      	// scroll to new step
+      	$('.stepNode:not(.newStep').css('opacity', 0.5);
+
+      	$('[data-toggle="popover"]').popover();
+	});
+
+	$(window).resize(function(){
+		setProcessMapSize();
+	});
+
+	// STEP TOUR
+	if(parseInt("<%=current_user.projects.count%>")==1 && parseInt("<%=@project.steps.count%>")==0){
+		$('#step_name').tooltip(
+		{
+			title: "1. Add step title",
+			placement: "left",
+			container: ".processBlog",
+			trigger: "manual"
+		});
+		$('#uploadMedia').tooltip(
+		{
+			title: "2. Upload images/videos",
+			placement: "left",
+			container: ".processBlog",
+			trigger: "manual",
+		});
+		$('.detailViewText').tooltip(
+		{
+			title: "3. Add step description",
+			placement: "left",
+			container: ".processBlog",
+			trigger: "manual",
+		});
+		$('.update_step_button').tooltip(
+		{
+			title: "4. Click to create step",
+			placement: "bottom",
+			container: ".processBlog",
+			trigger: "manual",
+		});
+
+		// hide or show tooltips depending on scroll position
+		$('.stepDetailView').scroll(function(e){
+			setTimeout(function(){
+				if($('.stepDetailView').scrollTop() > 0){
+					$('#step_name').tooltip('hide');
+					$('#uploadMedia').tooltip('hide');
+					$('.detailViewText').tooltip('hide');
+					$('.update_step_button').tooltip('hide');
+				}else{
+					$('#step_name').tooltip('show');
+					$('#uploadMedia').tooltip('show');
+					$('.detailViewText').tooltip('show');
+					$('.update_step_button').tooltip('show');
+			
+				}
+			}, 150);
+		});
+	}
+
+	$(window).load(function() {
+		if(parseInt("<%=current_user.projects.count%>")==1 && parseInt("<%=@project.steps.count%>")==0){
+			$('#step_name').tooltip('show');
+			$('#uploadMedia').tooltip('show');
+			$('.detailViewText').tooltip('show');
+			$('.update_step_button').tooltip('show');
+		}
 	});
 
 </script>
-

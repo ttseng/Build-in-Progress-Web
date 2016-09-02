@@ -1,5 +1,42 @@
-<p>Welcome <%= @email %>!</p>
+<!DOCTYPE html>
+<html>
+	<body style="font-family: 'arial'">
+	  
+	  <% # Banner %>
+	  <table style="width: 600px">
+        <tr>
+          <td class="heading" style="width: 100%; height: 24px; padding: 3px; background-color: #A9E2F3">
+              <%# comment out line below to insert your app's logo into the email %>
+              <%# = image_tag("build_in_progress_logo.png", :class=>"logo_icon" , :style=> "height: 20px; width: 20px; border: none;") %>
+           </td>
+         </tr>
+         <tr>
+      </table>
 
-<p>You can confirm your account email through the link below:</p>
+      <% # Content %>
+       <table style="padding: 10px">
+        <tr>
+         <td class="notification-content" valign="top">
+          <p class="notification_heading">
+            Welcome <%= @email %>!
+          </p>
+          <p class="notification_body">
+            You can confirm your <%=ENV["APP_NAME"]%> account through the link below:
+          </p>
+          <p class="notification_body" style="color: #949494; font-size: small; margin-top: 5px; margin-left: 10px;">
+          </p>
+         </td>
+       </tr>
+    </table>
 
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, :confirmation_token => @token) %></p>
+	<% # Link %>
+     <table class="notification_button_container">
+        <tr>
+          <td style="padding-left: 10px">
+          	<%= link_to 'Confirm my account', confirmation_url(@resource, :confirmation_token => @token), {:style => "background: #08c; color: white; padding: 5px; border-radius: 2px; font-size: 12px; font-weight: bold; text-decoration: none;", :class=>"notification_button"} %>
+          </td>
+        </tr>
+      </table>
+
+	</body>
+</html>

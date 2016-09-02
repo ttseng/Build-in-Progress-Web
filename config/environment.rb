@@ -7,3 +7,6 @@ Hirb::Formatter.dynamic_config['ActiveRecord::Base']
 
 # Initialize the rails application
 Build::Application.initialize!
+
+# remove cache logs
+Rails.cache.silence!

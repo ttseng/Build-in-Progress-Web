@@ -1,40 +1,64 @@
+<% title "Sign Up | #{ENV["APP_NAME"] }" %>
 <div class="fullRow" style="margin-top:60px">
 	<div class="fullRow">
 
 		<div class="signUpPage">
 
-			<h2>Sign up</h2>
+      <div class="form_container">
 
-			<%= semantic_form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
-		
-			  <%= devise_error_messages! %>
+  			<h3 class="form_heading sign_up">Sign up</h3>
 
-			  <div class="formField"><%= f.label :username, :class=> "label" %><br />
-			  <%= f.text_field :username, :class=> "signup_username", :maxlength=>"15"%></div>
-			  <div class="usernameValidation validation">Username is already taken</div>
+          <div id="sign_up_links" style="text-align: center;">
 
-			  <div class="formField"><%= f.label :email, :class=> "label" %><br />
-			  <%= f.email_field :email%></div>
-			  <div class="emailValidation validation">Email is already taken</div>
+          <%= link_to image_tag("google_login.png"), omniauth_authorize_path(resource_name, "google_oauth2"), :class=> "google_login_btn" %>
 
-			  <div class="formField"><%= f.label :password, :class=>"label" %><br />
-			  <%= f.password_field :password, :class=> "signup_password" %></div>
-			  <div class="passwordValidation validation">Password must be at least 8 characters</div>
+          <div style="margin: 10px;">or</div>
+          <div><a href="#" id="email_sign_up">Sign up with your email address</a></div>
+        </div>
 
-			  <div class="formField"><%= f.label :password_confirmation, :class=>"label" %><br />
-			  <%= f.password_field :password_confirmation %></div>
-			  <div class="passwordConfirmationValidation validation">Passwords do not match</div>
+  			<%= semantic_form_for(resource, :as => resource_name, :url => registration_path(resource_name), namespace: 'sign_up', html: {id: 'form_user_sign_up'}) do |f| %>
 
-			  <div><%= f.submit "Sign up", :class=>"btn btn-primary signup_button" %></div>
-			<% end %>
+  			  <div class="formField"><%= f.label :username, :class=> "label label-info" %><br />
+  			  <%= f.text_field :username, :class=> "signup_username", :maxlength=>"15"%></div>
+  			  <div class="usernameValidation validation">Username is already taken</div>
 
-			<%= render "devise/shared/links" %>
+  			  <div class="formField"><%= f.label :email, :class=> "label label-info" %><br />
+  			  <%= f.email_field :email%></div>
+  			  <div class="emailValidation validation">Email is already taken</div>
 
-		</div>
-	</div>
+  			  <div class="formField"><%= f.label :password, :class=>"label label-info" %><br />
+  			  <%= f.password_field :password, :class=> "signup_password" %></div>
+  			  <div class="passwordValidation validation">Password must be at least 8 characters</div>
+
+  			  <div class="formField"><%= f.label :password_confirmation, :class=>"label label-info" %><br />
+  			  <%= f.password_field :password_confirmation %></div>
+  			  <div class="passwordConfirmationValidation validation">Passwords do not match</div>
+
+  			  <div style="margin-top: 10px;"><%= f.submit "Sign up", :class=>"btn btn-info signup_button" %></div>
+
+          <div style="margin-top: 20px;"><a href="#" id="sign_up_back">Back</a></div>
+  			<% end %>
+
+  			<%= render "devise/shared/links" %>
+
+  		</div>
+  	</div>
+  </div>
 </div>
 
 <script type="text/javascript">
+
+  $('#email_sign_up').click(function(){
+    $('#sign_up_links').fadeOut(function(){
+      $('#form_user_sign_up').fadeIn();
+    });
+  });
+
+  $('#sign_up_back').click(function(){
+    $('#form_user_sign_up').fadeOut(function(){
+      $('#sign_up_links').fadeIn();
+    });
+  });
 
 	function disableSignUp(){
 		$('.signup_button').attr('disabled', 'disabled');
@@ -179,6 +203,11 @@ $(document).ready(function(){
     	if(password_confirmation.length > 0){
     		passwordMatch(password_confirmation, password);
     	}
+    });
+
+    // ensure username does not have spaces
+    $('.signup_username').on('keydown', function(e){
+      return e.which !==32;
     });
 
 });

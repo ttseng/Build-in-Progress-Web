@@ -1,0 +1,33 @@
+<div class ="collection search">
+	<% #show default image for project overview if the project has an image uploaded %>
+	<% collection = Collection.find(collection) %>
+	<div class="exploreImage-wrapper">
+		<% if collection.projects.public_projects.length != 0 && !collection.projects.public_projects.order(:updated_at).last.default_image.nil? %>
+			<%= link_to image_tag(collection.projects.public_projects.order(:updated_at).last.default_image.image_path_url(:preview), :width=>"100%", :class=>"largeImage"), collection %>
+			<% if collection.projects.public_projects.length != 0 && !collection.image.blank? %>
+				<%= link_to image_tag(collection.image_url(:preview), :width=>"30%", :class=>"img-polaroid mini-col-avatar"), collection %>
+			<% else %>
+				<%= link_to image_tag("default_collection_large.png", :width=>"30%", :class=>"limg-polaroid mini-col-avatar"), collection %>
+			<% end %>
+		<% elsif collection.projects.public_projects.length != 0 && !collection.image.blank? %>
+			<%= link_to image_tag(collection.image_url(:preview), :width=>"100%", :class=>"largeImage"), collection %>
+		<% else %>
+			<%= link_to image_tag("default_collection_large.png", :width=>"100%", :class=>"largeImage"), collection %>
+		<% end %>
+
+		<% if collection.challenge==true %>
+			<div class='challengeRibbon'>challenge</div>
+		<% end %>
+
+	</div>
+
+	<div class="name"><%=link_to collection.name, collection %> </div>
+	<div class="author"><%= collection.projects.count %> <i class="fa fa-folder-open" style="color:gray;"></i> &nbsp;|&nbsp; <%= link_to collection.user.username, user_path(collection.user.username) %> </div>
+	<div class="clear"></div>
+	<% if !collection.description.blank? %>
+		<div class="textMatch"><%= truncate(@collections_text[collection.id.to_s], :length => 115).html_safe %> </div>
+	<% else %>
+		<div class="textMatch">(No Collection Description)</div>
+	<% end %>
+	
+</div>

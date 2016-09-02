@@ -37,7 +37,7 @@ $hovercolor: #E9E9F1;
 
 .activity_feed_activity{
   position:relative;
-  min-height:53px;
+  min-height:25px;
   max-height:63px;
   padding:5px;
   p{
@@ -48,7 +48,7 @@ $hovercolor: #E9E9F1;
      width:11px;
      color: #969696;
      float: left;
-     margin-right:15px;
+     margin-right:5px;
      margin-top:3px;
   }
   .fa-code-fork{
@@ -56,9 +56,11 @@ $hovercolor: #E9E9F1;
     font-weight:bold;
   }
   .notification-heading{
-    font-size:13px;
+    font-size:12px;
     margin-bottom:0px;
-    max-width: 485px;
+    max-width: 550px;
+    max-height: 18px;
+    overflow: hidden;
     display:inline-block;
     a{
       font-weight: bold;
@@ -69,11 +71,10 @@ $hovercolor: #E9E9F1;
     float:left;
     margin-right:15px;
     margin-bottom:0px !important;
+    margin-top: -5px;
 
     img, .blank-image{
-      height:40px;
-      -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, .25);
-      box-shadow: 0 1px 4px rgba(0, 0, 0, .25);
+      height:30px;
     }
 
   }

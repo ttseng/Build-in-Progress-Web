@@ -5,6 +5,7 @@ development:
   pool: 5
   username: 
   password:
+  host: localhost
 
 test: 
   adapter: postgresql

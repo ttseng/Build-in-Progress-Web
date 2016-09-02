@@ -1,0 +1,647 @@
+<style>
+  #footer{
+    display: none;
+  }
+  body{
+    overflow: hidden;
+  }
+  #loading {
+    display: block;
+  }
+</style>
+
+<% title "#{@project.title} Timemachine" %>
+
+<% # add sign in modal %>
+<%= render :partial=> "steps/sign_in" %>
+
+<div class="fullRow" id="timemachine">
+    
+ <div id="processMap">
+  <ul id="org" class="0" style="display:none" >
+  </ul>
+
+  <div id="chart" class="orgChart">
+  </div>
+
+ </div>
+
+ <div id="timemachine_info">
+    <div class="nav">
+      <icon class="fa fa-arrow-left"></icon> [<span id ="index">0</span>/<%= @project_json["data"].length %>] <icon class="fa fa-arrow-right"></icon>
+    </div>
+
+    <h3><div id="project_title"></div></h3>
+    <canvas id="timeChart" width="30" height="30"></canvas>
+    <div id="calendar"></div>
+      <div id="project_updated_at" style="text-align: center; font-size: 10px;"></div>
+      <div style="text-align: center; background: #898989; color: white; margin: 10px 0px;"><span id="project_step_count"%><b></b></span> | <span id="project_word_count"%><b></b></span> | <span id="project_image_count"%><b></b></span></div>
+    
+ </div>
+</div>
+
+
+<script type="text/javascript">
+
+var logs = <%=@project_json.to_json.html_safe %>["data"];
+var thumbnails = <%= @thumbnails.to_json.html_safe %>;
+var current_log = 0;
+var ctx = $("#timeChart").get(0).getContext("2d");
+var clickedRight = null; // whether or not a user clicked the right arrow (used to determine calculating month difference)
+var monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+var chartOptions = {
+    //Boolean - Whether we should show a stroke on each segment
+    segmentShowStroke : true,
+
+    //String - The colour of each segment stroke
+    segmentStrokeColor : "#fff",
+
+    //Number - The width of each segment stroke
+    segmentStrokeWidth : 2,
+
+    //Number - The percentage of the chart that we cut out of the middle
+    percentageInnerCutout : 50, // This is 0 for Pie charts
+
+    //Number - Amount of animation steps
+    animationSteps : 100,
+
+    //String - Animation easing effect
+    animationEasing : "linear",
+
+    showTooltips: false,
+
+    animation: false
+}
+
+var dates = new Array(); // used to store time differences between different logs
+for(var i=0;i<logs.length;i++){
+  dates[i] = Date.parse(logs[i]["updated_at"]);
+}
+
+// create calendar events for each date
+eventColors = {
+  yellow: {
+    background: "#FC0",
+    text: "#000",
+    link: "#000"
+  }};
+
+kal_events = new Array();
+for(var i=0; i< dates.length; i++){
+  var current_event = dates[i];
+  var current_date = current_event.getFullYear().toString() + (current_event.getMonth()+1).toString() + ('0' + current_event.getDate().toString()).slice(-2).toString();
+  var current_time = current_event.getHours().toString()+"."+current_event.getMinutes().toString();
+  kal_events[i] = {start: {date: current_date.toString(), time: current_time}, end: {date: current_date.toString(), time: current_time}, color: eventColors["yellow"]};
+}
+
+
+
+$(document).ready(function(){
+
+  $('#chart').css('height', $(window).height()-40);
+
+    $('.fa-arrow-right').click(function(){
+      clickedRight = true;
+      // console.log('clicked right');
+      if(current_log < logs.length-1){
+          current_log = current_log + 1;
+          goToLog(current_log)
+      }
+    });
+
+    // load the previous log
+    $('.fa-arrow-left').click(function(){
+      clickedRight = false;
+      // console.log('clicked left');
+      if(current_log > 0){
+        current_log = current_log - 1;
+        goToLog(current_log);
+      }
+    });
+
+    // CALENDAR STUFF
+    $('#calendar').kalendar({
+      color: "blue",
+      firstDayOfWeek: "Sunday",
+      events: kal_events,
+      startMonth: dates[0].getMonth(),
+      startYear: dates[0].getFullYear(),
+      onDayClick: function(e){
+         // find the log with this date
+         findLog(e.data.date.toString("yyyy-MM-dd"));
+         // ensure that calendar nav arrows are highlighted
+         if(monthDiff(Date.parse(logs[0]["updated_at"]), Date.parse(logs[logs.length-1]["updated_at"])) != 0){
+          $('.c-month-arrow-right').css('display', 'block');
+          $('.c-month-arrow-left').css('display', 'block');
+        }
+      },
+      onInitiated: function(){
+          // check whether we should hide the calendar arrows
+          if(monthDiff(Date.parse(logs[0]["updated_at"]), Date.parse(logs[logs.length-1]["updated_at"])) == 0){
+            $('.c-month-arrow-right').addClass('hide');
+            $('.c-month-arrow-left').addClass('hide');
+        }
+        // load process map & calendar
+        goToLog(current_log);
+      }
+    });
+  });
+
+// find highlightDate(log_index)
+// given a log object, highlight the updated_at date in the calendar
+// log_index = index to use for searching through log array
+function highlightDate(log_index){
+  // console.log('highlightDate with log_index ' + log_index);
+
+  var day = Date.parse(logs[log_index]["updated_at"]).toString("d");  
+  var dateChanged = false;
+  
+  // check if the date has changed
+  if(clickedRight){
+    dateChanged = (dateDiffInDays(Date.parse(logs[log_index-1]["updated_at"]), Date.parse(logs[log_index]["updated_at"])) != 0);
+  }else if(clickedRight == false){
+    dateChanged = (dateDiffInDays(Date.parse(logs[log_index+1]["updated_at"]), Date.parse(logs[log_index]["updated_at"])) != 0);
+  }else{
+    // loaded for the first time - highlight the first date
+    dateChanged = true;
+  }
+
+  if(dateChanged){
+    var months = 0;
+    if(clickedRight){
+      // console.log('clicked right');
+      months = monthDiff(Date.parse(logs[log_index-1]["updated_at"]), Date.parse(logs[log_index]["updated_at"]));
+    }else if(clickedRight == false){
+      // console.log('clicked left');
+      months = monthDiff(Date.parse(logs[log_index+1]["updated_at"]), Date.parse(logs[log_index]["updated_at"]));
+    }
+    if($('.current').hasClass('other-month')){
+      // check the difference between the calendar's current month and the month of the desired log
+      var kal_month = $('.c-month-view').find('p').html().split(' ')[0]; // the current kalendar month
+      // console.log('kal_month: ' + kal_month);
+      var new_month = monthNames[Date.parse(logs[log_index]["updated_at"]).getMonth()];
+      // console.log('new_month: ' + new_month);
+      months = monthNames.indexOf(new_month) - monthNames.indexOf(kal_month);
+    }
+    // console.log('month diff: ' + months)
+    if(months>0){
+      for(i=0; i<months; i++){
+        $('.c-month-arrow-right').click();
+      }
+    }else if(months<0){
+      for(i=0;i<Math.abs(months);i++){
+       $('.c-month-arrow-left').click(); 
+      }
+    }
+
+      for(i=0; i <= $('.have-events').length-1; i++){
+      var event_day = $($('.have-events')[i]).find('.date-holder').html();
+      // console.log('event_date: ' + event_date);
+      if(day == event_day && !$($('.have-events')[i]).hasClass('current')){
+        $('.have-events').removeClass('current');
+        $($('.have-events')[i]).addClass('current');
+        break;
+      }
+    }
+  }
+}
+
+// monthDiff (find the difference between two dates in months)
+// d1 - start Date
+// d2 - end Date
+function monthDiff(d1, d2) {
+    // console.log('d1: ' + d1);
+    // console.log('d2: ' + d2);
+    return d2.getMonth() - d1.getMonth() + (12 * (d2.getFullYear() - d1.getFullYear()));
+}
+
+var _MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+// dateDiffInDays - find the difference between two dates in days
+// a - start Date
+// b - end Date
+function dateDiffInDays(a, b) {
+  // Discard the time and time-zone information.
+  // console.log('a: ' + a);
+  // console.log('b:' + b);
+  var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+  var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+  return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+}
+
+// findLog(info)
+// find the first log from a given date (info)
+// info = formatted yyyy-MM-dd (e.g., 2015-11-12)
+function findLog(info){
+  for(i=0;i<logs.length;i++){
+    var log_date = Date.parse(logs[i]["updated_at"]).toString("yyyy-MM-dd");
+    if(log_date == info){
+        current_log = i;
+        // console.log('found log: ' + current_log);
+        clickedRight = null;
+        goToLog(i);
+        break;
+    }
+  }
+}
+
+function goToLog(index){
+  // console.log('goToLog for index ' + index);
+  refreshInfo(index); // refresh the info (# of steps, words, images)
+  highlightDate(current_log); // highlight the corresponding date in the calendar
+  drawList(logs[index]["steps"], thumbnails[index]); // construct the ul list for the process map
+  loadProcessMap(); // load the process map
+  drawChart(index); // draw the doughnut chart
+
+  if(logs.length > 1){
+    if(index >= logs.length-1){
+      $('.fa-arrow-right').css('visibility', 'hidden');
+      $('.fa-arrow-left').css('visibility', 'initial');
+    }else if(index <=0){
+      $('.fa-arrow-left').css('visibility', 'hidden');
+      $('.fa-arrow-right').css('visibility', 'initial');
+    }else{
+      $('.fa-arrow-left').css('visibility', 'initial');
+      $('.fa-arrow-right').css('visibility', 'initial');
+    }
+  }else{
+     $('.fa-arrow-left').css('visibility', 'initial');
+     $('.fa-arrow-right').css('visibility', 'initial');
+  }
+
+}
+
+$(window).resize(function(){
+  $('#chart').css('max-height', $(window).height()-40);
+});
+
+function drawList(log, log_thumbnails){
+    $('#org').empty();
+    var ancestryArray = [];
+    for(i=0; i<log.length; i++){
+      ancestryArray[i] = log[i]["ancestry"];
+    }
+
+    for(i=0; i < log.length; i++){
+      var currentStep = log[i];
+      var currentStepID = currentStep["id"];
+      var currentStepPosition = currentStep["position"];
+      var currentStepName = currentStep["name"];
+      var currentStepAncestry = currentStep["ancestry"];
+
+      var is_label = false; // store whether the step is a label
+
+      if (currentStep["label"]){
+        is_label = true;
+      }
+
+      if(currentStep["position"] == 0){
+        $('ul.0').append("<li class= '" + currentStepID + "'> " + currentStepName + "</li>");
+      }else if(ancestryArray[i] == ancestryArray[i-1]){
+        // get the parent of the current step (the last part of the ancestry array)
+        currentStepAncestry = ancestryArray[i].split("/")[ancestryArray[i].split("/").length-1];
+        $('ul.'+currentStepAncestry).append("<li class= '"+currentStepID+"'> " + currentStepName + "</li>");
+      }else{
+        if (ancestryArray.indexOf(currentStepAncestry) == i){
+          currentStepAncestry = ancestryArray[i].split("/")[ancestryArray[i].split("/").length-1];
+          if($('ul.'+currentStepAncestry).length > 0){
+             $('ul.'+currentStepAncestry).append("<li class= '" + currentStepID + "'>" + currentStepName + "</li>");
+          }
+          else{
+            // first step with this ancestry
+             $('li.'+currentStepAncestry).append("<ul class= '" + currentStepAncestry + "'><li class= '" + currentStepID + "'> " + currentStepName + "</li></ul>");
+          }
+        }else{
+          currentStepAncestry = ancestryArray[i].split("/")[ancestryArray[i].split("/").length-1];
+          // returned to an existing branch
+          $('ul.' + currentStepAncestry).append("<li class= '" + currentStepID + "'> " + currentStepName + "</li>");
+        }
+      }
+
+     if(is_label){
+      $('li.' + currentStepID).addClass("branch_label");
+      $('li.'+ currentStepID).attr('data-label-color', currentStep["label_color"]);
+      // console.log("label color: " + currentStep["label_color"]);
+    }
+
+    // add image to step
+    $('li.'+currentStepID).attr("data-image", log_thumbnails[i]);
+  }
+}
+
+// drawChart: draw doughnut chart based on time in between steps 
+// index: current log index
+function drawChart(i){
+  // console.log('i: ' + i);
+  var total = dates[dates.length-1]-dates[0];
+  if(i== 1){
+    var current = (dates[i] - dates[i-1])/total * 100;
+    // console.log('current: ' + current);
+    var remain = (dates[dates.length-1] - dates[i])/total*100;
+    // console.log('remain: ' + remain);
+    var chartData = [
+    {
+        value: current,
+        color: "#5AD3D1"
+    },
+    {
+        value: remain,
+        color: "#ffffff"
+    }
+    ];
+
+  }else if(i >1){
+    var prev = (dates[i-1] - dates[0])/total*100;
+    // console.log('prev: ' + prev);
+    var current = (dates[i] - dates[i-1])/total*100;
+    // console.log('current: ' + current);
+    var remain = (dates[dates.length-1] - dates[i])/total*100;
+    // console.log('remain: ' + remain);
+    
+    var chartData = [
+    {
+        value: prev,
+        color:"#FFC870"
+    },
+    {
+        value: current,
+        color: "#5AD3D1"
+    },
+    {
+        value: remain,
+        color: "#ffffff"
+    }
+    ];
+  }  
+
+  var doughtnutChart = new Chart(ctx).Doughnut(chartData, chartOptions);
+
+}
+
+// refreshinfo: refresh information in #timeline_info
+function refreshInfo(index){
+
+    // refresh project info
+    $('#index').html(index+1);
+    $('#project_title').html(logs[index]["title"]);
+    $('#project_updated_at').html(formatDateTime(logs[index]["updated_at"]));
+    if(logs[index]["steps"].length == 1){
+      $('#project_step_count').html(logs[index]["steps"].length + " step");
+    }else{
+      $('#project_step_count').html(logs[index]["steps"].length + " steps");
+
+    }
+    $('#project_word_count').html(logs[index]["word_count"] + " words");
+    if(logs[index]["image_count"]==1){
+      $('#project_image_count').html(logs[index]["image_count"] + " image");   
+    }else{
+      $('#project_image_count').html(logs[index]["image_count"] + " images");   
+    }
+}
+
+function formatDateTime(datetime){
+  // console.log('datetime: ' + datetime);
+  return Date.parse(datetime).toString("MMMM d, yyyy h:mm:ss tt");
+}
+
+ // loadProcessMap - load / refresh the process map
+  function loadProcessMap(){
+    // create process map
+    $('.jOrgChart').remove();
+      $("#org").jOrgChart({
+          chartElement : '#chart',
+          dragAndDrop  : false
+      });      
+      setBackgrounds();
+      $('#processMap').css('min-height', $(window).height());
+      createTooltips(); 
+  }
+
+  // setBackgrounds: add background to process map
+  function setBackgrounds(){
+      var divs = document.getElementsByClassName("stepNode");
+      for(var k=0; k< divs.length; k++){
+        if($(divs[k]).data("image") != undefined){
+            $(divs[k]).css("background", 'url(' + $(divs[k]).data("image") + ') center');
+        }
+      }
+
+      // add label colors
+      $('.stepNode.branch_label').each(function(){
+        $(this).children('.stepLabel').css('background', $(this).attr('data-label-color'));
+      });
+  }
+
+    // set placement of tooltip to bottom if the process map has more than one branch
+    // otherwise, set placement of tooltip to bottom
+    function createTooltips(){
+  
+      var process_map_width = $('.jOrgChart table').width();
+      var single_branch_width_min = 100;
+      var single_branch_width_max = 102;
+      var single_branch = (process_map_width >= single_branch_width_min && process_map_width <= single_branch_width_max);
+
+      var end = $('.stepNode').length;
+
+       // place tooltip of all steps besides the add new step div
+        if(single_branch){
+          $('.stepNode').filter(function(){ return $(this).children('.stepLabel').text().indexOf('...')>0; }).slice(0, end).tooltip({
+            placement: 'right',
+          });
+        }else{
+          $('.stepNode').filter(function(){ return $(this).children('.stepLabel').text().indexOf('...')>0; }).tooltip({
+            placement: 'bottom',
+          });
+        }
+        $('.stepNode').filter(function(){ return $(this).children('.stepLabel').text().indexOf('...')<0; }).removeAttr('title');
+     }
+
+(function($) {
+
+  $.fn.jOrgChart = function(options) {
+    
+    var opts = $.extend({}, $.fn.jOrgChart.defaults, options);
+    var $appendTo = $(opts.chartElement);
+
+    // build the tree
+    $this = $(this);   
+    var $container = $("<div class='" + opts.chartClass + "'/>");
+    if($this.is("ul")) {
+      buildNode($this.find("li:first"), $container, 0, opts);
+    }
+    else if($this.is("li")) {
+      buildNode($this, $container, 0, opts);
+    }
+
+    $appendTo.append($container);
+
+    // set background of divs to default step image
+    setBackgrounds();
+
+    // apply elipses to stepLabels with overflow
+    $('.stepLabel:not(.branchStepLabel)').ellipsis();
+
+    // add tall class to steplabels that are more than one line
+    $('.stepLabel').each(function(){
+      if($(this).height() > 15 && $(this).parent().css('background-image') != "none"){
+        $(this).parent().addClass('tall');
+      }else if($(this).parent().css('background-image') == "none" && !$(this).parent().hasClass('branch_label')){
+        $(this).parent().addClass('short');
+      }
+    });
+
+  };
+
+  // Option defaults
+  $.fn.jOrgChart.defaults = {
+    chartElement : 'body',
+    depth      : -1,
+    chartClass : "jOrgChart",
+    dragAndDrop: false
+  };
+  
+  var nodeCount = 0;
+  
+  // Method that recursively builds the tree
+  function buildNode($node, $appendTo, level, opts) {
+    var $table = $("<table cellpadding='0' cellspacing='0' border='0'/>");
+    var $tbody = $("<tbody/>");
+
+    // Construct the node container(s)
+    var $nodeRow = $("<tr/>").addClass("node-cells");
+    var $nodeCell = $("<td/>").addClass("node-cell").attr("colspan", 2);
+    var $childNodes = $node.children("ul:first").children("li");
+    var $nodeDiv;
+    
+    if($childNodes.length > 1) {
+      $nodeCell.attr("colspan", $childNodes.length * 2);
+    }
+
+    // Draw the node
+    // Get the contents - any markup except li and ul allowed
+    var $nodeContent = $node.clone()
+                            .children("ul,li")
+                            .remove()
+                            .end()
+                            .html();
+
+    //console.log("nodeContent: " + $nodeContent.trim());
+
+    var stepID = $node.clone().attr("class");
+    var lastID = $node.clone().attr("id");
+     if($node.data("rotation")){
+      var rotation = $node.data('rotation');  
+    }else{
+      var rotation = undefined;
+    }
+    var image_path = $node.data("image");
+    var parent = $node.data("parent");
+    var label_color = $node.data('label-color');
+  
+    // console.log("lastID: " + lastID);
+      //Increaments the node count which is used to link the source list and the org chart
+    nodeCount++;
+    $node.data("tree-node", nodeCount);
+    $node.data("image", image_path);
+    if(label_color){
+      // remove title and add branchStepLabel class to branch labels
+         $nodeDiv = $("<p>").addClass("stepNode")
+                                     .addClass(stepID)
+                                     .data("image", image_path)
+                                     .data("tree-node", nodeCount) 
+                                     .data("parent", parent)
+                                     .attr('data-label-color', label_color)
+                                     .append("<p class='stepLabel branchStepLabel'>" + $nodeContent + "</p>");
+    
+    }else{
+        $nodeDiv = $("<p>").addClass("stepNode")
+                                     .addClass(stepID)
+                                     .addClass('step_'+stepID)
+                                     .attr("title", $nodeContent)
+                                     .data("image", image_path)
+                                     .data('rotation', rotation)
+                                     .data("tree-node", nodeCount) 
+                                     .data("parent", parent)
+                                     .append("<p class='stepLabel'>" + $nodeContent + "</p>");
+    }
+    
+    if(lastID=="last"){
+      $nodeDiv.append("<div class='ribbon-wrapper'><div class='ribbon'>built!</div></div>")
+    }
+
+    $nodeCell.append($nodeDiv);
+    $nodeRow.append($nodeCell);
+    $tbody.append($nodeRow);
+
+    if($childNodes.length > 0) {
+    
+      // recurse until leaves found (-1) or to the level specified
+      if(opts.depth == -1 || (level+1 < opts.depth)) { 
+        var $downLineRow = $("<tr/>");
+        var $downLineCell = $("<td/>").attr("colspan", $childNodes.length*2);
+        $downLineRow.append($downLineCell);
+        
+        // draw the connecting line from the parent node to the horizontal line 
+        $downLine = $("<div></div>").addClass("line down");
+        $downLineCell.append($downLine);
+        $tbody.append($downLineRow);
+
+        // Draw the horizontal lines
+        var $linesRow = $("<tr/>");
+        if($childNodes.length>1){
+          $childNodes.each(function() {
+            var $left = $("<td>&nbsp;</td>").addClass("line left top");
+            var $right = $("<td>&nbsp;</td>").addClass("line right top");
+            $linesRow.append($left).append($right);
+          });
+        }
+
+        //horizontal line shouldn't extend beyond the first and last child branches
+        $linesRow.find("td:first")
+                    .removeClass("top")
+
+                 .end()
+                 .find("td:last")
+                    .removeClass("top")
+
+        $tbody.append($linesRow);
+        var $childNodesRow = $("<tr/>");
+
+        $childNodes.each(function() {
+           var $td = $("<td class='node-container'/>");
+           $td.attr("colspan", 2);
+           // recurse through children lists and items
+           buildNode($(this), $td, level+1, opts);
+           $childNodesRow.append($td);
+        });
+
+      }
+      $tbody.append($childNodesRow);
+    }
+
+    $table.append($tbody);
+    $appendTo.append($table);
+    
+  };
+
+})(jQuery);
+
+$(document).keydown(function(e){
+   switch(e.which) {
+        case 37: // left
+        $('.fa-arrow-left').click();
+        break;
+
+        case 39: // right
+        $('.fa-arrow-right').click();
+        break;
+
+        default: return; // exit this handler for other keys
+    }
+})
+
+</script>

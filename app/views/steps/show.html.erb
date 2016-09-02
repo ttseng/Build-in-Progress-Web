@@ -1,3 +1,4 @@
+<% title "#{@step.name} from #{@project.title}" %>
 <style type="text/css">
 #loading {display: block;}
 </style>
@@ -5,13 +6,18 @@
 <div class="fullRow" style="width:940px">
       <%= render :partial => 'images/project_overview_image_gallery', :locals => {:source => 'show'} %>
 
+      <% if @authorLoggedIn %>
+        <!-- project info modals -->
+        <%= render :partial => "steps/edit_collaborators" %>
+        <%= render :partial => "steps/edit_categories" %>
+        <%= render :partial => "steps/share_project" %>
+      <% end %>
+
       <div id="processMap">
         <%= render :partial => 'process_map', :locals=> { :currentStep => @step, :project => @project, :steps => @project.steps, :source=>"show"} %>
       </div>
 
       <div class="processBlog">
-          <div class = "detailViewHandle"><icon class="fa fa-chevron-right" style="margin-left: 3px; font-size: 23px;"></i><icon class="fa fa-file-text" style="display: block; margin-top: 6px; font-size: 24px; margin-left: 1px;"></i></div>
-
           <div class="stepDetailView">
             <% # Add the Detail View%>  
             <%= render :partial=> 'step_detail_view', :locals=>{:step=>@step} %>
@@ -34,6 +40,26 @@
             data: {projectID: "<%=@project.id%>"} 
       });
     });
+
+    // edit the step
+    $('.editButton').click(function(){
+      editButton = $(this);
+      // go to edit_redirect
+       $.ajax({
+          url: "/projects/<%=@project.id%>/steps/edit_redirect",
+          type: 'GET',
+          data: {stepID: getClassID('edit', $(this).attr('id'))} ,
+          success: function(data, status, xhr){
+            // console.log('data: ' + data);
+            if(data.indexOf("window.location")==-1){            
+              console.log('creating modal');
+              $('#editing_conflict_modal .modal-body').append('User <strong>' + data+'</strong> is currently editing this step.  Are you sure you want to continue?');
+              $('#editing_conflict_modal').modal('show');
+            }
+          }
+          
+         });
+    });
     
       $(document).ready(function() {
 
@@ -44,9 +70,14 @@
 
         $('.content').css("height", "100%");
 
+        // scroll to bottom to show form full screen
+        window.scrollTo(0,document.body.scrollHeight);
+
         $(window).load(function(){
           var stepID = "<%=@step.id%>";
             $('.stepNode.'+stepID).css("border", "3px solid #FFFF00");
+            $('.stepNode:not(.'+stepID+'):not(.branch_label)').css('opacity', 0.5);
+            $('.stepNode.branch_label').css('opacity', 1.0);
         });
 
         $(window).bind("refresh", function(){

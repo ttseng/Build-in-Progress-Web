@@ -2,13 +2,34 @@
 
 <html>
 <head>
-  <title>Build in Progress</title>
+	<% if content_for?(:title) %>
+		<title><%= yield(:title) %></title>
+	<% else %>
+		<title><%= ENV["APP_NAME"] %></title>
+	<% end %>
+
+	<% if content_for(:metatags) %>
+		<%= yield (:metatags) %>
+	<% end %>
+
+	<script type="text/javascript">
+		var CKEDITOR_BASEPATH = '/assets/ckeditor/';
+	</script>  
+  
   <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag "https://www.google.com/jsapi", "chartkick" %>
   <%= csrf_meta_tags %>
+  
+  <%= yield :metatags %>
+  
   <%= stylesheet_link_tag "application-all", :media => "all" %>
-  <%= stylesheet_link_tag "application-v01", :media => "all" %>
+  <%= favicon_link_tag 'favicon.ico' %>
 
    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600,700' rel='stylesheet' type='text/css'>
+
+   <meta name="google-site-verification" content="ypAQvrj8z2CCvx1iEyWt-x4KVNs9hNYXzds301B95OE" />
+
+
 </head>
 
 <script type="text/javascript">
@@ -32,27 +53,27 @@ $(function(){
 
 <body>
 	<div class ="navbar">
-		
-			<%= link_to image_tag("build_in_progress_logo.png"), home_index_path, :class=> "brand logo" %>
-	
+			
 			<ul class="nav">
 				<li><%=link_to "Projects", projects_path %></li>
 				<li><%=link_to "Collections", collections_path %></li>
+				<li style="margin-left: 20px;">
+					<%= form_tag search_path, :method => 'get', :class => 'navbar-search' do %>
+					  <p>
+					    <%= text_field_tag :search, params[:search], :class => 'search-query', :placeholder => 'Search', :maxlength => 25 %>
+					    <a class="search-submit"><icon class="fa fa-search" style="margin-left: -22px; color:gray;"></icon></a>
+					  </p>
+					<% end %>
+				</li>	
 			</ul>	
 			
-			<ul class="pull-right nav">
-				<% if false %>
-					<form class="navbar-search">
-						<input type="text" class="search-query" placeholder="Search">
-					</form>	
-				<% end %>
-
+			<ul class="pull-right nav" style="margin-left: -1px">
 				<li class = "dropdown pull-right navbar_notification">
 					<% if user_signed_in? %>
 
 					<% # notifications %>
 
-					  <a href ="#" class="dropdown-toggle navbar_notification_link" data-toggle="dropdown"><icon class="fa fa-bell-o" style="font-size:17px;"></icon></a>	
+					  <a href ="#" class="dropdown-toggle navbar_notification_link" data-toggle="dropdown"><icon class="fa fa-bell-o" style="font-size:17px; padding-top: 3px;"></icon></a>	
 
 					  <% # highlight the notification icon if the user has unseen notifications %>
 					  <% if current_user.all_new_notifications.count > 0 %>
@@ -78,9 +99,17 @@ $(function(){
 										   	  
 					  <% # user profile + account settings %>
 					  <li class="navbar_login dropdown">		
-						<a href="#" class = "dropdown-toggle" data-toggle="dropdown" style="font-weight: bold"%> <%= current_user.username %> <icon class="fa fa-sort-down" style="display:inline-table; margin-top: -3px"></icon></a>
+						<a href="#" class = "dropdown-toggle" data-toggle="dropdown" style="font-weight: bold; height: 20px;"%> 
+							<% if current_user.avatar.present? %>
+								<%=image_tag(current_user.avatar_url(:thumb), :class=>"img-rounded avatar") %>
+							<% else %>
+								<%= image_tag("default_avatar.png", :class=>"img-rounded avatar") %>
+							<% end %>
+							<%= current_user.username %> 
+
+							<icon class="fa fa-sort-down" style="position: relative; top: -2px"></icon></a>
 						<ul class="dropdown-menu">
-							<li><%=link_to "Profile", user_path(current_user.username) %></li>
+							<li><%=link_to "My Portfolio", user_path(current_user.username) %></li>
 							<li class="divider"></li>
 							<li><%=link_to "Create Project", new_project_path %></li>
 							<li><%=link_to "Create Collection", new_collection_path %> </li>
@@ -89,29 +118,34 @@ $(function(){
 						</ul>
 
 						<% # logout %>
-					 	<li><%= link_to "Logout", destroy_user_session_path, method: :delete %></li>
+					 	<li style="padding-top: 1.3px;"><%= link_to "Logout", destroy_user_session_path, method: :delete %></li>
 					 </li>
 					 
-					<% else %>
-						<% # login %>
-						<a class="dropdown-toggle" href = "#" data-toggle="dropdown>">Sign In</a>
-						<div class= "dropdown-menu" style="padding:15px">
-							<%= semantic_form_for("user", :url => user_session_path, :html => {:class => "loginForm"})  do |f| %>
-							  <%= f.label :username, :class=>"smallLabel" %>	
-							  <%= f.text_field :username, :value=>"" %>
-							  <%= f.label :password, :class=>"smallLabel" %>	
-							  <%= f.password_field :password %>
-							  <%= f.check_box :remember_me, :class=>"rememberMeCheck" %>
-							  <%= f.label :remember_me, :class=>"rememberMeLabel smallLabel" %>
-							  <%= f.submit 'Login', :class=>"login btn btn-small btn-primary" %>
-							  <%= link_to "Forgot password?", new_password_path('user'), :class=>"pwForgot" %>
-							<div class="clear"></div>
-							<div class="loginSignUp">
-							<%= link_to "Sign Up",   new_registration_path(resource_name), :class=>"btn btn-mini", :style=>'float:left'	 %>
+					 <% else %>
+						<ul class="nav pull-right">
+							<li><%= link_to 'Sign Up', new_registration_path(resource_name) %> </li>
+						    <li class="dropdown"><a class="dropdown-toggle" href = "#" data-toggle="dropdown>">Sign In</a>
+								<div class= "dropdown-menu" style="padding:15px">
+								<%= semantic_form_for("user", :url => user_session_path, :html => {:class => "loginForm"})  do |f| %>
+								  <%= f.label :username, :class=>"smallLabel" %>	
+								  <%= f.text_field :username, :value=>"" %>
+								  <%= f.label :password, :class=>"smallLabel", :style=>"margin-top: 5px;" %>	
+								  <%= f.password_field :password %>
+								  <div class="rememberMeContainer">
+									  <%= f.check_box :remember_me, :class=>"rememberMeCheck" %>
+									  <%= f.label "Remember me • ", :class=>"rememberMeLabel smallLabel" %>
+									  <%= link_to "Forgot password?", new_password_path('user'), :class=>"pwForgot" %>
+								  </div>
+								  <div class="clear"></div>
+									<div class="loginSignUp">
+										<%= link_to image_tag("icons/google_icon.png", :style=> "max-height: 18px; padding: 2px;"), user_omniauth_authorize_path(:google_oauth2), :class=>"btn btn-mini", :style=> 'float: left; margin-left: 5px;', :title=>"Sign in with Google" %>
+										 <%= f.submit 'Login', :class=>"login btn btn-small btn-primary" %>
+									</div>
+								<% end %>
 							</div>
-							<% end %>
-						</div>
-					<% end %>
+						</li>
+					</ul>
+				<% end %>
 			 	</li>
 			</ul>
 	</div>
@@ -124,7 +158,7 @@ $(function(){
 		<% if controller_name != 'steps' %>
 		  <% flash.each do |name, msg| %>
 		    <% if name != "timedout" %>
-		    <%= content_tag :div, msg, id: "flash_#{name}" %>
+		    	<%= content_tag :div, msg, id: "flash_#{name}" %>
 		    <% end %>
 		  <% end %>
 	  <div class="clear"></div>
@@ -135,24 +169,28 @@ $(function(){
 	<div class="clear"></div>
 	<div id="footer">
 		<div class="footer_container">
-			<%= link_to "About", about_path %>   |   <%= link_to "News", news_path %>   |   <%= link_to "Mobile App", android_path %>   |   <%= link_to "Help", help_path %>   |   <%= link_to "Contact", contact_path %>
+			<%= link_to "About", about_path %>   |   <%= link_to "News", news_path %>   |   <%= link_to "Help", help_path %>   |    <%= link_to "Privacy Policy", privacy_policy_path %>   |   <%= link_to "Contact", contact_path %>
 		</div>
+		<br>
+		<div class="attribution" style="font-size: smaller; color: grey; margin-top: 10px;">Powered by Build in Progress</div>
 	</div>
 
 </body>
 </html>
 
-<% # Google Analytics %>
+<% # add a notice for users to create password to use android app (if they don't already have a password for their account %>
+
+<% if current_page?(root_url) && user_signed_in? && current_user.encrypted_password.blank? %>
+	<script>
+		var flash_notice = $('#flash_notice').html();
+		$('#flash_notice').html(flash_notice+"<br><b>Note:</b> To use the Android or iOS app, please create a password for your account via <a href='users/edit/' style='text-decoration:underline'>Account Settings</a>");
+
+	</script>
+<% end %>
+
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-41379809-1', 'herokuapp.com');
-  ga('send', 'pageview');
-
-  // returns the ID of an active record given the class / id of the page element (i.e., notification_30 will return 30)
+  // returns the ID of an element given the class / id of the page element (i.e., notification_30 will return 30)
   function getID(strings){
     var classes_array = strings.split(" ");
     for(var i =0; i<classes_array.length; i++){
@@ -174,9 +212,27 @@ $(function(){
   		$('#main').css('opacity',1);
   	}
 
+  	if($('#flash_notice').length>0){
+		$('#main .fullRow').css('margin-top', 0);
+  	}
+
   	$('.notification-text').each(function(){
   		$(this).ellipsis();
   	});
+  }); // end window load
+
+  $('.search-submit').click(function() {
+  	if ($('input#search.search-query').val() != ""){
+  		$('form').submit();
+  	}
   });
 
+  $('input#search.search-query').keypress(function(e) {
+        if(e.which == 13) {
+            if ($('input#search.search-query').val() == ""){
+            	e.preventDefault();
+		  	}
+        }
+    });
+  
 </script>

@@ -1,5 +1,5 @@
+<% title "Notifications" %>
 <div class="fullRow" style="margin-top:60px">
-  <div class="fullRow">
   	<div class="notificationsPage">
   		<div class="notification_header">
 			<icon class="fa fa-bell"></icon><h3>Notifications</h3>
@@ -10,76 +10,29 @@
 				No notifications...yet!
 			</p>
 		<% else %>
-			<div class="tabbable">
-				<ul class="nav nav-tabs" id="notification_tabs">
-					<li class="active">
-						<a href="#all_notifications">All Notifications 
-							<% all_new_notifications_count = current_user.all_new_notifications.count %>
-						<% if all_new_notifications_count > 0 %>
-							<span class="badge badge-info"><%= all_new_notifications_count%></span>
-						<% end %>
-						</a>
-					</li>
-					<li>
-						<a href="#personal_notification_activity">Personal Notifications 
-							<% new_user_project_notifications_count = current_user.new_user_project_notifications.count %>
-							<% if new_user_project_notifications_count > 0 %>
-								<span class="badge badge-info"><%=new_user_project_notifications_count%></span>
-							<% end %>
-						</a>
-					</li>
-				</ul>
-
-				<div class="notifications">
-					<div class="tab-content">
-						<div class="tab-pane active" id="all_notifications">
-							<% current_user.all_notifications.each do |notification| %>
-								<% if notification.trackable %>
-									<% unless (render_activity notification).blank? %>
-										<% if !notification.viewed %>
-											<div class="notifications_notification new">
-										<% else %>
-											<div class="notifications_notification">
-										<% end %>									
-										<%= render_activity notification, source: "notifications" %>
-										</div>
-										<hr>
-									<% end %>
-								<% end %>
-							<% end %>
+			<div class="notifications">
+			<% @notifications.each do |notification| %>
+				<% if notification.trackable %>
+					<% unless (render_activity notification).blank? %>
+						<% if !notification.viewed || (@new_notification_ids.include? notification.id) %>
+							<div class="notifications_notification new">
+						<% else %>
+							<div class="notifications_notification">
+						<% end %>									
+						<%= render_activity notification, source: "notifications" %>
 						</div>
-				<div class="tab-pane" id="personal_notification_activity">
-					<% if current_user.user_project_notifications.count > 0 %>
-						<% current_user.user_project_notifications.each do |notification| %>
-							<% if notification.trackable %>
-								<% unless (render_activity notification).blank? %>
-									<% if !notification.viewed && !notification.is_followed_comment? %>
-										<div class="notifications_notification new">
-									<% else %>
-										<div class="notifications_notification">
-									<% end %>									
-									<%= render_activity notification, source: "notifications" %>
-									</div>
-									<hr>
-								<% end %>
-							<% end %>
-						<% end %>
-					<% else %>
-						<p>No notifications on your projects...yet!</p>
+						<hr>
 					<% end %>
-				</div>
-			</div>
-		</div>
-	</div>
+				<% end %>
+			<% end %> <%# end notifications loop %>
 	<% end %>
+
 	</div>
+	<%= will_paginate @notifications, :param_name => 'notifications_page', previous_label: h("← Newer"), next_label: h("Older →"), :page_links=> false %>
 </div>
 
-<% if current_user.all_new_notifications.count > 0%>
-<script type="text/javascript">
-	$('.fa-bell').addClass('active');
-</script>
-<% end %>
+    
+
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -98,10 +51,5 @@ $(document).ready(function(){
 		$(this).closest('.notifications_notification').children('.notification-comment').ellipsis();
 	});
 
-	// activate chosen tab
-	$('#notification_tabs a').click(function(e){
-		e.preventDefault();
-		$(this).tab('show');
-	});
 });
 </script>

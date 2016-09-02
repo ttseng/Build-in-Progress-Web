@@ -1,29 +1,62 @@
-<div class="fullRow" style="margin-top:60px">
-	<div class="fullRow">
+<% unconfirmed = false %>
 
-		<div class="signinPage">
-
-<h2>Sign in</h2>
-
-<%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-  <div class="formField"><%= f.label :username, :class=>"label"%><br />
-  <%= f.text_field :username, :autofocus => true %></div>
-
-  <div class="formField"><%= f.label :password, :class=> "label"%><br />
-  <%= f.password_field :password %></div>
-
-  <% if devise_mapping.rememberable? -%>
-    <div><%= f.check_box :remember_me, :class=>"rememberMeCheck" %> <%= f.label :remember_me, :class=> "rememberMeLabel" %></div>
-  <% end -%>
-
-  <div><%= f.submit "Sign in", :class=> "btn btn-primary" %></div>
+<% if flash %>
+  <% flash.each do |name, msg| %>
+    <% if msg == "Please confirm your acount via email." %>
+      <% unconfirmed = true %>
+    <% end %>
+  <% end %>
 <% end %>
 
-<%= render "devise/shared/links" %>
+<% if !unconfirmed %>
+  <div class="fullRow" style="margin-top:60px">
+  	<div class="fullRow">
 
-</div>
-</div>
-</div>
+  		<div class="signinPage">
+
+      <div class="form_container">
+
+        <h3 class="form_heading sign_up">Sign in</h3>
+
+        <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+          <div class="formField"><%= f.label :username, :class=>"label label-info"%><br />
+          <%= f.text_field :username, :autofocus => true %></div>
+
+          <div class="formField"><%= f.label :password, :class=> "label label-info"%><br />
+          <%= f.password_field :password %></div>
+
+          <% if devise_mapping.rememberable? -%>
+          <div class="rememberMeContainer">
+              <div style="margin-bottom:15px;margin-top:-10px"><%= f.check_box :remember_me, :class=>"rememberMeCheck" %> <%= f.label :remember_me, :class=> "rememberMeLabel" %></div>
+            <% end -%>
+          </div>
+          <div class="clear"></div>
+          <div style="margin-top: 10px;"><%= f.submit "Sign in", :class=> "btn btn-primary" %></div>
+        <% end %>
+
+        <%= render "devise/shared/links" %>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+<% else %>
+ <div class="fullRow" style="margin-top:60px">
+    <div class="fullRow">
+
+      <div class="signinPage" style="background: white; border-radius: 5px;">
+        <h3 class="form_heading">Almost done!</h3>
+        <p>A confirmation email has been sent to your email address. <span style="color: #FF4A4A; font-weight: bold;">Please click the link in the email to finish the registration process!</span></p>
+      </div>
+   </div>
+  </div>
+  <script type="text/javascript">
+    // hide alert message
+    $('#flash_alert').hide();
+  </script>
+
+<% end %>
 
 <script>
 $(document).ready(function(){

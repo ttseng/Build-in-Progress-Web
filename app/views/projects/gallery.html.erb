@@ -1,0 +1,297 @@
+<script type="text/javascript">
+  $('head title').html("<%=@project.title%>"); // set title of page to project name
+</script>
+
+<style type="text/css">
+  #loading {display: block;}
+</style>
+
+
+<div class="fullRow">
+
+<%= render :partial => "projects/view_modes", :locals => {:source => "gallery"} %>
+
+<div id="titleBar">
+  <%=link_to @project.title, @project %>
+
+    <div id="projectAuthor">
+      <div class="authorAttribution">by <% @project.users.order("username ASC").each do |author| %> <%= link_to author.username, user_path(author), :class=>"project_author_name" %><% end %>
+          <% # add any commas or 'ands' between usernames %>
+          <% if @project.users.length == 2 %>
+            <script type="text/javascript">
+              $('.project_author_name').last().before(' and ');
+            </script>
+          <% elsif @project.users.length > 2 %>
+              <script type="text/javascript">
+                $('.project_author_name:not(:last)').after(', ');
+                $('.project_author_name').last().before(' and ');
+              </script>
+          <% end %>
+      </div>
+    </div><%# end projectAuthor %>
+</div>
+
+<!-- PROJECT LABELS -->
+<div id="projectLabels">
+  <% @project.steps.where(:label=>true).order(:position).each do |label| %>
+    <% if label.children.length > 0 %>
+      <div class="label" style="background: <%=label.label_color%>" data-children="<%=label.descendant_ids%>"><%=label.name%></div>
+    <% else %>
+      <div class="label" style="background: <%=label.label_color%>" data-children="<%=label.parent_id%>"><%=label.name%></div>
+    <% end %>
+  <% end %>
+</div>
+
+<!-- Slider -->
+<div id="imageZoom">
+  <icon class="fa fa-search-minus"></icon>
+  <input type="range" min="0" max="4" step="1" orient="vertical" id="zoomSlider" value="2">
+  <icon class="fa fa-search-plus"></icon>
+</div>
+
+<!-- IMAGE GALLERY -->
+<div id="imageView">
+	<% @project.steps.order('published_on').each do |step| %>
+		<% step.images.order(:position).each_with_index do |image,index| %>
+    <div class="step_image">
+      <% if image.is_remix_image? %>
+        <% image = Image.find(image.original_id) %>
+      <% end %>
+
+      <%# start fancybox link %>
+      <% if image.has_video? %>
+        <% if image.video.embedded? %>
+          <a href="<%=image.video.embed_url%>" class="fancybox" rel="gallery" data-fancybox-type="iframe" title="<%= step.name %>">
+        <% else %>
+          <a href="<%=image.video.video_path_url%>" class="fancybox fancy_video" rel="gallery" data-fancybox-type="html" title="<%= step.name %>">
+        <% end %>
+
+      <% else %>
+         <a href="<%=image.image_path_url%>" class="fancybox" rel="gallery" title="<%= step.name %>"data-fancybox-type="image">
+
+      <% end %>  <%# end add fancybox link %>   
+      
+      <img src="<%=image.image_path_url%>" class="step_<%=step.id%>" data-name='<%= link_to step.name, project_steps_path(@project, :step => step.id)%>' data-description="<%=step.description%>"/>
+
+      <% if image.has_video? %>
+        <div class="video">
+          <icon class="fa fa-play-circle" style="font-size: 100px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%); color: white; opacity: 0.9"></icon>
+        </div>
+      <% end %>
+          
+      </a><%# end slidebox link %>
+    </div>
+        
+      <% if index == 0 && step.has_siblings? && step.position != 0%>
+        <script type="text/javascript">
+          $('img.step_<%=step.id%>').attr('alt', '<%=step.name%>');
+        </script>
+      <% end %><%# end step name info %>
+
+      <%# add download link%>
+      <% if !image.has_video? %>
+          <script type="text/javascript">
+            $('img[src$="<%=image.image_path_url%>"]').parents('.step_image').append('<div class="download"><a href="<%=image.image_path_url%>" download="image"><icon class="fa fa-download"></icon></a></div>');
+          </script>
+          
+        <% elsif !image.video.embedded? %>
+          <script type="text/javascript">
+          $('img[src$="<%=image.image_path_url%>"]').parents('.step_image').append('<div class="download"><a href="<%=image.video.video_path_url%>" download="video"><icon class="fa fa-download"></icon></a></div>');
+          </script>
+        <% end %>
+
+
+		<% end %><%# end step images loop %>
+	<% end %> <%# end project loop %>
+</div>
+
+<!-- STEP INFO -->
+<div id='stepInfo' class="imageView">
+  <div id='stepName'>
+  </div>
+  <div id="stepDescription">
+  </div>
+</div>
+</div> <%# close fullRow %>
+
+
+<script type="text/javascript">
+
+var mouseX = 0;
+var mouseY = 0;
+var currentStep;
+var labelSelected = false;
+var zoomOutLevel = 2;  // this ranges from 0-4
+var defaultRowHeight = 300;
+var inImageView = false;
+
+if(parseInt("<% @project.steps.where(:label=>true).length %>") == 0){
+  $('#imageView').justifiedGallery({
+    rowHeight : 300,
+    lastRow : 'justify',
+    margins : 3,
+    captions: true,
+    captionSettings: { animationDuration: 0.0,
+    visibleOpacity: 1.0,
+    nonVisibleOpacity: 1.0 }
+  });
+}else{
+  $('#imageView').justifiedGallery({
+    rowHeight : 300,
+    lastRow : 'justify',
+    margins : 3,
+    captions: false
+  });
+}
+
+$('#imageView').hover(function(){
+  inImageView = true;
+}, function(){
+  inImageView = false;
+});
+
+$('.step_image').hover(function(){
+    $(this).find('.download').fadeIn();
+  }, function(){
+    $(this).find('.download').fadeOut();
+});
+
+$('.download a').click(function(){
+  $.ajax({
+      url:"<%=touch_users_path%>",
+      type:'GET'
+    });
+});
+
+$(document).mousemove(function(e){
+  mouseX = e.pageX;
+  mouseY = e.pageY;
+  if(mouseX < $('#imageView')[0].getBoundingClientRect().left){
+  }
+});
+
+$(document).ready(function(){
+
+  $('#footer').hide(); 
+
+  $('#projectLabels').css('top', $('#titleBar').offset().top + $('#titleBar').height()+parseInt($('#titleBar').css('padding-top'))*2);
+
+  $('.caption').css('opacity', 1);
+
+  setImageZoom(zoomOutLevel);
+
+  $('img').hover(function(event){
+      onImage = true;
+      var step = $(this).attr('class');
+      // console.log(step);
+
+      if(!labelSelected){
+        // fade out images from other steps;    
+        $('#imageView img:not(.'+step).fadeTo('fast', 0.3);
+        $('#imageView img.'+step).fadeTo('fast', 1.0);
+      }
+
+      if(step!=currentStep){
+      // reveal the stepInfo div for that step;
+      $('#stepName').html($(this).data("name"));
+      $('#stepDescription').html($(this).data('description'));
+      $('#stepInfo').fadeTo('fast', 0.8);
+      $('#stepInfo').css('top', $(this).parent().offset().top);
+     
+      currentStep = step;
+    
+    }
+
+  }, function(){
+    if(!labelSelected){
+        var step = $(this).attr('class');
+        onImage = false;
+    }
+  }); // end imageHover
+
+  $('.label').click(function(event){
+    if(parseFloat($(this).css('opacity'))<1){
+      $('.label').not(this).css('opacity', 0.5);
+      $('#stepInfo').fadeTo(100, 0);
+      labelSelected = true;
+      $(this).css('opacity', 1);
+      // change opacity of all children steps
+      var children = $(this).data('children');
+      $('#imageView img').css('opacity', 0.3);
+
+      if(children.length > 0){
+         for(var i=0; i<= children.length; i++){
+          // console.log('highlighting image ' + children[i]);
+          $('img.step_'+children[i]).fadeTo('fast', 1.0);
+        }
+        console.log('scrolling to first image ' + children[0]);
+        $('img.step_'+children[0]).scrollintoview();
+      }else{
+        $('img.step_'+children).fadeTo('fast', 1.0);
+      }
+      
+     
+    }else{
+      labelSelected = false;
+      // remove all labels
+      $('.label').css('opacity', 0.5);
+      $('#imageView img').css('opacity', 1.0);
+      $('#stepInfo').fadeTo(100, 0);
+    }
+  }); // end label click
+
+  $(document).click(function(event){
+    // hide things
+    if(!$(event.target).closest('.label').length && !$(event.target).closest('#stepInfo').length){
+      $('#stepInfo').fadeTo(100, 0.0);
+      $('#imageView img').fadeTo(100, 1.0);  
+      currentStep="";
+      labelSelected = false;
+      $('.label').css('opacity', 0.5);
+    }
+  });
+
+  function setImageZoom(zoomAmount){
+    var newRowHeight = defaultRowHeight - zoomAmount*50;
+    $('#imageView').justifiedGallery({
+      rowHeight : newRowHeight,
+      lastRow : 'justify',
+      margins : 3,
+      captions: false,
+      waitThumbnailsLoad: true
+    }).on('jg.complete', function(){
+      $('html, body').animate({scrollTop: 0}, 0);
+    });
+  }
+
+  $('#zoomSlider').change(function(){
+    var sliderValue = this.value;
+    // console.log('sliderValue: ' + sliderValue);
+    zoomOutLevel = sliderValue;
+    setImageZoom(zoomOutLevel);
+    // scroll to top
+  });
+
+  $('.fa-search-minus').click(function(){
+    if(zoomOutLevel <4){
+          zoomOutLevel = zoomOutLevel + 1;
+          setImageZoom(zoomOutLevel);
+          $('#zoomSlider').val(zoomOutLevel);
+    }
+  });
+
+  $('.fa-search-plus').click(function(){
+    if(zoomOutLevel > 0){
+      zoomOutLevel = zoomOutLevel - 1;
+      $('#zoomSlider').val(zoomOutLevel);
+      setImageZoom(zoomOutLevel);
+    }
+  });
+
+});
+
+$(window).load(function(){
+  hljs.initHighlightingOnLoad();
+})
+
+</script>

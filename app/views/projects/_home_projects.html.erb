@@ -1,0 +1,68 @@
+<% if project.steps.count > 0 %> <%# safety check %>
+<div class ="latestProject">
+
+	<div class="homeRibbon-wrapper">
+		<div class="left-container">
+			<% if project.images.count > 0 && !project.default_image.nil? %>
+				<% if project.default_image.image_path.blank? %>
+					<%= link_to image_tag(project.default_image.s3_filepath, :width=>"100%"), project  %>
+				<% else %>
+					<%= link_to image_tag(project.default_image.image_path_url(:preview), :width=>"100%"), project  %>
+				<% end %>
+			<% else %>
+				<%= link_to(project) do %>
+					<div class = "blankImage"></div>
+				<% end%>
+			<% end %>
+
+			<% if project.built %>
+					<div class='homeRibbon ribbon'>built!</div>
+			<% end %>
+
+		</div>
+
+		<div class="center-container">
+			<div class="project_info">
+				<span class="name home"><%=link_to project.title, project, :class=>"name home" %> </span> <span class="authorDate">by <%= render :partial => "projects/author_byline", :locals => {:project => project, :source=>"profile"} %> </span>
+			</div><%# close project_info %>
+
+			<% step = project.steps.order("updated_at").last %>
+			<% step_id_with_question = project.step_with_question %>
+
+			<%= link_to project_steps_path(project, :step => step.id) do %>
+				<div class="project_update">
+					<div class="step_name">
+						<%= step.name %>
+					</div>
+						<% if step_id_with_question.present? && step.id == step_id_with_question %>
+							<div class="step_description question">
+								<%= Step.find(step_id_with_question).question.description %>
+							</div>
+						<% elsif step.description %>
+							<div class="step_description">
+								<%= ActionController::Base.helpers.strip_tags(step.description).first(100).html_safe %>
+							</div>
+						<% elsif project.description %>
+							<div class="step_description">
+								<%= ActionController::Base.helpers.strip_tags(project.description).first(100).html_safe %>
+							</div>
+						<% end %>
+				</div>
+			<% end %>
+		</div>
+
+		<div class="right-container">
+			<%= time_ago_in_words(project.updated_at).gsub('about','') %>
+			<br>
+			
+			<% if step_id_with_question.present? %>
+				<%= link_to project_steps_path(project, :step=>step_id_with_question) do %>
+				<icon class="fa fa-question-circle"></icon>
+				<% end %>
+			<% end %>
+		</div>
+
+	</div><%# close homeRibbon-wrapper %>
+
+</div>
+<% end %>

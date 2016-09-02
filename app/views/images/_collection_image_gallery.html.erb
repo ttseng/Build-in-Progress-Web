@@ -1,0 +1,87 @@
+<div class="collectionOverviewPhoto" >
+    <div class="mainPhoto slide collectionOverviewCarousel" id="carousel">
+    
+      <% if @collection.projects.count > 0 %>
+        <div id="carouselNavIcons">
+          <% # button for restarting the carousel from the beginning %>
+          <%= link_to "", "#", :class=>"restart fa fa-rotate-left"%>
+          <% # button for pausing / continuing the carousel %>
+          <%= link_to "", "#", :class=> "play_pause fa fa-pause"%>
+        </div>
+
+        <div class="carousel-inner"></div>
+        <%# carousel controls %>
+           <a class="carousel-control left" href="#carousel" data-slide="prev">&lsaquo;</a>
+           <a class="carousel-control right" href="#carousel" data-slide="next">&rsaquo;</a>
+        </div>
+     <% end %>
+  </div>
+</div>
+
+<% all_images = [] %>
+
+<% # add images from projects in this collection - select random number from each project %>
+<% @collection.projects.each do |project| %>
+  <% project.images.order("RANDOM()").where("video_id IS NULL").where("step_id != ?", -1).limit(5).each do |image| %>
+    <% all_images.push(image) %>
+  <% end %>
+<% end %>
+
+  <% all_images.shuffle.each_with_index do |image, index| %>
+    <% remix = false %>
+
+    <% active = "" %> <%# stores whether or not image is active or first in carousel %>
+    <% if index==0 %>
+      <% active = "active" %>
+    <% end %>
+    
+    <% image_record = image %>
+
+    <% # check if the image is from a remix %>
+    <% if image.is_remix_image? && !image.original_image.blank? %>
+      <%# draw the original asset %>
+      <% remix = true %>
+      <% image = image.original_image %>
+    <% end %>
+
+      <% if image.image_path? %>
+        <% # add already uploaded image to carousel %>
+          <script type="text/javascript">
+             $('.carousel-inner').append('<div class="item <%=active%>"><%=image_tag(image.image_path_url(:preview), :width => "100%", :class=> image_record.id) %><div class="image_caption">from <%= link_to image_record.step.project.title, project_path(image_record.step.project) %></div></div>');
+           </script>
+        <% else %>
+          <% # add placeholder s3 direct upload image %>
+          <script type="text/javascript">
+             $('.carousel-inner').append('<div class="item <%=active%>"><%=image_tag(image.s3_filepath, :width => "100%", :class=> image_record.id) %><div class="image_caption">from <%= link_to image_record.step.project.title, project_path(image_record.step.project) %></div></div>');
+           </script>
+        <% end %>
+    
+  <% end %>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+  // only cycle the carousel if on the index page - otherwise, don't start the carousel and set the icon to play
+    $('.collectionOverviewCarousel').carousel();    
+
+    $('.restart').click(function(){
+        // start over project overview carousel slideshow
+        $('.collectionOverviewCarousel').carousel(0);
+    });
+
+    $('.play_pause').click(function(){
+        if($(this).hasClass('fa fa-pause')){
+          $('.collectionOverviewCarousel').carousel('pause');
+          $(this).removeClass('fa fa-pause');
+          $(this).addClass('fa fa-play');
+        }else if($(this).hasClass('fa fa-play')){
+          $('.collectionOverviewCarousel').carousel('cycle');
+          $(this).removeClass('fa fa-play');
+          $(this).addClass('fa fa-pause');
+        }
+    });
+
+});
+
+</script>

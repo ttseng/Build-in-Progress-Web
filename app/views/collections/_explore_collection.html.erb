@@ -1,15 +1,30 @@
 <div class ="collection">
 	<% #show default image for project overview if the project has an image uploaded %>
 	<div class="exploreImage-wrapper">
-		<% if collection.projects.published.length != 0 && !collection.projects.published.order(:updated_at).last.default_image.nil? %>
-			<%= link_to image_tag(collection.projects.published.order(:updated_at).last.default_image.image_path_url(:preview), :width=>"100%"), collection %>
-			<% if collection.projects.published.length != 0 && !collection.image.blank? %>
+		<% if collection.projects.public_projects.length != 0 && !collection.projects.public_projects.order(:updated_at).last.default_image.nil? %>
+			<% # collection has project with image + has collection image %>
+
+			<% # add image thumbnail %>
+			<% project_default_image = collection.projects.public_projects.order(:updated_at).last.default_image %>
+
+			<% if project_default_image.image_path.blank? %>
+				<%= link_to image_tag(project_default_image.s3_filepath, :width=>"100%", :class=>"largeImage uploadingImage"), collection %>
+			<% else %>
+				<%= link_to image_tag(project_default_image.image_path_url(:preview), :width=>"100%", :class=>"largeImage"), collection %>
+			<% end %>
+
+			<% # add collection image %>
+			<% if collection.projects.public_projects.length != 0 && !collection.image.blank? %>
 				<%= link_to image_tag(collection.image_url(:preview), :width=>"30%", :class=>"img-polaroid mini-col-avatar"), collection %>
 			<% end %>
-		<% elsif collection.projects.published.length != 0 && !collection.image.blank? %>
-			<%= link_to image_tag(collection.image_url(:preview), :width=>"100%"), collection %>
+
+		<% elsif collection.projects.public_projects.length != 0 && !collection.image.blank? %>
+			<% # collection has no project image but has collection image %>
+			<%= link_to image_tag(collection.image_url(:preview), :width=>"100%", :class=>"largeImage"), collection %>
+		
 		<% else %>
-			<%= link_to image_tag("default_collection_large.png", :width=>"100%"), collection %>
+			<%= link_to image_tag("default_collection_large.png", :width=>"100%", :class=>"largeImage"), collection %>
+
 		<% end %>
 
 		<% if collection.challenge==true %>
@@ -20,5 +35,8 @@
 
 	<div class="name"><%=link_to collection.name, collection %> </div>
 	<div class="author"><%= collection.projects.count %> <i class="fa fa-folder-open" style="color:gray;"></i> &nbsp;|&nbsp; <%= link_to collection.user.username, user_path(collection.user.username) %> </div>
-	
+	<div class="updated_at">
+		<icon class="fa fa-clock-o" style="margin-right: 5px;"></icon><%= time_ago_in_words(collection.updated_at).gsub('about','') %>
+	</div>
+
 </div>

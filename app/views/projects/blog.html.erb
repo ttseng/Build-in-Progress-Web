@@ -1,0 +1,322 @@
+<script type="text/javascript">
+  $('head title').html("<%=@project.title%>"); // set title of page to project name
+</script>
+<style>
+	body{
+		background-color: white;
+	}
+	html{
+		background-color: white;
+	}
+	#loading {display: block;}
+	#projectLabels{
+		width: 147px;
+		overflow: scroll;
+	}
+
+</style>
+<div class="fullRow blogView">
+	<%= render :partial => "projects/view_modes", :locals => {:source => "blog"} %>
+	
+		<% if @project.homepage_image %>
+			<div class="cover" style="background-image: url('<%=@project.homepage_image.image_path%>')">
+		<% else %>
+			<div class="cover">
+		<% end %>
+		
+			<div class="info">
+				<div class="title"><%= @project.title %></div>
+				<hr>
+				<div class="byline">by <%= @project.users.pluck(:username).to_sentence%></div>
+			</div>
+		</div>
+
+		<div id="project_nav">
+			<ul>
+				<% @project.steps.not_labels.order(:published_on).each do |step| %>
+					<li id="nav_<%=step.id%>"><a href="#step_<%=step.id%>"><%=step.name%></a></li>
+				<% end %>
+			<ul>
+		</div>
+
+		<div id="projectLabels">
+		  <% @project.steps.where(:label=>true).order(:position).each do |label| %>
+		    <% if label.children.length > 0 %>
+		      <div class="label" style="background: <%=label.label_color%>" data-children="<%=label.descendant_ids%>"><%=label.name%></div>
+		    <% else %>
+		      <div class="label" style="background: <%=label.label_color%>" data-children="<%=label.parent_id%>"><%=label.name%></div>
+		    <% end %>
+		  <% end %>
+		</div>
+				
+		<div class="content">
+			<% if @project.description && @project.description.length > 0  %>
+				<div class="project_description">
+					<%= @project.description %>
+				</div>
+			<% end %>
+
+			<% @project.steps.not_labels.order(:published_on).each do |step| %>
+			<div class="step">
+				<div class="left">
+					<span class="link_span" id="step_<%=step.id%>"></span>
+					<% if step.images.length > 0 %>
+						<div class="gallery">
+							<% step.images.order(:position).each_with_index do |image,index| %>
+								<% if image.is_remix_image? %>
+									<% image = Image.find(image.original_id) %>
+								<% end %>
+								<% if image.has_video? %>
+									<% if image.video.embedded? %>
+										<a href="<%=image.video.embed_url%>" class="fancybox" data-fancybox-type="iframe" rel="gallery_<%=step.id%>">
+											<img src="<%=image.image_path_url%>"/>
+											 <div class="video">
+										          <icon class="fa fa-play-circle" style="font-size: 100px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%); color: white; opacity: 0.9"></icon>
+									        </div>
+										</a>
+									<% else %>
+									  <a href="<%=image.video.video_path_url%>" class="fancybox fancy_video" data-fancybox-type="html" rel="gallery_<%=step.id%>">
+									  	<img src="<%=image.image_path_url%>"/>
+									  	 <div class="video">
+									          <icon class="fa fa-play-circle" style="font-size: 100px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%); color: white; opacity: 0.9"></icon>
+									      </div>
+									  </a>
+									<% end %>
+								<% else %>
+									 <a href="<%=image.image_path_url%>" class="fancybox" rel="gallery_<%=step.id%>">
+								   		<img src="<%=image.image_path_url%>"/>
+								   	</a>
+							   	<% end %>
+							 <% end %>
+						</div>
+					<% end %>
+
+					<% if step.description %>
+						<div class="step_info">
+							<div class="description"><%=step.description.html_safe%></div>
+						</div>
+					<% end %>
+				</div>
+				<div class="right" id="right_<%=step.id%>">
+					<div class="name" id="name_<%=step.id%>">
+						<%= link_to project_steps_url(@project, :step => step.id) do %>
+							<%= step.name %>
+						<% end %>
+					</div>
+					<div class="date">
+						<%= step.published_on.strftime "%A, %B %-d %Y" %>
+					</div>
+					<% if step.comment_threads.count > 0 %>
+						<%= link_to project_steps_url(@project, :step => step.id) do %>
+							<div class="comments">
+								<icon class="fa fa-comment"></icon><%= step.comment_threads.count %>
+							</div>
+						<% end %>
+					<% end %>
+				</div>
+			</div>		
+		<% end %>
+
+	</div>
+
+
+	
+</div>
+
+<script type="text/javascript">
+
+var inProjectNav = false;
+var step_ids = JSON.parse("<%=@project.steps.not_labels.order(:position).pluck(:id)%>");
+var left;
+var min_width = 1150;
+
+$('.gallery').justifiedGallery({
+	rowHeight: 300,
+	maxRowHeight: 300,
+	lastRow: 'justify'
+});
+
+$(document).ready(function(){
+  	$('#footer').hide();	
+
+  	if($(window).width() <min_width){
+  		$('#project_nav').hide();
+  		$('#projectLabels').hide();
+  		$('.content')[0].style.setProperty('margin-left', 'auto', 'important');
+  	}
+
+  	$('#project_nav').css('max-height', $(window).height()-$('.navbar').height());
+
+  	// adjust size of project navigation and labels
+  	if(parseInt("<%=@project.steps.where(:label=>true).count%>") > 0){
+  		$('#project_nav').css('max-height', parseInt($('#project_nav').css('max-height'))*0.8);
+  		$('#projectLabels').css('max-height', $(window).height() - $('.navbar').height() - $('#project_nav').height()-30);
+  	}
+});  
+
+$(window).load(function(){
+	left = $('.left').offset().left + $('.left').width();
+	// console.log('left: ' + left);
+	$('.right').css('left', left);
+});
+
+$(window).scroll(function(){
+	if($(window).scrollTop() < (400+50) || $(window).scrollTop() < 400){
+		$('.right').first().removeClass('stuck');
+		if($(window).scrollTop() < 400){
+			// console.log('removing stuck');
+
+			$('#project_nav').removeClass('stuck');
+
+			$('#projectLabels').fadeOut();
+			$('#project_nav li').removeClass('labelHighlight');
+
+			// remove all labels
+			$('.label').css('opacity', 0.5);
+	  		$('#project_nav li').css('background-color', 'transparent');
+	  	}
+	}else{
+		// console.log('adding stuck');
+
+		$('#project_nav').addClass('stuck');
+		if($(window).width() > min_width){
+			$('#projectLabels').fadeIn();	
+		}
+	}
+});
+
+$(window).resize(function(){
+	left = $('.left').offset().left + $('.left').width();
+	// console.log('left: ' + left);
+
+	if($(window).width() < min_width){
+		// console.log('hiding content');
+		$('.content')[0].style.setProperty('margin-left', 'auto', 'important');
+		$('#project_nav').hide();
+		$('#projectLabels').hide();
+	}else{
+		$('.content')[0].style.setProperty('margin-left', '261px', 'important');
+		$('.right').css('left', left);
+		$('#project_nav').show();
+		if($(window).scrollTop() > 400){
+			$('#projectLabels').show();	
+		}
+	}
+});
+
+
+// Waypoints - used for sticky containers
+
+var nav_waypoint = $('#project_nav').waypoint({
+	handler: function(direction){
+		if($(window).scrollTop() < 400){
+			$('#project_nav').removeClass('stuck');
+		}else{
+			$(this.element).addClass('stuck');
+		}
+	},
+	offset: parseInt($('#project_nav').height())
+});
+
+
+ $('.right').waypoint(function(direction){
+	if(direction == 'down'){
+		if(!inProjectNav){
+			console.log('waypoint down');
+			$('.right').removeClass('stuck');
+			$(this.element).addClass('stuck');
+
+			// highlight the current step
+			var currentStepID = getImageID($(this.element).find('.name').attr('id'));
+			// console.log('currentStepID: '+ currentStepID);
+			$('#project_nav li').removeClass('current');
+			$('#nav_'+currentStepID).addClass('current');
+			// console.log('current id: ' + parseInt(getImageID($(this.element).attr('id'))));
+
+			$('.right').css('left', left);
+		}else{
+			// remote stuck
+			$('.stuck:not(#project_nav').removeClass('stuck');
+		}
+	}
+}, {
+		offset: '20%'
+});
+ 
+ $('.right').waypoint(function(direction){
+		if(direction == 'up'){
+			console.log('waypoint up');
+			if(!inProjectNav){
+				$('.right').removeClass('stuck');
+				$(this.element).addClass('stuck');
+				var currentStepID = getImageID($(this.element).find('.name').attr('id'));
+				// console.log('currentStepID: '+ currentStepID);
+				$('#project_nav li').removeClass('current');
+				$('#nav_'+currentStepID).addClass('current');
+				// console.log('current id: ' + parseInt(getImageID($(this.element).attr('id'))));
+
+				$('.right').css('left', left);
+			}else{
+				$('.stuck:not(#project_nav').removeClass('stuck');
+			}
+		}
+	}, {
+		offset: '0%'
+	});
+
+
+  $('#project_nav a').click(function(){
+  	$('#project_nav li').removeClass('current');
+  	$(this).parent('li').addClass('current');
+  });
+
+  $('#project_nav').hover(function(){
+  	inProjectNav = true;
+  	$(this).fadeTo('fast', 1.0);
+  	$('li.labelHighlight a').css('color', 'white');
+  }, function(){
+  	inProjectNav = false;
+  	$(this).fadeTo('fast', 0.5);
+  	$('li.labelHighlight a').css('color', 'black');
+  });
+
+
+$('.label').click(function(event){
+if(parseFloat($(this).css('opacity'))<1){
+  $('.label').not(this).css('opacity', 0.5);
+  $('#project_nav li').css('background-color', 'transparent');
+  $('#project_nav li').removeClass('labelHighlight');
+  $(this).css('opacity', 1);
+
+  // highlight all children steps
+  var children = $(this).data('children');
+
+  if(children.length > 0){
+     for(var i=0; i<= children.length; i++){
+      $('#nav_'+children[i]).css('background-color', $(this).css('background'));
+      $('#nav_'+children[i]).addClass('labelHighlight');
+    }
+  }
+ 
+}else{
+  // remove all labels
+  $('.label').css('opacity', 0.5);
+  $('#project_nav li').css('background-color', 'transparent');
+  $('#project_nav li').removeClass('labelHighlight');
+}
+}); // end label click
+
+$('.label').hover(function(){
+	if($(this).css('opacity')==0.5){
+		console.log('changing opacity');
+		$(this).css('opacity', 0.8);
+	}
+}, function(){
+	$('.label').filter(function(){
+		return $(this).css('opacity')!=1.0;
+	}).css('opacity', 0.5);
+});
+
+  
+</script>
+

@@ -3,9 +3,11 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 $pageWidth: 940px;
 $halfPageWidth: $pageWidth/1.7;
-$tooltip_color: #045FB4;
+$tooltip_color: #3fb5d9;
 $lightgrey: #E2E2E2;
 $lightblue: #02ABFF;
+
+// COLLECTION PAGE
 
 .collectionPage{
   width:890px;
@@ -62,18 +64,11 @@ $lightblue: #02ABFF;
 
 }
 
-.collectionTitle a{
-  color: #000
-}
-
-.collectionTitle a:hover{
-  color: #D3D3D3;
-}
-
-.collectionAvatar, .collectionAvatarUpload {
-  float: left;
-  width: 105px;
-  margin-left: 26px;
+.challengeAvatar{
+  background: transparent; 
+  border: none; 
+  box-shadow: none;
+  margin-left: 15px;
 }
 
 .collectionAvatarUpload {
@@ -87,27 +82,10 @@ input#collection_image {
   width: 175px;
 }
 
-#collectionName{
-  width: 475px;
-  height: 31px;
-  float:right;
-  line-height:28px;
-  color: #fff;
-  margin: 0px 5px 0px 5px;
-  font-size: 25px;
-  font-weight: bold;
-  margin-top:3px;
-  overflow: hidden;
-
-  a:hover{
-    color: #D3D3D3;
-  }
-}
-
 .edit_collection{
   width:54px;
   padding: 5px 0px;
-  float: right;
+  float: left;
   .editCollectionTitleBtn {
     position: absolute;
     top: 0px;
@@ -123,16 +101,163 @@ input#collection_image {
   margin-top: 5px;
 }
 
-.collectionsTitleSection{
-  height: 120px;
-  width:895px;
-  position:relative;
-  background-color: #fff;
-  // box-shadow: 1px 1px 5px #888888;
-  border: 1px solid #E2E2E2;
-  border-radius: 5px;
-  padding: 20px 0;
-  margin-bottom: 20px;
+  #collectionLeft{
+    float: left; 
+    background: white;
+    margin-right: 20px;
+    width:300px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    position: relative;
+
+    .label{
+        font-size: 14px;
+        padding: 6px 4px;
+        margin: 10px 0px;
+    }
+
+    .collectionsTitleSection{
+    position:relative;
+    display: inline-block;
+
+    .collectionOverviewPhoto{
+      width: 666px;
+      height: 350px;
+      float: right;
+      margin-top: 0px;
+
+      .carousel-inner{
+        border: none !important;
+      }
+
+      #carousel img{
+        margin-top: -50px;
+      }
+      .collectionOverviewCarousel{
+        width: 666px;
+        float: right;
+        background: white;
+        border-radius: 5px;
+        .image_caption{
+          right: 10px;
+        }
+        #carouselNavIcons{
+          right: 136px;
+          left: auto;
+        }
+        .carousel-control.left{
+          right: 40px;
+          left: auto;
+        }
+        .carousel-control.right{
+          right: 10px;
+          left: auto;
+        }
+      }
+    }
+
+  #collectionInfoContainer{
+    height: 300px;
+    background: #505050;
+    padding: 25px;
+     
+    #collectionAvatar{
+      float:none;
+      position: relative;
+      img{
+        width: 105px;
+        border: 3px solid rgba(97, 97, 97, 0.8);
+      }
+      #editAvatarIcon{
+        position: absolute;
+        top: 10px;
+        left: 80px;
+        font-size: 20px;
+        display: none;
+      }
+      #uploadImageWrapper{
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 107px;
+          width: 107px;
+          padding: 0;
+          img{
+            width: 95% !important;
+          }
+      }
+      #uploadImageWrapper > input[type="file"]{
+        height: 100%;
+      }
+    }
+    #collectionAvatar.editing:hover{
+      cursor: pointer;
+    }
+
+    #collectionName{
+      color: white;
+      margin: 10px 0px;
+      margin-left: -10px;
+      border-radius: 5px;
+      padding: 10px;
+      font-size: 27px !important;
+      line-height: 29px !important;
+      #collectionNameBIP textarea{
+        font-size: 20px;
+        line-height: 25px;
+        width: 95%;
+        color: black !important;
+      }
+      form textarea{
+        max-height: 60px;
+        min-height: 60px !important;
+      }
+    }
+
+    #collectionDescription{
+      color: white;
+      height: 50px;
+      border-radius: 5px;
+      padding: 10px;
+      margin-left: -10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    #collectionInfo{
+      
+      width: 85%;
+      color: white;
+      a.username{
+        color: white;
+      }
+      icon.fa-folder-open{
+        
+      }
+      #collectionPrivacy{
+        position: absolute;
+        right: 20px;
+        bottom: 10px;
+        button{
+          border: none;
+          box-shadow: none;
+          text-shadow: none;
+          font-size: 12px;
+          a{
+            color: white;
+          }
+          .caret{
+          }
+        }
+      }
+    }
+
+    #editCollectionBtn{
+      position: absolute;
+      right: 10px;
+      top: 10px;
+    }
+  }
 
   .collectionsText {
     height:115px;
@@ -172,6 +297,67 @@ input#collection_image {
   }
 }
 
+#collectionActivityFeed{
+  float: left;
+  background: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+
+  .notification-image{
+    float: left;
+    margin-right: 10px;
+    img{
+      height: 33px;
+    }
+  }
+  .notification-text{
+    display: inline;
+    float: left;
+    width: 55%;
+    margin-bottom: 0px;
+    color: grey;
+    font-size: 11px;
+    a{
+      color: #747474;
+    }
+  }
+  .notification-date{
+    display: inline;
+    width: 25%;
+    float: right;
+  }
+
+  .collection_question{
+    font-size: 15px;
+    font-style: italic;
+    line-height: 22px;
+    word-wrap: break-word;
+    color: black;
+    a{
+      color: black;
+    }
+  }
+  .byline{
+    text-align: right;
+    margin: 15px 0px;
+    color: grey;
+    a{
+      color: grey;
+    }
+  }
+}
+
+
+  }
+  #collectionRight{
+    float: left;
+    width: 65%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: white;
+  }
+
+
   .featuredProjectsTitle{
     width: 860px;
     font-size: 15px;
@@ -207,51 +393,197 @@ input#collection_image {
   }
 }
 
+// CHALLENGE COLLECTION PAGE
+
+.challenge_links{
+  position:absolute; 
+  bottom: 45px;
+  color: white;
+  a{
+    text-decoration: underline;
+    color: rgb(255, 255, 84);
+    target: "_blank";
+  }
+  a:hover{
+    color: rgb(235, 235, 99);
+  }
+}
+
+.challenge_milestones{
+  width: 99.7%;
+  border: 2px solid #E2E2E2;
+  border-radius: 4px;
+  margin-bottom: 0px;
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  li{
+    width: 25%;
+    a{
+      padding: 0;
+      border: none;
+      margin: 0;
+      img{
+        width: 100%;
+        -webkit-filter: brightness(92%);
+      }
+    }
+  }
+}
+
+.nav-tabs .active a.week1link{
+    border-bottom-color: #FDEDF4;
+}
+.nav-tabs .active a.week2link{
+    border-bottom-color: #FCF5E6;
+}
+.nav-tabs .active a.week3link{
+    border-bottom-color: #E7F4E6;
+}
+.nav-tabs .active a.week4link{
+    border-bottom-color: #E7F1F7;
+}
+
+.nav-tabs .active img{
+  -webkit-filter:  brightness(100%);
+}
+
+.tab-content.challenge{
+  width: 100%px;
+  border: 2px solid #E2E2E2;
+  border-top: none;
+  margin-bottom: 10px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  .tab-pane{
+    padding: 10px;
+  }
+  #week1{
+    background:#FDEDF4;
+  }
+  #week2{
+    background: #FCF5E6;
+  }
+  #week3{
+    background: #E7F4E6;
+  }
+  #week4{
+    background: #E7F1F7;
+  }
+  a{
+    text-decoration: underline;
+  }
+}
+
 .add_project_form{
-  width: 857px;
-  padding: 10px 20px;
-  background: white;
+  width: 100%;
   border-radius: 5px;
-  border: 1px solid #E2E2E2;
+  margin-bottom: 10px;
+  background: white;
+
   label{
     font-weight:bold;
+    padding: 10px;
+    background: darkgrey;
+    color: white;
+    margin-bottom: 0px;
+    margin-right: 3px;
+  }
+  #project_url{
+    width:425px;
+    margin-top: -2px;
+  }
+  .addProjectButton{
+    float: right;
+    margin-top: 5px;
+    margin-right: 5px;
   }
 }
 
 .collectionsTitleSection.challenge{
-      border: 4px solid #7633B1;
+      // border: 4px solid #7633B1;
 }
 
 #collectionsName.challenge{
     color: #7633B1
 }
 
-#collectionAvatar{
-  float:left;
+.addProjectContainer{
+    border-bottom: 1px solid #ccc;
+    height: 40px;
 }
 
 .project_url_label{
-  margin-right:10px;
-}
-
-#project_url{
-  width:520px;
 }
 
 .collectionsProjectSection{
-  width:878px;
   position:relative;
   background: white;
-  // box-shadow: 1px 1px 5px #888888;
-  border: 1px solid #E2E2E2;
-
   border-radius: 5px;
-  padding: 20px 0px 0px 20px;
+  padding: 5px;
+
+  .project{
+    position: relative;
+    width: 182px;
+    box-shadow: none;
+    margin: 7px;
+    overflow: hidden;
+
+   .privacy_icon{
+        float: right;
+        margin-right: 10px;
+    }
+
+    .exploreRibbon-wrapper{
+      height: 137px;
+      .projectInfo{
+          height: 20px;
+          font-size: 11px;
+        }
+        icon{
+          font-size: 15px;
+        }
+    }
+    .project_update_text{
+        position: absolute;
+        top: 0;
+        height: 80px;
+        overflow: hidden;
+        color: white;
+        padding: 20px;
+        background: rgba(0,0,0,0.5);
+        width: 78%;
+        opacity: 0.0;
+        z-index: 9;
+      p{
+        max-height: 90px;
+        max-width: 100%;
+        color: white;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+    .name{
+      font-size: 12px;
+      max-width: 163px;
+    }
+    .author{
+      font-size: 11px;
+      max-width: 163px;
+    }
+  }
+
+  .project:hover{
+    box-shadow: none;
+  }
 
   .delete{
     position: absolute;
     top: 10px;
     left: 10px;
+  }
+  .project_container{
+    display: inline-block;
   }
 }
 
@@ -271,119 +603,12 @@ input#collection_image {
   padding-top:7px;
 }
 
-#collectionAvatarForm {
-  margin-left: -39px;
-  .avatarFormField{
-    width:140px;
-    float:left;
-  }
-  .fa-times {
-    margin-top: -75px !important;
-    margin-left: -98px !important;
-    width: 10px !important;
-  }
-}
+// COLLECTION FORM
 
-.collectionTitleForm{
-  margin: -23px 0px 5px 39px;
-  width:500px;
-  display:none;
-}
-
-.collectionTitleFormAdjust {
-  margin-top: -32px !important;
-}
-
-.collectionTitleFormWrapper {
-  margin-top:10px;
-  height:135px;
-  position:relative;
-  float:left;
-  margin-left:20px;
-  .error_message{
-    color: red;
-    margin-left:10px;
-    display:none;
-  }
-
-  .form_buttons{
-    position:absolute;
-    bottom:-12px;
-    width:710px;
-  }
-}
-
-.collectionTitleFormTitleField, .collectionTitleFormDescField{
-  height:25px;
-  font-size:25px;
-  width:325px;
-  margin-top:5px;
-}
-
-input#collection_name.collectionTitleFormTitleField {
-  font-size: 2em;
-  font-weight: bold;
-  height: 35px;
-  width:639px;
-  line-height:35px;
-}
-
-.collectionTitleFormDescField{
-  height: 40px;
+#collection_description{
+  width: 100%;
   font-size: 13px;
-  margin-top: 1px;
-}
-
-.collectionTitleFormSubmitButton, .collectionTitleCancelButton{
-    width:54px;
-    float:right;
-    padding: 5px 0px;
-    font-size: small;
-    margin-top:  4px;
-    margin-left: 10px;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-.collectionTitleCancelButton{
-  margin-left:-20px;
-  color:#000;
-  float:left;
-  margin-right:10px;
-}
-
-.collectionTitleCancelButton a{
-  margin-left:-20px;
-  color:#000;
-}
-
-.collectionDeleteBtn {
-  float: right;
-  height: 16px;
-}
-
-.collectionsUploadImage {
-  width: 90px;
-  position: absolute;
-  height: 25px;
-
-  p {
-    font-size: 0.75em;
-    margin-top: -3px !important;
-  }
-}
-
-#uploadAvatarWrapper{
-  left:38px;
-  width:90px;
-  height:75px;
-  overflow:hidden;
-  position:absolute;
-  bottom:-45px;
-}
-
-.collectionsUploadImageWrapper {
-  margin-left: -41.5px;
-  margin-top: 29px;
+  margin-bottom: 20px;
 }
 
 #img_prev_filename {
@@ -452,10 +677,9 @@ input#collection_name.collectionTitleFormTitleField {
 
 .collection {
   position:relative;
-  width: 270px;
+  width: 306px;
   float: left;
-  margin-right: 20px;
-  margin-bottom: 20px;
+  margin: 10px;
   background: #fff;
   box-shadow: 1px 1px 2px #B6B1B1;
 
@@ -465,8 +689,8 @@ input#collection_name.collectionTitleFormTitleField {
   }
 
   .name {
-    padding-top: 5px;
-    padding-left:10px;
+    margin-top: -10px;
+    padding-left: 10px;
     text-align: left;
     font-weight: bold;
     font-size: 13px;
@@ -476,7 +700,6 @@ input#collection_name.collectionTitleFormTitleField {
     overflow: hidden;
     white-space: nowrap;
     a{
-      font-family: "verdana";
       color: #000;
     }
     a:hover{
@@ -485,10 +708,9 @@ input#collection_name.collectionTitleFormTitleField {
   }
 
  .author{
-  display:inline;
-  float:left;
   padding: 0px 10px 10px 10px;
-  font-size:13px;
+  font-size:11px;
+  float: left;
   a{
     color: #000;
   }
@@ -524,8 +746,6 @@ input#collection_name.collectionTitleFormTitleField {
 .collection .collectionInfo{
   width:100%;
   height:30px;
-  position:absolute;
-  bottom: 0;
   background: rgba(0,0,0,0.3);
 }
 
@@ -539,14 +759,50 @@ input#collection_name.collectionTitleFormTitleField {
 .exploreImage-wrapper {
   position:relative;
   overflow: hidden;
-  height:187px;
-  background-color: #ccc;
+  height: 245px;
+
+  .collection_avatar{
+    width: 200px;
+    float: left;
+  }
+  .collection_thumbnails{
+    position: absolute;
+    right: 2px;
+    .collection_project{
+      width: 99px;
+      float: left;
+      margin: 0px 1px 3px 3px;
+    }
+  }
+  .collection_info{
+    margin-top: 20px;
+    .description{
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+      margin: 0px 10px 10px 10px;
+      height: 35px;
+      overflow: hidden;
+    }
+  }
+
+  .largeImage {
+    width: 100%;
+    max-height: 230px;
+    border: 1.5px solid #ccc;
+  }
+
+  .uploadingImage{
+      max-height: 178px;
+      max-width: 237px;
+      width: auto;
+  }
 
   .mini-col-avatar {
-    margin-top: -140px;
-    margin-left: 175px;
+    margin-top: -70px;
+    margin-left: 197px;
     padding: 0px;
-    border: 2px solid white;
+    border: none;
+    box-shadow: 1px 3px 1px rgba(0,0,0,0.1);
   }
 }
 
@@ -566,8 +822,8 @@ input#collection_name.collectionTitleFormTitleField {
 
 
 .challengeRibbon{
-  left:145px;
-  top:-190px;
+  left:180px;
+  top:-222px;
   width: 150px;
   position: relative;
   font: bold 17px Sans-Serif;
@@ -581,11 +837,6 @@ input#collection_name.collectionTitleFormTitleField {
   padding: 3px 0;
   padding-left:10px;
   background-color: #9A59D3;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#9A59D3), to(#7946A6)); 
-  background-image: -webkit-linear-gradient(top, #9A59D3, #7946A6); 
-  background-image:    -moz-linear-gradient(top, #9A59D3, #7946A6); 
-  background-image:     -ms-linear-gradient(top, #9A59D3, #7946A6); 
-  background-image:      -o-linear-gradient(top, #9A59D3, #7946A6); 
   -webkit-box-shadow: 0px 0px 3px rgba(0,0,0,0.3);
   -moz-box-shadow:    0px 0px 3px rgba(0,0,0,0.3);
   box-shadow:         0px 0px 3px rgba(0,0,0,0.3);
@@ -600,4 +851,47 @@ input#collection_name.collectionTitleFormTitleField {
   color: #FFF;
   padding: 10px;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#9A59D3), to(#7946A6));
+}
+
+.collection.search {
+  height: 322px;
+
+  .textMatch{
+    padding: 10px;
+    color: gray;
+    font-size: 11.5px;
+  }
+
+  .clear{
+    border-top: #ddd 1px solid;
+    margin: -3px 11px;
+  }
+}
+
+#collectionSearchFilter {
+
+  a {
+      font-weight: normal;
+      font-size:small
+  }
+
+  .btn-group {
+    margin-right: -24px;
+  }
+}
+
+#ExpCollections{
+  .challenge{
+    background: purple;
+    color: white;
+    padding: 5px;
+    position: absolute;
+    right: 0;
+    top: 170px;
+  }
+  .updated_at{
+    font-size: 11px;
+    float: right;
+    margin-right: 10px;
+  }
 }

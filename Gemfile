@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-ruby "1.9.3"
+ruby "2.1.7"
 
-gem 'rails'
+gem 'rails', '3.2.15'
 gem 'rails_autolink'
 
 # Bundle edge Rails instead:
@@ -12,10 +12,13 @@ gem 'pg'
 
 gem 'json'
 
-#gem 'rmagick'
-gem 'mini_magick'
+gem 'sunspot_rails'
+gem 'sunspot_solr'
 
-gem 'devise'
+#gem 'rmagick'
+gem 'mini_magick', '~>3.6.0'
+
+gem 'devise', '=3.1.1'
 gem 'cancan'
 gem "acts_as_follower", '~> 0.1.1'
 
@@ -24,12 +27,7 @@ gem "acts_as_follower", '~> 0.1.1'
 group :assets do
   gem 'sass-rails'
   gem 'coffee-rails'
-
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  # gem 'therubyracer', :platforms => :ruby
-
   gem 'uglifier', '>= 1.0.3'
-  gem 'turbo-sprockets-rails3'
 end
 
 gem 's3_direct_upload'
@@ -48,26 +46,22 @@ gem 'friendly_id'
 
 gem 'gon'
 
-gem 'formtastic'
+gem 'formtastic', '~>2.2.1'
 
-gem 'libv8', '=3.11.8.13'
-
-gem 'carrierwave'
-
-gem 'ckeditor_rails'
+gem 'carrierwave', '~>0.9.0'
 
 gem "font-awesome-rails"
 
-gem 'ancestry', git: 'https://github.com/stefankroes/ancestry.git'
+gem 'font_assets'
 
-gem 'therubyracer'
+gem 'ancestry', :path => 'ancestry-2.1.0'
 
 gem 'bootstrap-sass', '~> 2.3.2.2'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
-# To use Jbuilder templates for JSON
+# To use Jbuilder templates for JS
 # gem 'jbuilder'
 
 gem 'thin'
@@ -80,7 +74,7 @@ gem 'paper_trail'
 
 gem "fog", :git => 'https://github.com/fog/fog.git'
 
-gem 'sidekiq'
+gem 'sidekiq', '~>2.15.2'
 gem 'sinatra'
 gem 'slim'
 
@@ -95,7 +89,7 @@ gem 'fancybox2-rails'
 # for external api requests
 gem 'httparty'
 
-gem 'deep_cloneable'
+gem 'deep_cloneable', '=1.5.5'
 
 gem 'carrierwave_backgrounder'
 
@@ -107,13 +101,11 @@ gem 'video_info'
 
 gem 'streamio-ffmpeg'
 
-gem 'carrierwave-video', :github => 'elja/carrierwave-video', :branch => 'patch-1'
+gem 'carrierwave-video'
 
 gem 'carrierwave-video-thumbnailer'
 
 gem 'soundcloud'
-
-gem 'voyeur'
 
 gem 'mime-types'
 
@@ -123,13 +115,52 @@ gem 'rest_in_place'
 
 gem 'newrelic_rpm'
 
-gem 'aws-sdk'
+gem 'aws-sdk-v1'
 
 gem 'unf'
 
 gem 'browser'
 
-gem 'mini_exiftool'
+gem 'mini_exiftool_vendored'
+
+gem 'omniauth-oauth2'
+
+gem 'factory_girl_rails', '4.2.1', :require => false
+
+gem 'rspec-rails', '~> 3.0.0.beta'
+
+gem 'faker'
+
+gem 'jquery-simplecolorpicker-rails', '0.5.0'
+
+gem 'mail_view', :git => 'https://github.com/basecamp/mail_view.git'
+
+gem 'roadie-rails', '~> 1.0.2'
+
+gem 'ledermann-rails-settings', '=2.3.0'
+
+gem 'quiet_assets', group: :development
+
+gem 'rack-canonical-host'
+
+gem 'rubyzip'
+
+gem 'htmlentities'
+
+gem 'dalli'
+
+gem 'memcachier'
+
+gem "mediaelement_rails"
+
+gem 'puma'
+
+gem "omniauth-google-oauth2"
+
+gem 'chart-js-rails'
+
+gem 'groupdate'
+gem 'chartkick'
 
 # Use unicorn as the app server
 # gem 'unicorn'

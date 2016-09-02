@@ -1,23 +1,36 @@
 $darkgrey: #727272;
 
-.signUpPage, .signinPage, .pwPage, .editAccountPage,  .editUserProfilePage{
-	background: white;
+.signUpPage, .signinPage, .pwPage, .editAccountPage{
+	background: none;
 	margin: 20px;
 	padding: 5px 50px 20px 50px;
-	width:700px;
+	width:550px;
 	margin-left:auto;
 	margin-right:auto;
-	border-radius: 6px;
-	border: 1px solid #E2E2E2;
 
 	.rememberMeCheck{
 		float:left;
-		margin-top: 8px !important;
+	}
+	.rememberMeContainer{
+		margin-left: 130px;
+	}
+	.google_login_btn img{
+		margin: 0 auto;
+		display: block;
+	}
+	#form_user_sign_up{
+		display: none;
+		text-align: center;
+	}
+	#new_user{
+		text-align: center;
 	}
 }
 
-
 .deviseLinks{
+	border-top: 1px solid grey;
+	padding-top: 20px;
+	text-align: center;
 	margin-top:20px;
 	line-height: 20px;
 }
@@ -27,18 +40,65 @@ $darkgrey: #727272;
 }
 
 .formField{
-	margin: 10px 0 10px 0;
+	margin: 15px 0 0px 0;
 }
 
-// Sign in Pop up Styling
+/////// ACCOUNT SETTINGS ///////
+
+.editAccountPage{
+	background: white;
+	border-radius: 5px;
+	padding: 20px 50px 50px 50px;
+	.account_settings_label{
+		display: inline; 
+		margin-top: 20px; 
+		margin-right: 10px;	
+	}
+	
+	.usernameLabel{
+		margin-bottom:5px;
+	}
+	.account_settings_field{
+		position: absolute;
+		left: 30px;
+	}
+	.aboutMeTextArea{
+		width:500px;
+		height:25px;
+	}
+}
+
+.notification_checkbox{
+	margin: 5px 30px;
+}
+
+
+/////// SIGN UP ///////
+
+.form_heading.sign_up{
+	background: #3A87AD;
+}
+
+/////// FORGOT PASSWORD ///////
+
+.form_heading.forgot_pw{
+	background: #AAA9A9;
+}
+
+/////// CHANGE PASSWORD ///////
+
+.form_heading.change_pw{
+	background: #3A87AD;
+}
+
+/////// NAVBAR SIGNIN ///////
 
 .loginForm{
 	margin-top:5px;
 	.rememberMeCheck{
 		float:left;
-		margin-top: 14px;
+		margin-top: 4px;
 }
-
 
 }
 
@@ -46,9 +106,18 @@ $darkgrey: #727272;
 	font-size:small;
 }
 
+.loginForm .rememberMeContainer{
+	margin-top: 5px;
+}
+
 .rememberMeLabel{
-	padding-left:20px;
-	margin-top:10px;
+	float: left;
+	padding-left: 4px;
+	font-size: small;
+}
+
+.rememberMeLabel:hover{
+	cursor: default;
 }
 
 .dropdown-toggle{
@@ -57,13 +126,21 @@ $darkgrey: #727272;
 
 .pwForgot{
 	float:left;
-	padding-top:7px;
+	display: inline;
+	font-weight: normal !important;
+	margin-left: 5px;
+	font-size: small;
+	color: #B8B8B8;
+	text-decoration: underline;
 }
 
 .pwForgot:hover{
-	background-color: #fff !important;
+	text-decoration: underline;
+}
+
+.pwForgot:hover{
+	background-color: transparent !important;
 	background-image: none !important;
-	text-decoration: none;
 	color: $darkgrey !important;
 }
 
@@ -106,11 +183,12 @@ $darkgrey: #727272;
 
 .loginSignUp{
 	width:100%;
-	margin-top:10px;
+	margin-top:5px;
+	padding-top: 5px;
 	border-top: 1px solid #CCC;
 }
 
-// Sign in Modal Styling
+/////// MODAL SIGNIN ///////
 
 #signInModal{
     &.formtastic {

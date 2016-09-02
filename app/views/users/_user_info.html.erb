@@ -1,15 +1,24 @@
 <div class="userProfile">
 
 	<div id="userAvatar">  
-    <% if @user.avatar.length > 0%>
-        <%= link_to image_tag(@user.avatar_url(:thumb), :class=>"avatar img-polaroid"), user_path%>
+    <% if @user.avatar.present? %>
+        <%= image_tag(@user.avatar_url(:thumb), :class=>"avatar img-rounded") %>
     <% else %>
-        <%= image_tag("default_avatar.png", :class=>"avatar img-polaroid")%>
+        <%= image_tag("default_avatar.png", :class=>"avatar img-rounded")%>
     <% end %>
-
   </div>
+
+  <% if @user == current_user %>
+    <%=link_to "Edit", edit_profile_user_path, :class => "btn btn-small btn-info", :style=>"float:right; position: absolute; top: 20px; right: 15px;" %>
+  <% end %>
     
-	<div id="username"><h4><%= link_to @user.username, user_path %></h4></div>
+	<div id="username" style="margin-right: 10px; float: left;"><h4><%= @user.username %></h4></div>
+
+  <% # add village icon next to name if user was created from village %>
+  <% if !@user.provider.blank? && @user.provider == "village"%>
+    <%= image_tag("icons/clubhouse_icon.png", :style => "float: left; height: 20px; margin-top: 10px;") %>
+  <% end %>
+  <div class="clear"></div>
 
   <% if !@user.about_me.blank? %>
     <h6>About me</h6>
@@ -42,13 +51,13 @@
     <div class="profile_category_icon other_icon_div"><icon class="fa fa-asterisk" style="color:rgb(170, 9, 253);" title="Other"></icon></div>
   <% end %>
 
-  <div class="clear" style="margin: 10px 0px;"></div>
+  <div style="height: 10px"></div>
 
-  <div>Last seen: <%=@user.last_updated_date%> ago </div>
-  <div>Member since: <%=@user.created_at.strftime "%b %d, %Y"%></div><br>
+  <div>Last seen <%=@user.last_updated_date%> ago </div>
+  <div>Member since <%=@user.created_at.strftime "%b %d, %Y"%></div><br>
 
-  <div>Builds in Progress: <%=@user.projects.not_built.count%></div>
-  <div>Built Projects: <%=@user.projects.built.count%></div><br>
+  <div><b><%=@user.projects.not_built.count%></b> <%= pluralize_without_count(@user.projects.not_built.count, "Build") %> in Progress</div>
+  <div><b><%=@user.projects.built.count%></b> Built <%= pluralize_without_count(@user.projects.built.count, "Project") %></div><br>
 
 </div>
 

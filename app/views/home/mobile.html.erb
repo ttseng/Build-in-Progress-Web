@@ -1,0 +1,66 @@
+<style>
+	.btn{
+		float: right;
+		font-size: 12px;
+	}
+</style>
+<% title "Mobile Apps | #{ENV["APP_NAME"]}" %>
+<div class="fullRow" style="width:940px">
+
+	<div class="centeredContainer mobilePage">
+		<h3><%= ENV["APP_NAME"] %> Mobile Apps</h3>	
+
+		<div id="myCarousel" class="carousel slide">
+		  <!-- Carousel items -->
+		  <div class="carousel-inner">
+		    <div class="active item" style="height: 350px"></div>
+		  </div>
+		  <!-- Carousel nav -->
+		  <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+		  <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+		</div>
+
+		<div>
+		<h6 style="text-align: center;"><%= ENV["APP_NAME"] %> mobile apps lets you create, update, and view your projects on-the-go. </h6>
+		<ul style="margin-left: 200px; margin-top: 10px;">
+			<li>Upload images and videos to your projects</li>
+			<li>Create and update projects and steps</li>
+			<li>View and rearrange steps in your Process Map</li>
+		</ul>
+		</div>
+		<div style="clear: both;"></div>
+
+		<hr>
+		<div class="app_category" style="float: left; ">
+			<div class="icon">
+				<%= image_tag("mobile/android_icon.png") %>
+			</div>
+			<a href="#" style="margin-top: 10px; text-decoration: none;" class="btn btn-success" target="_blank">Get From Play Store</a>
+		</div>
+
+		<div class="app_category" style="float: right;">
+			<div class="icon">
+				<%= image_tag("mobile/apple_icon.png") %>
+			</div>
+			<%= link_to mobile_request_path do %>
+				<a href="#" style="margin-top: 10px; text-decoration: none;" class="btn btn-info" target="_blank">Get from App Store</a>
+			<% end %>
+		</div>
+		<div class="clear"></div>
+		<hr>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('.carousel').carousel({
+	    interval: false
+	});
+
+	$('.carousel').on('slid', function() {
+	    $('.carousel').carousel('pause');
+	});
+});
+	
+</script>

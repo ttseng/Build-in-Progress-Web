@@ -10,7 +10,7 @@ Build::Application.configure do
   config.action_controller.perform_caching = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this)
-  config.serve_static_assets = false
+  config.serve_static_assets = true
 
   # Compress JavaScripts and CSS
   config.assets.compress = true
@@ -20,6 +20,8 @@ Build::Application.configure do
 
   # Generate digests for assets URLs
   config.assets.digest = true
+
+  config.assets.cache_store = :dalli_store
 
   # Defaults to nil and saved in location specified by config.assets.prefix
   # config.assets.manifest = YOUR_PATH
@@ -31,8 +33,6 @@ Build::Application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
 
-  # See everything in the log (default is :info)
-  config.log_level = :debug
 
   # Prepend all log lines with the following tags
   # config.log_tags = [ :subdomain, :uuid ]
@@ -41,17 +41,20 @@ Build::Application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
 
   config.logger = Logger.new(STDOUT)
+  config.logger.level = Logger.const_get('ERROR')
+  config.log_level = :error
 
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
-  # config.action_controller.asset_host = "http://assets.example.com"
+  config.action_controller.asset_host = "d1znuvnwgfslq5.cloudfront.net"
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
 
   config.assets.precompile << /(^[^_\/]|\/[^_])[^\/]*$/
+  config.assets.precompile += ['ckeditor/*', 'highlight/*']
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
@@ -72,6 +75,8 @@ Build::Application.configure do
 
     # Default URL option for devise
   config.action_mailer.default_url_options = { :host => ENV["PRODUCTION_HOST_URL"] }
+
+  config.action_mailer.asset_host = "http://" + ENV["PRODUCTION_HOST_URL"]
   
   config.action_mailer.raise_delivery_errors = false
 

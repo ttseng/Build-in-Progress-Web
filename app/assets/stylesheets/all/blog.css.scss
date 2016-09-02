@@ -1,0 +1,143 @@
+.blogView{
+
+
+	.cover{
+	height: 400px;
+	background-position: 0;
+	background-repeat: no-repeat;
+	background-size: 100%;
+	text-align: center;
+	.info{
+		background-color: rgba(0, 0, 0, 0.25);
+		height: 100%;
+		.title{
+			padding-top: 150px;
+			font-size: 45px;
+			color: white;
+			text-transform: uppercase;
+			font-weight: 600;
+			line-height: 45px;
+		}
+		hr{
+			text-align: center;
+			margin: 20px auto;
+			width: 620px;
+		}
+		.byline{
+			font-size: 15px;
+			color: white;
+		}
+	}
+}
+
+#project_nav{
+	float: left;
+	opacity: 0.5;
+	max-width: 236px;
+	margin-left: 25px;
+	overflow: scroll;
+	ul{
+		list-style-type: none;
+		margin-top: 30px;
+	}
+	li{
+		padding: 0px 5px; 
+	}
+	li.current a{
+		background-color: #FFFF00 !important;
+		color: black !important;
+	}
+	li:not(.current) a{
+		color: black;
+	}
+}
+
+#projectLabels{
+	margin-left: 50px;
+	bottom: 10px;
+	display: none;
+	.label{
+		font-size: 10px;
+		white-space: nowrap !important;
+		display: inline !important;
+		opacity: 0.5;
+	}
+	.label:hover{
+		opacity: 0.8;
+	}
+}
+
+.content{
+	margin-left: 261px !important;
+	margin-top: 25px !important;
+	width: 750px;
+	margin: auto;
+	font-family: "Palatino Linotype";	
+
+	.project_description{
+		margin-bottom: 30px;
+		font-size: 20px;
+		line-height: 26px;
+		background: rgb(86, 86, 86);
+		color: white;
+		padding: 20px;
+		min-width: 700px;
+	}
+	.step{
+		position: relative;
+		.link_span{
+			position: absolute;
+			top: -50px;
+		}
+	}
+	.date{
+		margin: 10px 0px;
+	}
+	.left{
+		background: white;
+		position: relative;
+		float: left;
+		min-width: 600px;
+	}
+	.right{
+		float: left;
+		border-left: 1px solid grey;
+		margin-left: 19px;
+		padding-left: 10px;
+		font-family: "Palatino Linotype";
+		max-width: 100px;
+		opacity: 0.5;
+		icon{
+			margin-right: 5px;
+		}
+		a{
+			text-decoration: none;
+		}
+	}
+	.gallery{
+		margin-bottom: 30px;
+		max-width: 600px;
+		min-width: 598px;
+	}
+	.name{
+		font-size: 15px;
+	}
+	.description{
+		max-width: 600px;
+		margin-bottom:30px;
+	}
+	.description p, .description ul, .description ol{
+		font-family: "Palatino Linotype";
+		font-size: 15px;
+	}
+}
+
+.stuck{
+	position: fixed;
+  	opacity: 1 !important;
+	top: 50px;
+  	transition-property: opacity, transform;
+  	transition-duration: 0.5s;
+}
+
+}

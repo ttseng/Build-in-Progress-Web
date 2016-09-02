@@ -1,19 +1,24 @@
 <html>
 	<head>
-	  <title>Build in Progress</title>
+	  <title><%= ENV["APP_NAME"] %></title>
 	  <%= csrf_meta_tags %>
 	  <%= javascript_include_tag "application" %>
 	  <%= stylesheet_link_tag "application-all", :media => "all" %>
-	  <%= stylesheet_link_tag "application-v01", :media => "all" %>
 	</head>
 	<body style="width:500px">
 		<div class="embedDiv">
 			<div class="embedTitle">
 				<%= link_to @project.title, project_path(@project) %> by <%= render :partial => "projects/author_byline", :locals => {:project => @project, :source=>"embed"} %> 
 			</div>
+			<% if !@project.description.blank? %>
+				<div class="projectDescription">
+					<p class="description">Project Description</p>
+					<%= @project.description %>
+				</div>
+			<% end %>
 			<div class="embedLink">
 				<%= image_tag("build_in_progress_logo.png", :class=> "logo" )%>
-				<% tagline = "Check out all of " + @project.title + " at Build in Progress!" %>
+				<% tagline = "Check out all of " + @project.title + " at #{ENV["APP_NAME"]}!" %>
 				<p> <%= link_to tagline, project_path(@project) %> </p>
 			</div>
 		</div>

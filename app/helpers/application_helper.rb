@@ -25,4 +25,15 @@ module ApplicationHelper
 	  end
 	  link_to(name, '#', class: "add_fields", data: {id: id, fields: fields.gsub("\n", "")})
 	end
+
+	def title(page_title)
+		content_for :title, page_title.to_s
+	end
+
+	def pluralize_without_count(count, noun, text = nil)
+	  if count != 0
+	    count == 1 ? "#{noun}#{text}" : "#{noun.pluralize}#{text}"
+	  end
+	end
+
 end

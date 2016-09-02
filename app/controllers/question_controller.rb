@@ -8,4 +8,5 @@ class QuestionsController < ApplicationController
 		@question = Question.find(params[:question_id])
 		@question.step.project.touch
 	end
+
 end

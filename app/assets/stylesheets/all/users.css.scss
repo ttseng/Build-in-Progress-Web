@@ -11,11 +11,12 @@
 	max-height:685px;
 	margin-top:20px;
 	float:left;
-	// box-shadow: 1px 1px 3px #888888;
+	position: relative;
 	padding: 20px 20px 0px 20px;
 	border-radius:5px;
 	background: #fff;
 	border: 1px solid #CCC;
+	position: relative;
 
 	#userAvatar{
 		width:185px;
@@ -23,7 +24,7 @@
 		margin-bottom:20px;
 	}
 	#username{
-		margin: 10px 0px;
+		margin: 10px 0px 0px 0px;
 	}
 
 	#about_me{
@@ -52,7 +53,7 @@
 	max-height: 665px;
 	margin-top:20px;
 	float:right;
-	overflow-y:scroll;
+	overflow:auto;
 	padding: 0 10px;
 
 	.nav {
@@ -91,6 +92,7 @@
 		margin-right:15px;
 		position:relative;
 		padding-bottom:10px;
+		margin-bottom: 25px;
 
 		.userProjectsContainer, .userFavoritesContainer, .userCollectionsContainer {
 			width:570px;
@@ -98,6 +100,9 @@
 			margin-left: auto;
 			margin-right: auto;
 			margin-top: -10px;
+		}
+		.authorDate{
+			margin-left: 6px;
 		}
 
 		.delete{
@@ -115,11 +120,20 @@
 			text-align: center;
 			padding: 5px 20px;
 		}
+		.pagination a{
+			background: #3fb5d9;
+    		color: white;
+    		padding: 5px 14px;
+    		border-radius: 5px;
+		}
+		.pagination a:hover{
+			color: white;
+		}
 	}
 	.userFavorites, {
 		margin-top: 20px;
 	}
-	.userFavorite, .userComment, .userRemix, .collectionProjects {
+	.userFavorite, .userComment, , .userSteps, .userRemix, .collectionProjects {
 		float:left;
 		height:24px;
 		color: #fff;
@@ -133,16 +147,23 @@
 	.userRemix{
 		left:74px;
 	}
+	.userSteps{
+		margin-left: 7px;
+	}
 	.userFavorite .fa-star, .userComment .fa-comment, .userRemix .fa-code-fork{
-		font-size:17px;
+		font-size:16px;
 	}
 	.userFavorite .fa-star{
 		color:  #DFDF00;
 		padding-left:5px;
 	}
 	.userComment .fa-comment{
-		padding-left:9px;
+		padding-left:7px;
 		color: #A9E2F3;
+	}
+	.userSteps .fa-square{
+		color: #EAEAEA;
+		font-size: 14px;
 	}
 	.userRemix .fa-code-fork{
 		padding-left:9px;
@@ -150,13 +171,13 @@
 		font-weight:bold;
 	}
 
-	.userFavorite .count, .userComment .count, .userRemix .count{
-		font-size:small;
-		color:#000;
+	.count{
+		font-size:11px;
+		color:grey;
 	}
 
 	.userFavorite .count{
-		padding-left:4px;
+		padding-left: 0px;
 	}
 	.userComment .count{
 		padding-left:0px;
@@ -164,6 +185,14 @@
 
 	.count{
 		font-weight:normal;
+	}
+
+	.privacy-icon{
+		position: absolute;
+		right: 15px;
+		bottom: 5px;
+		color: grey;
+		font-size: 17px;
 	}
 
 }
@@ -175,11 +204,28 @@
 	margin-top:20px;
 	margin-bottom: -10px;
 	margin-left: 48px;
-	overflow-y:scroll;
+	overflow:auto;
 	border: 1px solid #ccc;
 	border-radius:5px;
 	background-color: white;
 	padding: 0 10px;
+
+	#following, #followers, #follow {
+		width: 150px;
+
+		p {
+			font-variant:small-caps;
+			color: gray;
+		}
+
+
+	}
+
+	#following:hover, #followers:hover {
+		p, a, h4 {
+			color: rgb(59, 174, 220);
+		}
+	}	
 }
 
 .userFollowSideArea {
@@ -222,7 +268,6 @@
 	background: #C96969;
 	border-bottom-left-radius:5px;
 	border-bottom-right-radius:5px;
-	margin-top:-10px;
 	padding-left:10px;
 	padding-bottom:3px;
 	color: #fff;
@@ -234,9 +279,6 @@
 	margin-top: 10px;
 }
 
-#following, #followers, #follow {
-	width: 150px;
-}
 
 .followButton, .unfollowButton {
 	float: right;
@@ -274,19 +316,6 @@
 
 .no_follows {
 	margin-top: 50px;
-}
-
-#following, #followers {
-	p {
-		font-variant:small-caps;
-		color: gray;
-	}
-}
-
-#following:hover, #followers:hover {
-	p, a, h4 {
-		color: rgb(59, 174, 220);
-	}
 }
 
 #followers {
@@ -348,4 +377,67 @@
 .viewAll {
 	left: 26px !important;
 	right: auto !important;
+}
+
+.user-search {
+  position:relative;
+  width: 270px;
+  height: 285px;
+  float: left;
+  margin: 10px;
+  background: #fff;
+  box-shadow: 1px 1px 2px #B6B1B1;
+
+  .user-search-heading {
+  	margin-left: 10px;
+  	.counts {
+  		color: gray;
+  		margin-top: -10px;
+  		margin-bottom: 10px;
+  	}
+  }
+
+  .user-search-images {
+  	padding-bottom: 25px;
+
+	  .user-search-avatar {
+	  	margin-left: 10px;
+	  	width: 37.5%;
+	  	img {
+	  		max-width: 115%;
+	  	}
+	  }
+
+	  .user-search-projects {
+		margin-top: -108px;
+		margin-left: 131px;
+		margin-right: 3px;
+	  	img {
+	  		padding: 3px;
+	  		max-width: 43%;
+	  	}
+	  }
+  }
+
+  .textMatch{
+    padding: 10px;
+    color: gray;
+    font-size: 11.5px;
+  }
+
+  .clear {
+    border-top: #ddd 1px solid;
+    margin: -3px 11px;
+  }
+
+  .search-follow-form {
+  	height: 20px;
+  	a {
+  		float: right;
+		margin-left: 7px;
+		margin-top: -20px;
+		margin-bottom: 12px;
+		width: 231px;
+  	}
+  }
 }

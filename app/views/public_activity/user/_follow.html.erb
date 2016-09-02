@@ -3,7 +3,7 @@
 <% source = params[:source] %>
 <% followed_user = activity.trackable %>
 
-<% if followed_user %>
+<% if followed_user && activity.owner != nil %>
 	<% if source == "navbar" %>
 		<%= link_to user_path(activity.owner, :notification_id=>activity.id) do %>
 			<icon class="fa fa-user"></icon>
@@ -25,9 +25,9 @@
 		<icon class="fa fa-user"></icon>
 		<p class ="notification-image">
 			<% if activity.owner.avatar.present? %>
-				<%= link_to image_tag(activity.owner.avatar_url(:thumb), :class=>"img-polaroid"), user_path(activity.owner) %>
+				<%= link_to image_tag(activity.owner.avatar_url(:thumb), :class=>"img-rounded"), user_path(activity.owner) %>
 			<% else %>
-				<%= link_to image_tag("default_avatar.png", :class=>"img-polaroid"), user_path(activity.owner) %>
+				<%= link_to image_tag("default_avatar.png", :class=>"img-rounded"), user_path(activity.owner) %>
 			<% end %>
 		</p>
 		<p class="notification-heading">

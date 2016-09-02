@@ -1,9 +1,9 @@
 <div class ="collectionDisplay" >
 	<div class="image-wrapper">
-		<% if collection.projects.published.length != 0 && !collection.image.blank? %>
+		<% if collection.projects.public_projects.length != 0 && !collection.image.blank? %>
 			<%= link_to image_tag(collection.image_url(:preview), :width=>"100%"), collection %>
-		<% elsif collection.projects.published.length !=0 && !collection.projects.published.last.default_image.nil? %> 
-			<%= link_to image_tag(collection.projects.published.last.default_image.image_path_url(:preview), :width=>"100%"), collection %>
+		<% elsif collection.projects.public_projects.length !=0 && !collection.projects.public_projects.last.default_image.nil? %> 
+			<%= link_to image_tag(collection.projects.public_projects.last.default_image.image_path_url(:preview), :width=>"100%"), collection %>
 		<% else %>
 		<%= link_to image_tag("default_collection_large.png"), collection %>
 		<% end %>
@@ -17,5 +17,14 @@
 
 	<% if user_signed_in? && current_user == collection.user && @user==current_user %>
 		<div class="delete"> <%=link_to raw('<i class="btn btn-danger fa fa-trash-o" style="display:block"></i>'), collection, :method => :delete, :data=> {:confirm=>  "Are you sure you want to delete this collection?"} %> </div>
+		<% if collection.private? %>
+			<div class="privacy-icon">
+				<icon class="fa fa-lock"></icon>
+			</div>
+		<% elsif collection.unlisted? || collection.privacy.blank? %>
+			<div class="privacy-icon">
+				<icon class="fa fa-unlock-alt"></icon>
+			</div>
+		<% end %>
 	<% end %>
 </div>

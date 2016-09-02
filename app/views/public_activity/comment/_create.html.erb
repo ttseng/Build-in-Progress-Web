@@ -9,13 +9,11 @@
 	<% notification_id = "notification_" + activity.id.to_s + " notification_link" %>
 	<% step = activity.trackable.commentable %>
 	<% if step %>
-		<% step_id = "step_" +step.id.to_s %>
 		<% # div with all the comments in a step (for accordion) %>
-		<% comments_id = "comments_" + step.id.to_s %>
 		<% project = activity.trackable.commentable.project %>
 		<% if project %>
 			<% if source == "navbar" %>
-				<%= link_to project_steps_path(project, :anchor => comments_id, :comment_id => comment_id, :notification_id => activity.id) do %>
+				<%= link_to project_steps_path(project, :step => activity.trackable.commentable.id, :comment_id => activity.trackable.id, :notification_id => activity.id) do %>
 					<icon class="fa fa-comment"></icon>
 					<p class="notification-image">
 						<%= render :partial=>"images/navbar_image", :locals=> {:activity => activity} %>
@@ -34,22 +32,22 @@
 				<icon class="fa fa-comment"></icon>
 					<p class="notification-image">
 						<% if !activity.owner.avatar.blank? %>
-							<%= link_to image_tag(activity.owner.avatar_url(:thumb), :class=>"img-polaroid"), project_steps_path(project, :anchor => comments_id, :comment_id => comment_id, :notification_id => activity.id) %>
+							<%= link_to image_tag(activity.owner.avatar_url(:thumb), :class=>"img-rounded"), project_steps_path(project, :step => activity.trackable.commentable.id, :comment_id => activity.trackable.id, :notification_id => activity.id) %>
 						<% else %>
-							<%= link_to image_tag("default_avatar.png", :class=>"img-polaroid"), user_path(activity.owner) %>
+							<%= link_to image_tag("default_avatar.png", :class=>"img-rounded"), user_path(activity.owner) %>
 						<% end %>
 					</p>
 
 						<p class="notification-heading">
 							<% if activity.is_followed_comment? %>
-								<%= link_to activity.owner.username, user_path(activity.owner) if activity.owner %> also commented on <%= link_to step.name, project_steps_path(project, :anchor => comments_id, :comment_id => comment_id, :notification_id => activity.id), :class=> notification_id %> of <%= link_to project.title, project_steps_path(project), :class=> notification_id   %> 
+								<%= link_to activity.owner.username, user_path(activity.owner) if activity.owner %> also commented on <%= link_to step.name, project_steps_path(project, :step => activity.trackable.commentable.id, :comment_id => activity.trackable.id, :notification_id => activity.id), :class=> notification_id %> of <%= link_to project.title, project_steps_path(project), :class=> notification_id   %> 
 							<% else %>
-								<%= link_to activity.owner.username, user_path(activity.owner) if activity.owner %>	commented on <%= link_to step.name, project_steps_path(project, :anchor => comments_id, :comment_id => comment_id, :notification_id => activity.id), :class=> notification_id %> of <%= link_to project.title, project_steps_path(project), :class=> notification_id   %> 
+								<%= link_to activity.owner.username, user_path(activity.owner) if activity.owner %>	commented on <%= link_to step.name, project_steps_path(project, :step => activity.trackable.commentable.id, :comment_id => activity.trackable.id, :notification_id => activity.id), :class=> notification_id %> of <%= link_to project.title, project_steps_path(project), :class=> notification_id   %> 
 							<% end %>
 
 						</p>
 						<p class="notification-comment">
-							<%= link_to activity.trackable.body, project_steps_path(project, :anchor => comments_id, :comment_id => comment_id, :notification_id => activity.id) %>
+							<%= link_to activity.trackable.body, project_steps_path(project, :step => activity.trackable.commentable.id, :comment_id => activity.trackable.id, :notification_id => activity.id) %>
 						</p>
 
 					<p class="notification-date"><%= time_ago_in_words(activity.created_at).gsub('about', '') %> ago</p>

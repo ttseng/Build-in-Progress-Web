@@ -8,7 +8,7 @@
 			<%= JSON.pretty_generate(@project.as_json(only: [:title, :description], :methods => [:collaborative?, :remix?])).html_safe %>
 			,
 		"steps":
-			<% all_steps = @project.steps.order("published_on ASC").as_json(only: [:name, :id, :last, :position], :methods=> :published_on_formatted, include: {images: {only: [:image_path, :position, :id], include: {video: {only: [:embed_url, :video_path]}} } } ) %>
+			<% all_steps = @project.steps.order("published_on ASC").as_json(only: [:name, :id, :last, :position, :description, :ancestry, :label, :label_color], :methods=> :published_on_formatted, include: {images: {only: [:image_path, :position, :id], include: {video: {only: [:embed_url, :video_path, :rotation]}} } } ) %>
 			<%= JSON.pretty_generate(all_steps).html_safe %>
 			
 		} 
@@ -23,7 +23,7 @@
 			<%= JSON.pretty_generate(@project.as_json(only: [:title, :description], :methods => [:collaborative?, :remix?])).html_safe %>
 			,
 		"steps":
-			<% all_steps = @project.steps.order("published_on ASC").as_json(only: [:name, :id, :last, :position], :methods=> :published_on_formatted, include: {images: {only: [:position, :id], :methods => [:remix_image_path, :remix_video_path]} } ) %>
+			<% all_steps = @project.steps.order("published_on ASC").as_json(only: [:name, :id, :last, :position, :ancestry, :label, :label_color], :methods=> :published_on_formatted, include: {images: {only: [:position, :id], :methods => [:remix_image_path, :remix_video_path]} } ) %>
 			<%= JSON.pretty_generate(all_steps).html_safe %>
 			
 		} 

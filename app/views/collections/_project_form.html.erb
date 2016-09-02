@@ -1,9 +1,80 @@
-
 <div class="addProjectContainer">
 <%= form_tag({controller: "collections", action: "add_project"}, method: "post", :class=> "form-inline add_project_form") do %>
-  <%= label_tag 'project_url', 'Add project to collection:', :class=>"project_url_label" %>
-  <%= text_field_tag 'project_url', nil, placeholder: "http://buildinprogress.herokuapp.com/projects/xx/steps" %>
 
-  <%= submit_tag '+ Add project', :class=> "btn btn-info addProjectButton", :style => "margin-top: 0px; margin-right: 0px" %>
+  <%= label_tag 'project_url', 'Add project:', :class=>"project_url_label" %>
+  <%= text_field_tag 'project_url', nil, :onKeyPress => 'return disableEnterKey(event)' %>
+
+  <div class="btn btn-info addProjectButton" style="float: right;">Add</div>
+
 <% end %>
 </div>
+
+
+<%# add errorModal - used to display errors if user is trying to add a project with private or unlisted privacy settings %>
+
+<div id="errorModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Warning</h3>
+  </div>
+  <div class="modal-body">
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button class="btn btn-primary">Add Project</button>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+	$('.addProjectButton').click(function(){
+		$('#errorModal .modal-body').empty();
+  	  	$.ajax({
+			url:"<%=check_privacy_projects_path%>",
+			type:'GET',
+			data: {project_url: $('#project_url').val()},
+			success: function(data,status,xhr){
+				// console.log('data: ' + JSON.stringify(data));
+	  			if(data){
+	  				var privacy = data.project_privacy;
+	  				var project_name = data.project_name;
+
+	  				console.log('privacy: ' + privacy);
+	  				console.log('project_name: ' + project_name);
+
+	  				if (privacy== "public" || privacy == "unpublished" || "<%=@collection.privacy%>" == "private" || "<%=@collection.privacy%>" == "unlisted"){
+	  					// submit the form
+	  					// console.log('adding public project to collection');
+	  					$('form.add_project_form').submit();
+	  				}else if(privacy == "unlisted"){
+	  					$('#errorModal .modal-body').append('<p><i>'+project_name +'</i> is an unlisted project.   Are you sure you want to add it to this collection? </p>');
+	  					// console.log('trying to add unlisted project to collection');
+	  					$('#errorModal .btn-primary').show();
+	  					$('#errorModal').modal('show');
+
+	  					// detect if add project button is clicked
+	  				}else if(privacy == "private"){
+						// console.log('trying to add private project to collection');
+						$('#errorModal .modal-body').append("<p><i>"+project_name +"</i> is a private project. Please change this collection's privacy settings to <b>private</b> before adding this project.</p>");
+						$('#errorModal .btn-primary').hide();
+						$('#errorModal').modal('show');
+	  				}
+	  			}
+  		}
+		});
+	});
+
+	disableEnterKey = function(e) {
+	    var code = (e.keyCode ? e.keyCode : e.which);
+	    if(code == 13) { //Enter keycode
+	        e.preventDefault();
+	        //do somethig else
+	    }
+	  };
+
+	$('#errorModal .btn-primary').click(function(){
+		// user confirms that they want to add an unlisted project to the collection
+		$('form.add_project_form').submit();
+	});
+
+</script>

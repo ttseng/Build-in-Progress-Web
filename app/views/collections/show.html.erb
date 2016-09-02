@@ -1,138 +1,77 @@
-<div class="fullRow" style="width:940px; margin-top: 60px">
-  <div class="fullRow">
+<% title "#{@collection.name}" %>
 
+<div class="fullRow" style="width:940px; margin-top: 20px;">
+
+  <div id="collectionLeft">
     <div class="collectionsTitleSection">
-      <div id="collectionAvatar">  
-        <% if @collection.image.length > 0%>
-          <%= image_tag(@collection.image_url(:thumb), :class=>"collectionAvatar img-polaroid") %>
-        <% else %>
-          <%= image_tag("default_collection.png", :class=>"collectionAvatar img-polaroid") %>
+      <%= render :partial => 'collection_title' %>
+    </div>
+    <hr style="margin: 0;">
+
+    <% if @collection.projects.length > 0 %>
+      <div id="collectionActivityFeed">
+        <%= render 'collection_people' %>
+        <hr style="margin: 10px 0px;">
+        <% if @questions.length > 0 %>
+          <%= render 'collection_activity' %>
         <% end %>
-      </div>
-
-      <div class="collectionsText">
-        <h3 id="collectionsName"><%= @collection.name %></h3>
-        <p id="collectionsDesc">
-          <% if @collection.description.blank? && current_user == @collection.user%>
-            <span style="color:#838383">Add a description to your collection by clicking edit!</span>
-          <% else %>
-            <%= @collection.description %>
-          <% end %>
-        </p>
-        <p id="collectionsInfo"><%= @collection.projects.count %> <i class="fa fa-folder-open" style='color:gray;'></i> &nbsp;|&nbsp; <%= link_to @collection.user.username, user_path(@collection.user) %></p>
-        <% if user_signed_in? && current_user == @collection.user %>
-          <div class="edit_collection">
-            <div class="btn btn-info btn-small editCollectionTitleBtn">Edit</div>
-          </div>
-        <% end %>
-
-        <% if @collection.challenge==true %>
-          <div class="challengeLabel">challenge</div>
-          <script type="text/javascript">
-            $('.collectionsTitleSection').addClass('challenge');
-            $('#collectionsName').addClass('challenge');
-          </script>
-        <% end %>
-      </div>
-
-      <%= form_for @collection, :html=> {:class=>"collectionTitleForm"}, :remote=> true do |f| %>
-      <div id="collectionAvatarForm">  
-        <div class="formField avatarFormField">
-          <% if @collection.image.length > 0%>
-              <%= image_tag(@collection.image_url(:thumb), :class=>"collectionAvatar img-polaroid") %>
-            <% else %>
-              <%= image_tag("default_collection.png", :class=>"collectionAvatar img-polaroid")%>
-          <% end %>
-          <div class="clear"></div>
-            <div id="img_prev">
-                <p id="img_prev_filename"></p>
-            </div>
-
-          <div id="uploadImageWrapper" class="collectionsUploadImageWrapper" title="Add Image" style="left:80px;">
-              <button class="btn collectionsUploadImage" >
-                <p class="collectionsUploadImageText" style="margin:auto;">Add Image</p>
-              </button>
-              <%= f.file_field :image, :label=> false, :onChange=>"javascript: readURL(this);"%>
-            </div>
-          <div class="clear"></div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="span3 collectionTitleFormWrapper">
-          <div class="field" style="width:600px">
-            <%= f.text_field :name, :label=> false, :class=> "collectionTitleFormTitleField", :maxlength=> 50, :placeholder => "Collection Name" %>
-            <span class="error_message">Collections must have a title!</span>
-          </div>
           
-          <div class="field">
-            <%= f.text_area :description, :label=> false, :class=> "collectionTitleFormDescField", :maxlength=> 210, :placeholder => "Collection description", :style=> "width: 640px;" %>
-          </div>
-          <div class="form_buttons">
-            <%= link_to 'Cancel', collection_path, :class=> "btn btn-small cancel_button", :style => 'color: #000;' %>
-            <%= f.submit 'Save', :class=> "btn btn-info btn-small save_button" %>
-            <%=link_to raw('<i class="btn btn-danger fa fa-trash-o collectionDeleteBtn"></i>'), @collection, :method=> :delete, :data=> {:confirm=>  "Are you sure you want to delete this collection?"}%>
-          </div>
-        </div>
-      </div>
-      <% end %>
-    </div>
-    <%= render 'project_form' %>
-
-    <% if @featured_projects.length>0 %>
-    <div class='featuredProjectsTitle'>Featured Projects</div>
-       <div class="collectionFeaturedSection">
-        <div id="featuredProjects">
-          <%= render :partial => "projects/collection_project", :collection => @featured_projects, as: :project %>
-        </div>
-    </div>
-    <div class='featuredProjectsTitle'>All Projects</div>
     <% end %>
+
+  </div>
+
+  <div id="collectionRight">
+    <%# Form for adding a project to the collection %>
+    <%= render 'project_form' %>
 
     <div class="collectionsProjectSection">
       <div id = "projects" >      
-        <%= render :partial => "projects/collection_project", :collection => @projects, as: :project  %>
+        <%= render :partial => "projects/collection_project", :collection => @collection.projects.order("updated_at DESC"), as: :project %>
       </div>
 
       <% if @collection.projects.count == 0 %>
-      <p style="color: black">Add a project to your collection by adding a project URL above!</p>
-      <p style="color: black">Note: Your collection will become public on Build in Progress once you name it and add a published project.</p>
-      </br>
+      <div class="collection_help_text" style="padding: 25px;">
+        <p style="color: #449CB6; font-size: 15px;"><b>Add a project to your collection by adding a project URL above!</b></p>
+        <p style="color: #636363"><b>Note:</b> Your collection will become public on <%= ENV["APP_NAME"] %> once you name it and add a published project.</p>
+      </div>
       <% end %>
-
-      <div class="clear"></div>
     </div>
+  </div>
 
-<script type="text/javascript">
-    $("#img_prev").hide();
+  </div>
 
-    $('.content').css("height", "100%");
-    $('.editCollectionTitleBtn').click(function() {
-      $('.collectionsText').hide();
-      $('.edit').hide();
-      $('#collectionAvatar').hide();
-      $('.collectionTitleForm').show();
-    });
+  <script type="text/javascript">
+    var collection_id = "<%=@collection.id%>";
 
-    function readURL(input) {
-      // validate that an image was uploaded
-      if(!/(\.jpg|\.jpeg|\.png|\.gif)$/i.test(input.value)) {
-         alert("Invalid image file type.  Please upload a .jpg, .jpeg, .png, or .gif file.");      
-         field = $('#collection_image');
-         field.replaceWith(field=field.clone(true));
-      }else{
-        if (input.files && input.files[0]) {
-          $("#img_prev").show();
-          $("#img_prev_filename").html('<a id="remove_img"><i class="fa fa-times"></i></a> '+input.files[0].name);
-          $("#uploadImageWrapper").hide();
-          // $(".collectionTitleFormTitleField").addClass("collectionTitleFormAdjust");
-        }
+    $('#collectionRight').css('min-height', $('#collectionLeft').height());
+
+    $(document).ready(function(){
+      // highlight added project if a new project was added to the collection
+      var project_id = "<%=params[:project_id]%>"
+      if(project_id.length >0){
+        // console.log('project_id ' + project_id);
+        $('#'+project_id).animateHighlight("#CFC", 10000);
       }
-    }
-
-    $("#img_prev_filename").click(function() {
-        $("#img_prev").hide();
-        $("#uploadImageWrapper").show();
-        $(".collectionTitleFormTitleField").removeClass("collectionTitleFormAdjust");
+      $('.collectionsProjectSection').css('min-height', $('#collectionActivityFeed').height());
+      $('#collectionActivityFeed').css('min-height', $('.collectionsProjectSection').height());
     });
-</script>
+
+      $("#img_prev").hide();
+
+      $('.content').css("height", "100%");
+
+      $('.editCollectionTitleBtn').click(function() {
+        $('.collectionsText').hide();
+        $('.edit').hide();
+        $('#collectionAvatar').hide();
+        $('.collectionTitleForm').show();
+      });
+
+      $('.project_update_text').hover(function(){
+        $(this).fadeTo(400,1.0);
+      }, function(){
+        $(this).fadeTo(400,0.0);
+      });
+
+  </script>

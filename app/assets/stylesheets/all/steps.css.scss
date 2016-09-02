@@ -26,18 +26,21 @@ $lightorange: #F8C66E;
 // Detail View Styling //
 
 .processBlog{
+	width: 520px;
 	padding:0;
 	float:right;
-	width: 518px;
 	position: relative;
 	margin-bottom: 10px;
-	overflow-y: scroll;
+	transition: opacity .25s ease-in-out;
+	-moz-transition: opacity .25s ease-in-out;
+   	-webkit-transition: opacity .25s ease-in-out;
 }
 
 .detailViewHandle{	
 	z-index: 1;
+	position: absolute;
 	float: left;
-	width: 18px;
+	width: 22px;
 	padding: 3px;
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -46,7 +49,6 @@ $lightorange: #F8C66E;
 	font-size: 20px;
 	border-top-left-radius: 10px;
 	border-bottom-left-radius: 10px;
-	border: 1px solid #AFAFAF;
 	text-shadow: 1px 1px #A3A3A3;
 	-webkit-box-shadow: -1px 0px 1px rgba(165, 165, 165, 0.57);
 	-moz-box-shadow:    -1px 0px 1px rgba(165, 165, 165, 0.57);
@@ -60,28 +62,30 @@ $lightorange: #F8C66E;
 
 .stepDetailView{
 	float:right;
-	overflow:visible;
-	width:94.5%;
-	height: 99%;
-	font-family: "Verdana";
-	p{
-		font-family:"Verdana";
+	overflow-x: hidden;
+	overflow-y: auto;
+	width:98.5%;
+	p, ul{
+		font-size: 14px;
+		line-height: 24px;
+		margin-bottom: 20px;
+		font-family: georgia;
+		color: #525252;
 	}
 	.detailViewStepName{
-		width:104%;
+		width:85%;
 		float:left;
 		text-align: left;
 		margin-top: 15px;
 		
-		.name{
-			width: 80%;
+		.name, .step_link{
+			width: 98%;
 			font-size: 25px;
-			font-weight:bold;
-			line-height: 25px;
+			line-height: 30px;
 			margin-bottom:0px;
+			font-weight: 600;
 			font-family: "open sans";
 		}
-
 		a{
 			color: black;
 		}
@@ -93,16 +97,37 @@ $lightorange: #F8C66E;
 		li{
 			list-style-type:none;
 		}
+		icon{
+		  font-size: 20px;
+  		  margin-left: 8px;
+    	  background: #DA8EA6;
+    	  color: white;
+    	  padding: 5px;
+    	  border-radius: 16px;
+    	  width: 19px;
+    	  height: 19px;
+		}
+	}
+	.detailViewStepName.labelName{
+		margin-bottom: 15px;
+		p{
+			a{
+				color: white;
+			}
+		}
 	}
 	.shim{
 		width: 100%;
 		float:right;
 		position: relative;
 	}
+	pre{
+		padding: 0 !important;
+	}
 }
 
-.stepDetailView.editStepForm{
-	height: 102%;
+.stepDetailView.stepForm{
+	width: 94.5%;
 }
 
 .detailView {
@@ -110,27 +135,34 @@ $lightorange: #F8C66E;
 	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 	box-sizing: border-box;         /* Opera/IE 8+ */
 	padding: 0px 20px 0px 20px;
-	margin: 10px 0px;
-	margin-top: 0px;
+	margin: 0px 20px 10px 20px;
 	border: 1px solid #ccc;
   	float: left;
 	background-color: #FFF;
 	clear:right;
 	border-radius: 5px;
 	position:relative;
-	width: 99%;
+	width: 95%;
 	.detailViewPhoto{
-		height: 284px;
-
+		height: 306px;
+	}
+	.detailViewPhoto.fullWidth{
+		height: 307px;
+		.mainPhoto{
+			width: 109.1% !important;
+		}
 	}
 	.mainPhoto{
 		margin-left:-20px;
-		width: 87.5%;
+		width: 93.5%;
 		overflow: hidden;
 		height: 100%;
 		border-top-left-radius: 5px;
 	}
 	.thumbGallery{
+		img:hover{
+			cursor: pointer;
+		}
 	}
 
 	.emptyStepDescription{
@@ -139,7 +171,7 @@ $lightorange: #F8C66E;
 	.editButton{
 		position: absolute;
 		right: 20px;
-		top: 290px;
+		top: 318px;
 	}
 	.adviceContainer{
 		position: relative;
@@ -157,8 +189,18 @@ $image_width: 95%;
 	margin-bottom: 5px;
 	position: relative;
 	.stepImage{
+		overflow: hidden;
 		img{
 			width: 100%;
+			max-width: none;
+		}
+		img.rotated_odd{
+			width: auto !important;
+		}
+		img.rotated_even{
+			height: auto !important;
+			margin-left: auto !important;
+
 		}
 	}
 }
@@ -179,15 +221,18 @@ $image_width: 95%;
 
 .editDetailView{
 	padding-top:10px;
+	padding-bottom: 10px;
 	padding-left:20px;
 	padding-right:10px;
-	overflow-x:hidden;
 	border: 1px solid #ccc;
 	background: white;
+	position: relative;
+	overflow: hidden;
 	.detailViewStepName{
-		width:100% !important;
+		width:79% !important;
 		background: transparent !important;
 		margin-top: 0px;
+		font-weight: 600;
 	}
 	.detailViewPhoto{
 		margin-top: 20px;
@@ -203,13 +248,12 @@ $image_width: 95%;
 		z-index: 0;
 	}
 	.thumbGallery{
+		width: 104px;
 		height: 225px;
 		float: left;
 		margin-right: 0px;
-		width: auto !important;
-		min-width: 104px;
 		img:hover{
-			cursor: move;
+			
 		}
 		.fa-play-circle:hover{
 			cursor: move;
@@ -217,7 +261,7 @@ $image_width: 95%;
 	}
 	.label_container{
 		position: relative;
-		min-height: 25px;
+		min-height: 33px;
 		.label{
 			position:absolute;
 		}
@@ -306,7 +350,6 @@ $image_width: 95%;
 			color: #9C9B9B;
 			margin-top: 9px;
 			float: left;
-			margin-left: 5px;
 			font-size: small;
 		}
 	}
@@ -339,6 +382,7 @@ $image_width: 95%;
 	.delete_existing_files, .upload_new_files {
 		margin-right: 10px;
 		padding: 7px 29px;
+		overflow: hidden;
 	}
 	.design_file_row{
 		margin: 5px 0px;
@@ -407,6 +451,32 @@ $image_width: 95%;
 			display: inline;
 			text-overflow: ellipsis;
 		}
+	}
+}
+
+.viewModes{
+	float: left;
+	bottom: 35px;
+	position: fixed;
+	z-index: 1;
+	.mode{
+		border-radius: 3px;
+		background-color: lightgrey;
+		padding: 7px;
+		border-bottom: 1px solid white;
+		color: white;
+		icon{
+			font-size: 20px;
+		}
+	}
+	.mode:not(.selected):hover{
+		background-color: rgb(200, 200, 200) ;
+	}
+	.selected{
+		background-color: #62c3e0;
+	}
+	.selected:hover{
+		background-color: #59B4CF;
 	}
 }
 
@@ -526,6 +596,7 @@ $image_width: 95%;
 	line-height:150%;
 	padding: 0px;
 	margin: 10px 0px 0px 0px;
+	overflow-x: hidden;
 
 	p{
 		a{
@@ -536,6 +607,10 @@ $image_width: 95%;
 		a:hover{
 			color: $lightblue !important;
 		}
+	}
+	li{
+		line-height: 24px;
+		margin-bottom: 10px;
 	}
 
 }
@@ -652,6 +727,14 @@ $image_width: 95%;
 
 .editButtons.top{
 	border-top-right-radius: 3px;
+	border-bottom-right-radius: 0px;
+	margin-right: 8px;
+	width: 90.2%;
+}
+
+.editButtons.top.newLabel{
+	width: 91.8%;
+	margin-right:0;
 }
 
 .editButtons.bottom{
@@ -675,9 +758,6 @@ $image_width: 95%;
 	float:right; 
 	text-align:right; 
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	.update_step_button{
-		height: 25px;
-	}
 }
 
 .clear{
@@ -690,11 +770,74 @@ $image_width: 95%;
 }
 
 .stepForm{
+	.stepPin{
+		margin-top: 23px;
+		.dropdown-menu{
+			width: 90px !important;
+			min-width: initial !important;
+			.row-fluid{
+				width: 100%;
+			}
+		}
+		li{
+			text-align: center;
+			a{
+				display: block;
+				width: 100%; 
+				height: 100%;
+			}
+		}
+		li:hover{
+			background: $lightblue;
+			cursor: pointer;
+			icon{
+				color: white;
+			}
+		}
+		li.selected{
+			background: lightgrey;
+		}
+		icon{
+			padding:5px;
+			font-size: 15px;
+		}
+		icon.instructions{
+			font-size: 11px;
+		}
+	}
 	#detailViewPhoto{
 		margin-bottom:0px !important;
 	}
 	#step_timeZone_input{
 		display:none;
+	}
+	.label_checkbox{
+		width: 80px;
+		float: left;
+		padding-left: 0px;
+		margin-top: 32px;
+		margin-left: -30px;
+		li{
+			list-style-type: none;	
+		}
+	}
+	.color_picker{
+		position: relative;
+		margin-top: 30px;
+		list-style-type: none;
+		float: right;
+	}
+	.simplecolorpicker.picker{
+		position: absolute;
+		top: 20px !important;
+		left: -5px !important;
+		max-width: none !important;
+		min-width: initial !important;
+		margin-left: -82px;
+		width: 110px;
+	}
+	.color{
+			width: 17px;
 	}
 }
 
@@ -727,7 +870,7 @@ $image_width: 95%;
 	padding-top:0px;
 	margin-top:10px;
 	width: 100%;
-	border-top:1px dotted #949494;
+	border-top: 1px solid rgb(225, 225, 225)
 }
 
 .formStepName{
@@ -746,6 +889,13 @@ $image_width: 95%;
 	}
 }
 
+.accordiong h5{
+	color: black;
+}
+.accordion h5:hover{
+	color: #0769AD;
+}
+
 .lastStepHelp{
 	float:left;
 	font-size:15px;
@@ -755,6 +905,7 @@ $image_width: 95%;
 
 #step_last_input{
 	float: left;
+	width: 25px;
 	label{
 		padding-top:7px;
 	}
@@ -773,10 +924,14 @@ $image_width: 95%;
 }
 
 .edit_categories {
-	margin-top: 5px;
+	margin: 0;
 
 	a {
 		color: white;
+	}
+	a:hover{
+		color: rgb(236, 236, 236);
+		cursor: pointer;
 	}
 }
 
@@ -793,4 +948,542 @@ $image_width: 95%;
 	a:hover{
 		color: #A9E2F3;
 	}
+}
+
+// NEW PROJECT PAGE STYLING
+#projectInfoContainer{
+	width: 275px;
+	padding: 0px 20px;
+	background: rgb(76, 76, 76);
+	color: white;
+	position: absolute;
+	top: 73px;
+	left: 50px;
+	box-shadow: 1px 3px 3px #C6C6C6;
+
+	#projectNameContainer{
+      display: inline-block;
+      border-radius: 5px !important;
+      width: 95%;
+      background: white;
+      transition: opacity .25s ease-in-out;
+      -moz-transition: opacity .25s ease-in-out;
+      -webkit-transition: opacity .25s ease-in-out;
+    }
+      #projectName{
+      width: 100%;
+      color: #fff;
+      font-size: 27px;
+      overflow-x: hidden;
+      padding: 10px;
+      overflow-y: hidden;
+      margin: 0px;
+      line-height: 35px;
+      border-radius: 5px;
+      a{
+        color: white;
+      }
+      a:hover{
+        text-decoration:none;
+      }
+    }
+    .bip_title textarea{
+      font-size: 20px;
+      line-height: 25px;
+      width: 95%;
+    }
+
+    #projectAuthor {
+      margin-left: 10px;
+      padding-right: 0px;
+      color: white;
+      border-radius: 5px;
+      font-size: 11px;
+      position: relative;
+
+      .authorAttribution{
+        float: left;
+      }
+      a{
+        font-weight: bold;
+        color: $teal;
+      }
+    }
+    .edit_categories{
+    	display: inline;
+    }
+    #projectOverviewDescription{
+    	margin-left: 10px;
+    	margin-top: 15px;
+    	margin-bottom: 25px;
+    	.project_description{
+    		margin-bottom: 20px;
+    		font-family: georgia;
+    		font-size: 14px;
+    		line-height: 22px;
+    		span{
+    			color: white;
+    		}
+    	}
+    }
+    .project_buttons{
+    	float: right;
+    	display: inline;
+    	.fa{
+    		font-size: 15px !important;
+    	}
+    }
+
+    .projectInfo{
+    	position: absolute;
+    	bottom: 0;
+    	.projectInfoDiv{
+    		position: absolute;
+    		bottom: 0;
+    	}
+    	.count{
+    		margin-top: 3px;
+    	}
+    	.remixCount{
+    		margin-left: 0px;
+    	}
+    	.counter{
+    		margin-top: 3px;
+    		margin-right: 0px;
+    	}
+    	.projectFavorite{
+    		left: 0px;
+    		background: rgba(56, 56, 56, 0.8);
+    	}
+    	.projectComment{
+    		background: rgba(56, 56, 56, 0.8);
+    		left: 55px;
+    		border: none;
+    	}
+    	.projectRemix{
+    		background: rgba(56, 56, 56, 0.8);
+    		padding-left: 5px;
+    	}
+    }
+    .projectPrivacy{
+    	bottom: 3px;
+    }
+    .category_icon{
+    	font-size: 1.5em;
+    	img{
+    		max-width: 80%;
+    	}
+    }
+}
+
+#projectNameNode{
+  color: white;
+  background: black;
+  padding: 8px;
+  display: inline;
+  border: 3px solid #F2F2F2;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+#projectNameNode:hover{
+	cursor: pointer;
+	border: 3px solid #7a7a7a;
+}
+
+#processMap{
+	width: 99.5%;
+	position: relative;
+	font-size: medium;
+	float:left;
+	color: #000;
+	margin: 0px 5px 0px 5px;
+	overflow: auto;
+	#processMapInstructions{
+		background: #5D93C6;
+		font-weight: 11px;
+		box-shadow: 0 2px 1px rgba(0, 0, 0, 0.13);
+		left: 35px;
+		top: 15px;
+		z-index: 1000;
+	}
+	.processMapButtons{
+		position: absolute;
+		left: 30px;
+		top: 20px;
+		z-index: 50;
+		width: 40px;
+		font-size: 11px;
+	}
+	#chart{
+		overflow: visible;
+		min-height: 100%;
+		margin-left: 85px;
+		margin-top: 30px;
+		width: 92%;
+	}
+}
+
+
+	#infoContainer{
+		position: absolute;
+		top: 85px;
+		right: 50px;
+		z-index: 1;
+	}
+
+	#infoContainer.edit, #infoContainer.new{
+		top: 50px;
+	}
+
+	#chart{
+		margin-top: 10px;
+	}
+	#projectInfoContainer:hover{
+		opacity: 1;
+	}
+	#projectInfoContainer{
+		width: 457px;
+		z-index: 1;
+		background: white;
+		color: black;
+		box-shadow: none;
+		opacity: 0.9;
+		transition: opacity .25s ease-in-out;
+    	-moz-transition: opacity .25s ease-in-out;
+    	-webkit-transition: opacity .25s ease-in-out;
+		position: initial;
+		box-shadow: rgba(0, 0, 0, 0.24706) 0px 0px 2px 0px;
+		#projectNameContainer{
+			background: white;
+			width: 101%;
+			margin-top: 10px;
+			margin-left: -17px;
+			padding: 5px 15px;
+			#projectName{
+				color: black; 
+				font-weight: 600;
+				padding: 0;
+			}
+		}
+		#projectAuthor{
+				color: black;
+				padding: 0;
+				margin-top: 5px;
+				margin-left: 0px;
+				margin-bottom: 15px;
+		}
+		.editCategories:hover{
+			cursor: pointer;
+		}
+		#projectOverviewDescription{
+			padding: 0;
+			margin: 10px 0px;
+		}
+		.bip_description.new{
+			color: grey !important;
+		}
+		.bip_description textarea{
+        	font-size: 12px;
+        	line-height: 18px;
+        	width: 95%;
+      	}
+		.project_description{
+			  margin-left: -17px;
+  			  padding: 17px;
+  			  border-radius: 5px;
+  			  margin-right: -17px;
+		}
+		.project_description span{
+			color: black !important;
+		}
+		.projectInfo{
+			background: grey;
+			width: 109%;
+			height: 25px;
+			margin-left: -20px;
+			position: initial;
+			.projectInfoDiv{
+				float: left;
+				position: initial;
+				position: block;
+				max-height: 30px;
+				background: transparent;
+				max-width: 50px;
+			}
+			.projectPrivacy{
+				position: initial;
+				float: right;
+				.dropdown-menu{
+					right: 0 !important;
+					left: auto !important;
+				}
+			}
+			.count{
+				font-size: 15px;
+			}
+			.counter{
+				font-size: 11px;
+			}
+		}
+		.category_text{
+			font-size: 10px;
+		}
+		.edit_categories a{
+			color: grey;
+		}
+		.dropdown-menu{
+			box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2) !important;
+			border-radius: 0 !important;
+		}
+		.comment-list{
+			margin-top: 25px;
+			padding: 0;
+			width: 312px;
+			.comment-list-title{
+				width: 240px;
+			}
+			.comment-list-item{
+				height: 50px !important;
+				.comment-list-title{
+					height: 38px;
+					p{
+						font-size: 11px !important;
+					}
+				}
+			}
+		}
+
+	}
+	.projectInfoDiv{
+
+		.counter{
+			color: white;
+		}
+		.commentCount{
+			margin-left: 5px;
+			margin-top: 1px !important;
+		}
+		.remixCount{
+			margin-left: 10px;
+			margin-top: 8px;
+		}
+		.remixCounter{
+			margin-left: -3px;
+		}
+	}
+	.projectPrivacy .btn-group{
+			height: 24px;
+			button{
+				background-color: transparent !important;
+			}
+	}
+	.stepDetailView{
+		float: none;
+		width: auto;
+		z-index: 1000;
+		box-shadow: 0 3px 3px rgba(0, 0, 0, 0.13)
+	}
+	.item{
+		width: 99.5%;
+	}
+
+	.detailView{
+		box-shadow: rgba(0, 0, 0, 0.247059) 0px 0px 2px 0px;
+		width: 497px;
+		border-radius: 0;
+		display: none;
+		border-top: 0px;
+		z-index: 1001;
+		.mainPhoto{
+			border-radius: 0;
+		}
+		.editButton{
+			top: 320px;
+		}
+	}
+	#projectTitleBar.overview{
+		color: white;
+		border-top: 10px solid #F2F2F2;
+		.projectName{
+			color: white;
+		}
+	}
+	#projectTitleBar{
+		border-top: 10px solid #F2F2F2;
+		background: #373737;
+		-o-transition:.5s;
+		-ms-transition:.5s;
+		-moz-transition:.5s;
+		-webkit-transition:.5s;
+		font-size: 10px;
+		/* ...and now for the proper property */
+		transition:.5s;
+		color: white;
+		width: 485.5px;
+		padding: 7px;
+		position: absolute;
+		right: 48px;
+		text-transform: uppercase;
+		z-index: 10;
+		icon{
+			padding: 0px 5px;
+			font-size: 18px;
+		}
+		icon:hover{
+			cursor: pointer;
+		}
+		.names{
+			max-width: 85%;
+			max-height: 18px;
+			float:left;
+			overflow: hidden;
+		}
+		.projectName{
+			float: left;
+			opacity: 0.8;
+			color: rgb(195, 195, 195);
+			display: inline;
+		}
+		.projectName:hover{
+			cursor: pointer;
+			opacity: 1.0;
+			color: white;
+		}
+		.stepName{
+			float: left;
+			margin-left: 5px;
+		}
+		.fa:hover{
+			color: lightgrey !important;
+		}
+	}
+	#projectTitleBar:hover{
+		cursor: pointer;
+	}
+	.detailView{
+		margin: 0px;
+	}
+	.detailView.current{
+		display: block;
+	}
+
+
+ .new_step_instructions.visible{
+ 	width: 30%; top: 50px; left: 50px;
+ 	z-index: 1000;
+ }
+
+.processBlog{
+	position: absolute !important;
+	top: 50px;
+	right: 50px;
+	z-index: 1;
+	margin-bottom: 0px;
+	.label{
+		font-weight: normal !important;
+	}
+	.editButtons{
+		background: #373737;
+	}
+	.editButtons.top{
+		border-radius: 0;
+		width: 97.5%;
+		margin-right: 0;
+	}
+	.editButtons.bottom{
+		border-radius: 0;
+	}
+	.stepForm{
+		width: 100%;
+	}
+}
+.step_title{
+	position: absolute;
+	font-size: 11px;
+		bottom: 0px;
+		right: 2px;
+		color: white;
+		background: black;
+		opacity: 0.8;
+		padding: 7px;
+		border-top-left-radius: 5px;
+		max-width: 96%;
+		overflow: hidden;
+		a{
+			color: #62c3e0;
+			font-weight: bold;
+		}
+}
+
+#mobileProcessMap{
+	position: relative;
+	width: 99%;
+	.tooltip{
+		display: none !important;
+	}
+	.stepLabel{
+		font-weight: 100;
+		font-family: sans-serif;
+	}
+}
+
+#feedback_button{
+    position: absolute;
+    right: -30px;
+    bottom: 60px;
+    transform: rotate(-90deg);
+    background: darkgrey;
+    color: white;
+    text-shadow: none;
+}
+
+#feedbackModal{
+	.modal-body{
+		height: 250px;
+		overflow: hidden;
+	}
+}
+
+// TOUR STYLING
+
+#welcomeModal {
+  top:25%;
+}
+.about_container{
+  width: 32.9%;
+  position: relative;
+  display: inline-block;
+  text-align: center;
+  img{
+  	width: 100px;
+  }
+  .about_description{
+  	position: absolute;
+  	top: 10px;
+  	display: none;
+
+  }
+}
+#optionsModal {
+  top:30%;
+  left:27%;
+}
+
+.endButton{
+	float: left !important;
+	margin-right: 10px;
+}
+
+.tour-tour-0 .closeButton{
+	display: none;
+}
+
+.tour-tour-2 .nextButton{
+	display: none;
+}
+
+.delete_project_text_area{
+	width: 97%; 
+	height: 20px;
 }

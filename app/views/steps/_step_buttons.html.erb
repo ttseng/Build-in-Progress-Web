@@ -1,16 +1,22 @@
+<% if label %>
+  <% button_text = "Label" %>
+<% else %>
+  <% button_text = "Step" %>
+<% end %>
+
 <% if @step.new_record? %>
     <!--Creating new Step-->
     <div class = "submitButtons" > 
-        <%= link_to 'Back', project_steps_path(@project, :exit_editing_step_id => @step.id), :class => "btn btn-small btn-back" %>
-        <%= f.submit :class => "btn btn-small btn-primary update_step_button" %>
+        <%= link_to 'Back', project_steps_path(@project, :exit_editing_step_id => @step.id, :step => @step.id), :class => "btn btn-small btn-back" %>
+        <div class="btn btn-small btn-primary update_step_button" onclick="saveOrdering();">Create <%=button_text%></div>
     </div>
 <% else %>
     <!--Editing an existing step-->
     <div class="deleteButton">
-      <%=link_to "Delete Step", {:controller => :steps, :action => 'destroy'}, :method => :delete, :confirm=>  "Are you sure you want to delete this step?", :class => "btn btn-small btn-danger"%>
+      <%=link_to "Delete " + button_text,project_step_path(@project, @step, :step_id=> @step.id), :method => :delete, :confirm=>  "Are you sure you want to delete this " + button_text.downcase + "?", :class => "btn btn-small btn-danger"%>
     </div>
     <div class = "submitButtons" > 
-      <%= link_to 'Back', project_steps_path(@project, :exit_editing_step_id => @step.id), :class => "btn btn-small btn-back" %>
-      <%= f.submit 'Update Step', :class => "btn btn-small btn-primary update_step_button" %>
+      <%= link_to 'Back', project_steps_path(@project, :exit_editing_step_id => @step.id, :step => @step.id), :class => "btn btn-small btn-back" %>
+      <%= f.submit 'Update ' + button_text, :class => "btn btn-small btn-primary update_step_button", :disable_with=> "Update " + button_text %>
     </div>
 <% end %>

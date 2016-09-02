@@ -5,8 +5,6 @@
 	  <% else %>
 	    <%= link_to 'Follow', follow_user_path(@user), :remote => true, :class=> "btn btn-small btn-success followButton" %>
 	  <% end %>
-	<% else %>
-		<%=link_to "Edit Profile", edit_profile_user_path, :class => "btn btn-small btn-info followButton", :style=>"float:right" %>
 	<% end %>
 <% else %>
 	<%= link_to 'Follow', new_user_session_path, :class=> "btn btn-small btn-success followButton" %>

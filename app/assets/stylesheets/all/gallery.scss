@@ -1,0 +1,150 @@
+#titleBar{
+  width: 7%;
+  background: #3c3c3c;
+  padding: 10px 20px;
+  float: left;
+  position: fixed;
+  z-index: 1;
+  word-wrap: initial;
+  min-width: 75px;
+  a{
+    color: white;
+    font-size: 20px;    
+    font-family: lato;
+    text-decoration: none;
+  }
+  #projectAuthor{
+    margin-top: 20px;
+    font-size: 12px;
+    color: white;
+    a{
+      font-size: 12px;
+      color: white;
+    }
+  }
+}
+
+#projectLabels{
+  color: white;
+  float: left;
+  width: 7%;
+  position: fixed;
+  padding: 5px;
+  .label{
+    word-wrap: break-word;
+    max-width: 100%;
+    white-space: normal;
+    margin: 5px 0px;
+    opacity: 0.5;
+  }
+  .label:hover{
+    cursor:pointer;
+  }
+}
+
+#imageView{
+  width: 80%;
+  margin: auto;
+  .caption{
+    display: block;
+    opacity: 1.0;
+    top: 0;
+    bottom: auto;
+    font-size: 15px;
+    width: auto;
+    right: auto;
+    padding: 10px;
+    opacity: 0.9;
+    font-weight: bold;
+    background: rgb(79, 79, 79);
+  }
+  .download{
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    display: none;
+    icon{
+      color: white;
+      font-size: 20px;
+    }
+    .download:hover{
+      pointer: cursor;
+    }
+  }
+}
+
+#imageZoom {
+  .fa-search-minus{
+  position: fixed;
+  bottom: 260px;
+  left: 50px;
+  font-size: 15px;
+  color: rgb(116, 116, 116);
+  }
+  .fa-search-minus:hover{
+    cursor: pointer;
+  }
+  #zoomSlider{
+    -webkit-appearance: slider-vertical; /* WebKit */
+    width: 8px;
+    height: 200px;
+    padding: 0 5px;
+    position: fixed;
+    left: 47px;
+    bottom: 50px;
+  }
+  .fa-search-plus{
+    position: fixed;
+    bottom: 30px;
+    font-size: 15px;
+    left: 50px;
+    color: rgb(116, 116, 116);
+  }
+  .fa-search-plus:hover{
+    cursor:pointer;
+  }
+}
+
+
+
+#stepInfo.imageView{
+      background: black;
+      color: white;
+      font-family: lato;
+      width: 291px;
+      float: right;
+      position: absolute;
+      padding: 10px;
+      opacity: 0.0;
+      right: 0%;
+      
+      #stepName{
+        font-size: 18px;
+        font-weight: bold;
+        float: right;
+        display: inline;
+        width: 40%;
+        font-family: lato;
+        word-wrap: break-word;
+        a{
+          color: white;
+          text-decoration: none;
+        }
+      }
+      
+      #stepDescription p, #stepDescription ol, #stepDescription ul{
+        color: white;
+       font-weight: 200;
+       font-size: 14px;
+       float: left;
+       display: inline;
+       width: 58%;
+       font-family: lato;
+       a{
+        color: white;
+       }
+      }
+
+}
+
+

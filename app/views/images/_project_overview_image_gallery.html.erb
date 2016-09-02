@@ -1,27 +1,33 @@
 <div class="projectOverviewPhoto" >
     <div class="mainPhoto slide projectOverviewCarousel" id="carousel-<%=@project.id%>">
     
-    <div id="carouselNavIcons">
-      <% # button for restarting the carousel from the beginning %>
-      <%= link_to "", "#", :class=>"restart fa fa-rotate-left"%>
-      <% # button for pausing / continuing the carousel %>
-      <%= link_to "", "#", :class=> "play_pause fa fa-pause"%>
-    </div>
+    <% if source != 'new' && source != 'edit' %>
+      <div id="carouselNavIcons">
+        <% # button for restarting the carousel from the beginning %>
+        <%= link_to "", "#", :class=>"restart fa fa-rotate-left"%>
+        <% # button for pausing / continuing the carousel %>
+        <%= link_to "", "#", :class=> "play_pause fa fa-pause"%>
+      </div>
+    <% end %>
 
-        <div class="carousel-inner <%=@project.id%>"></div>
-        <%# carousel controls %>
-           <a class="carousel-control left" href="#carousel-<%=@project.id%>" data-slide="prev">&lsaquo;</a>
-           <a class="carousel-control right" href="#carousel-<%=@project.id%>" data-slide="next">&rsaquo;</a>
+    <div class="carousel-inner <%=@project.id%>"></div>
+
+    <% if source != 'new' && source != 'edit' %>
+      <%# carousel controls %>
+         <a class="carousel-control left" href="#carousel-<%=@project.id%>" data-slide="prev">&lsaquo;</a>
+         <a class="carousel-control right" href="#carousel-<%=@project.id%>" data-slide="next">&rsaquo;</a>
+    <% end %>
     </div>
+    
 
     <div class="container">
-        <%= render :partial => 'project_title', :locals=> {:project => @project, :authorLoggedIn =>(user_signed_in? && @project.users.include?(current_user)) , :source=>"index"} %>
+        <%= render :partial => 'steps/project_title', :locals=> {:project => @project, :authorLoggedIn =>(user_signed_in? && @project.users.include?(current_user)) , :source=>source} %>
     </div>
 
   </div>
 
   <% # hide carousel controls if there are no images in the project %>
-  <% if @project.photo_images_count < 2 %>
+  <% if source == 'index' && @project.photo_images_count < 2 %>
     <script type="text/javascript">
       // console.log('hiding carousel nav icons');
       $('#carouselNavIcons').hide();
@@ -30,25 +36,24 @@
   <% end %>
 
 <% image_project_id = @project.id %>
+<% last_step_with_images = @project.last_step_with_images_no_vid %>
 <% all_images = [] %>
 
   <% # first, add all images from the last step of the project %>
-  <% if !@project.last_step_with_images.blank? %>
-    <% last_step_with_images_id = @project.last_step_with_images.id %>
-      <% @project.last_step_with_images.images.order(:position).each do |image| %>
-        <% if !image.has_video? && !image.has_sound? %>
+  <% if !last_step_with_images.blank? %>
+
+    <% last_step_with_images_id = last_step_with_images.id %>
+    
+    <% if source != 'new' && source != 'edit'  %> 
+
+      <% last_step_with_images.images.where("video_id IS NULL and sound_id IS NULL").order(:position).each do |image| %>
           <% all_images.push(image) %>
-        <% end %>
       <% end %>
 
-      <% # next, all all other images from the project ordered chronological in ascending order %>
-      <% @project.steps.where("id != ? ", last_step_with_images_id ).order(:published_on).each do |step| %>
-        <% step.images.order(:position).each do |image| %>
-          <% if !image.has_video? && !image.has_sound? %>
-            <% all_images.push(image) %>
-          <% end %>
-        <% end %>
-      <% end %>
+    <% elsif @project.homepage_image.present?%> <%# only load last image on all other pages %>
+      <% all_images.push(@project.homepage_image) %>
+    <% end %>
+
   <% end %>
 
 <% image_project_id = @project.id %>
@@ -70,34 +75,47 @@
       <% image = image.original_image %>
     <% end %>
 
-    <% if image.image_path? %>
-      <% # add already uploaded image to carousel %>
-        <script type="text/javascript">
-           $('.carousel-inner.<%=image_project_id%>').append('<div class="item <%=active%>"><a class="fancybox" href="<%=image.image_path_url%>" rel="gallery <%=image_project_id%>" data-fancybox-type="image"> <%=image_tag(image.image_path_url(:preview), :width => "100%", :class=> image_record.id) %></a><div class="image_caption">from <%= link_to_function image_record.step.name, "goToStep(\"#{image_record.step.id}\");" %></div></div>');
-         </script>
+    <% if source != "embed" %>
+      <% # on project page, only add the step name to the image caption %>
+      <% if image.image_path? %>
+        <% # add already uploaded image to carousel %>
+          <script type="text/javascript">
+             $('.carousel-inner.<%=image_project_id%>').append('<div class="item <%=active%>"><a class="fancybox" href="<%=image.image_path_url%>" rel="gallery <%=image_project_id%>" data-fancybox-type="image"> <%=image_tag(image.image_path_url(:preview), :width => "100%", :class=> image_record.id) %></a><div class="image_caption">from <%= link_to_function image_record.step.name, "goToStep(\"#{image_record.step.id}\");" %></div></div>');
+           </script>
+        <% else %>
+          <% # add placeholder s3 direct upload image %>
+          <script type="text/javascript">
+             $('.carousel-inner.<%=image_project_id%>').append('<div class="item <%=active%>"><a class="fancybox" href="<%=image.s3_filepath%>" rel="gallery <%=image_project_id%>" data-fancybox-type="image"> <%=image_tag(image.s3_filepath, :width => "100%", :class=> image_record.id) %></a><div class="image_caption">from <%= link_to_function image_record.step.name, "goToStep(\"#{image_record.step.id}\");" %></div></div>');
+           </script>
+        <% end %>
       <% else %>
-        <% # add placeholder s3 direct upload image %>
-        <script type="text/javascript">
-           $('.carousel-inner.<%=image_project_id%>').append('<div class="item <%=active%>"><a class="fancybox" href="<%=image.s3_filepath%>" rel="gallery <%=image_project_id%>" data-fancybox-type="image"> <%=image_tag(image.s3_filepath, :width => "100%", :class=> image_record.id) %></a><div class="image_caption">from <%= link_to_function image_record.step.name, "goToStep(\"#{image_record.step.id}\");" %></div></div>');
-         </script>
+        <% step_name = image.step.name + " [Step " + (image.step.position+1).to_s + " of " + (image.project.steps.count).to_s + "]" %>
+        <% # on embed page, include step description in caption %>
+        <% if image.image_path? %>
+          <% # add already uploaded image to carousel %>
+            <script type="text/javascript">
+               $('.carousel-inner.<%=image_project_id%>').append('<div class="item <%=active%>"><a class="fancybox" href="<%=image.image_path_url%>" rel="gallery <%=image_project_id%>" data-fancybox-type="image"> <%=image_tag(image.image_path_url(:preview), :width => "100%", :class=> image_record.id) %></a><div class="image_caption" style="height: 90px;"><%=link_to step_name, project_steps_path(image.project, :step => image.step.id) %> <% if image.step.description && !image.step.description.blank? %><div class="step_description"><%= sanitize(image.step.description.gsub(/(?:\n\r?|\r\n?)/, "<br />").gsub(/'/){ %q(\') }.html_safe) %> <% end -%></div></div></div>');
+             </script>
+          <% else %>
+            <% # add placeholder s3 direct upload image %>
+            <script type="text/javascript">
+               $('.carousel-inner.<%=image_project_id%>').append('<div class="item <%=active%>"><a class="fancybox" href="<%=image.s3_filepath%>" rel="gallery <%=image_project_id%>" data-fancybox-type="image"> <%=image_tag(image.s3_filepath, :width => "100%", :class=> image_record.id) %></a><div class="image_caption" style="height: 9px;"><%=link_to step_name, project_steps_path(image.project, :step => image.step.id) %> <% if image.step.description && !image.step.description.blank? %><div class="step_description"><%= sanitize(image.step.description.gsub(/(?:\n\r?|\r\n?)/, "<br />").gsub(/'/){ %q(\') }.html_safe) %> <% end -%></div></div></div>');
+             </script>
+          <% end %>
       <% end %>
-
+      <script type="text/javascript">
+        $('.image_caption').hover(function(){
+          if($(this).find('.step_description').length> 0){
+            $('.image_caption').animate({height: '90px'}, 50);  
+          }
+        }, function(){
+          if($(this).find('.step_description').length>0){
+            $('.image_caption').animate({height: '2px'}, 50);  
+          }
+        });
+      </script>
   <% end %>
 
-
-<% # add attribution to all remix images %>
-<% if false %>
-  <% all_images.each do |image| %>
-    <% if image.is_remix_image? %>
-    <% original_project = Image.find(image.original_image.id).project %>
-    <script type="text/javascript">
-      var image_id = parseInt("<%= image.id %>");
-      var project_overview = true;
-      remix_caption(image_id, project_overview, "<%=project_path(original_project)%>", "<%=original_project.title%>", "<%=user_path(original_project.user)%>", "<%=image.author%>");
-    </script>
-    <% end %>
-  <% end %>
-<% end %>
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -110,24 +128,16 @@ $(document).ready(function(){
     $('.play_pause').addClass('fa fa-play');
   }
 
-   $('.projectOverviewCarousel').on('slide', function(){
-      reset_video_masks($(this));
-    });
-
     $('.projectOverviewCarousel').on('slid', function(){
-        stopHTMLVideo($(this));
-        stopVimeo($(this));
-        stopSoundcloud($(this));
     });
 
     $('.restart').click(function(){
         // start over project overview carousel slideshow
         $('.projectOverviewCarousel').carousel(0);
-    });
-
-    $('.projectOverviewCarousel .video_mask').click(function(){
-        console.log('clicked video mask');
-        trigger_video_mask($(this));
+        if("<%=source%>"=="embed"){
+          $('.mainPhoto').fadeOut();
+          $('.fa-play-circle').fadeTo('fast', 0.2);
+        }
     });
 
     
@@ -142,6 +152,12 @@ $(document).ready(function(){
           $(this).addClass('fa fa-pause');
         }
     });
+
+    if("<%=source%>"=="embed"){
+      $('.item img').addClass("embedImage");
+    }else{
+      $('.item img').addClass('banner');
+    }
 
 });
 

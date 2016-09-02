@@ -1,21 +1,23 @@
+<% title "Reset Password | #{ENV["APP_NAME"]}" %>
+
 <div class="fullRow" style="margin-top:60px">
 	<div class="fullRow">
-
 		<div class="pwPage">
+			<div class="form_container">
+				<h3 class="form_heading forgot_pw">Reset Password</h3>
 
-<h2>Forgot your password?</h2>
+				<%= semantic_form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f| %>
+				  
+				  <%= devise_error_messages! %>
 
-<%= semantic_form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f| %>
-  <%= devise_error_messages! %>
+				  <div class="formField"><%= f.label :email, :class=> "label" %><br />
+				  <%= f.email_field :email, :autofocus => true %></div>
+				  
+				  <div style="margin-top: 10px;"><%= f.submit "Send me reset password instructions", :class=> "btn" %></div>
+				<% end %>
 
-  <div class="formField"><%= f.label :email, :class=> "label" %><br />
-  <%= f.email_field :email, :autofocus => true %></div>
-
-  <div><%= f.submit "Send me reset password instructions", :class=> "btn btn-primary" %></div>
-<% end %>
-
-<%= render "devise/shared/links" %>
-
+				<%= render "devise/shared/links" %>
+			</div>
 		</div>
 	</div>
 </div>

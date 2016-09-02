@@ -1,3 +1,4 @@
+<% title "#{@current_user.username}'s Activity Feed" %>
 <div class="fullRow" style="margin-top:60px">
   <div class="fullRow">
   	<div class="activity_feedPage">
@@ -13,7 +14,7 @@
 			<div class="activity_feed">
 			<% @activities.each do |activity| %>
 				<% if activity.trackable %>
-                	<% unless render_activity(activity).blank? %>
+                	<% unless render_activity(activity).blank? || activity.is_private? %>
                     	<div class="activity_feed_activity">
                     		<%= render_activity activity %>
                     	</div>

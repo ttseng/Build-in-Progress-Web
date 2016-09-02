@@ -1,0 +1,141 @@
+<% if !params[:search].blank? %>
+  <% title "#{params[:search]} | Build in Progress" %>
+<% end %>
+
+<div class="fullRow" style="width:980px" class="search_results">
+  <div class="projectPage">
+
+    <div style="padding:10px"></div>
+
+    <div class="searchContentTypeBar">
+      <div class="row">
+        <%= link_to raw('<div class="span1 searchContentType selected" ><h6>Projects ('+@project_count+')</h6></div>'), search_path(:search => @search_term, :search_object => "project") %>
+        <%= link_to raw('<div class="span1 searchContentType"><h6>Collections ('+@collection_count+')</h6></div>'), search_path(:search => @search_term, :search_object => "collection") %>
+        <%= link_to raw('<div class="span1 searchContentType"><h6>Users ('+@user_count+')</h6></div>'), search_path(:search => @search_term, :search_object => "user") %>
+        <div class="searchTerms">
+          <h5>Search results for "<%= @search_term %>"</h5>
+        </div>
+      </div>
+    </div>
+
+    <!--Apply Project Filters-->
+    <% if !params[:type].blank?  %>
+      <% project_type = params[:type] %>
+    <% else %>
+      <% project_type = "All Projects" %>
+    <% end %>
+
+    <% if !params[:category].blank?  %>
+      <% project_category = params[:category] %>
+    <% else %>
+      <% project_category = "All Categories" %>
+    <% end %>
+
+    <% if !params[:search].blank?  %>
+      <% project_search = params[:search] %>
+    <% else %>
+      <% project_search = "" %>
+    <% end %>
+
+    <div id="filterBar">
+          <b>Filters:</b>
+
+            <div class="explore_category arts_and_crafts">
+
+              <%= link_to raw('<icon class="fa fa-cut icon_arts_and_crafts" style="color:rgb(198, 0, 105);" ></icon>Arts and Crafts'), search_path(:category => "Arts & Crafts", :type => project_type, :search => project_search, :search_object => "project") %>
+            </div>
+          
+            <div class="explore_category clothing">
+              <%= link_to(search_path(:category => "Clothing", :type => project_type, :search => project_search, :search_object => "project")) do %>
+                <%= image_tag("icons/clothing_icon.png", :class=>"icon_clothing")%>Clothing
+              <% end %>
+            </div>
+            
+            <div class="explore_category cooking">
+              <%= link_to raw('<icon class="fa fa-cutlery icon_cooking" style="color:rgb(237, 162, 10);"></icon>Cooking'), search_path(:category => "Cooking", :type => project_type, :search => project_search, :search_object => "project")  %>
+            </div>
+
+            <div class="explore_category electronics">
+              <%= link_to(search_path(:category => "Electronics", :type => project_type, :search => project_search, :search_object =>"project")) do %>
+                <%=image_tag("icons/electronics_icon.png", :class=>"icon_electronics", :style=>"max-height:20px") %>Electronics
+              <% end %>
+            </div>
+            
+            <div class="explore_category mechanical">
+              <%= link_to raw('<icon class="fa fa-gears icon_mechanical" style="color:rgb(42, 171, 170);"></icon>Mechanical'), search_path(:category => "Mechanical", :type => project_type, :search => project_search, :search_object => "project")  %>
+            </div>
+            
+            <div class="explore_category other">
+              <%= link_to raw('<icon class="fa fa-asterisk icon_other" style="color:rgb(170, 9, 253);"></icon>Other'), search_path(:category => "Other", :type => project_type, :search => project_search, :search_object => "project") %>
+            </div>
+
+            <hr>
+
+            <div id="project_type_filters">
+              <div class="project_type_link featured">
+              <%= link_to "Featured Projects", search_path(:category => project_category, :type => "Featured Projects", :search => project_search, :search_object => "project") %>
+              </div>
+              <div class="project_type_link builds">
+              <%= link_to "Builds in Progress", search_path(:category => project_category, :type => "Builds in Progress", :search => project_search, :search_object => "project")%>
+              </div>
+              <div class="project_type_link built">
+              <%= link_to "Built Projects", search_path(:category => project_category, :type => "Built Projects", :search => project_search, :search_object => "project") %><br>
+              </div>
+            </div>
+
+            <% if project_category != "All Categories" || project_type != "All Projects" %>
+              <hr>
+              <div class="project_type_link">
+                <%= link_to(search_path(:category => "All Categories", :type => "All Projects", :search => project_search, :search_object => "project")) do %>
+                  <icon class="fa fa-times-circle-o" style="font-size: 20px; margin-right: 10px; color: grey; vertical-align: middle;"></icon><span class="category_tile">Clear Filters</span>
+                <% end %>
+              </div>
+            <% end %>
+        </div><%# end filterBar %>
+
+  <div id="ExpProjects">
+    <% if !@projects.nil? && @projects.count > 0%>
+      <%= render :partial => "search_project", :collection => @projects, as: :project  %>
+    <% else %>
+      <div class="empty_search">
+        There are no projects that match your search...yet!
+      </div>
+    <% end %>
+  </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+  var highlight_color = "#E0F2FD";
+  
+  $(document).ready(function(){
+    // highlight project type filter in dropdown
+    if("<%=project_type%>"=="All Projects"){
+      $('.all_projects').css("background-color", highlight_color);
+    } else if ("<%=project_type%>"=="Builds in Progress"){
+      $('.builds').css("background-color", highlight_color);
+    } else if ("<%=project_type%>"=="Built Projects"){
+      $('.built').css("background-color", highlight_color);
+    } else if ("<%=project_type%>" == "Featured Projects"){
+      $('.featured').css("background-color", highlight_color);
+    }
+
+    // highlight project category filter in dropdown
+    if("<%=project_category%>"=="All Categories"){
+      $('.all_categories').css("background-color", highlight_color);
+    } else if ("<%=project_category%>"=="Arts &amp; Crafts"){
+      $('.arts_and_crafts').css("background-color", highlight_color);
+    } else if ("<%=project_category%>"=="Clothing"){
+      $('.clothing').css("background-color", highlight_color);
+    } else if ("<%=project_category%>" == "Cooking"){
+      $('.cooking').css("background-color", highlight_color);
+    } else if ("<%=project_category%>"=="Electronics"){
+      $('.electronics').css("background-color", highlight_color);
+    } else if ("<%=project_category%>"=="Mechanical"){
+      $('.mechanical').css("background-color", highlight_color);
+    } else if ("<%=project_category%>" == "Other"){
+      $('.other').css("background-color", highlight_color);
+    }
+  });
+</script>

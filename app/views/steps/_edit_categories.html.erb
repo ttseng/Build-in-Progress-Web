@@ -1,4 +1,4 @@
-<div id="editCategoriesModal" class="modal hide fade">
+<div id="editCategoriesModal" class="modal hide fade" style="z-index: 100000">
   
   <div class="modal-header">
     <h3>Edit Project Categories</h3>
@@ -6,6 +6,7 @@
   
   <div class="modal-body">
     <%= form_tag categorize_project_path(@project), :method => :post, :class=> "category_picker_form", remote: true do %>
+
       <div class='arts_and_crafts_checkbox'><%= check_box_tag 'arts_and_crafts' %></div>
       <%= label_tag 'arts_and_crafts', raw('<icon class="fa fa-cut" style="color:rgb(198, 0, 105);"></icon> Arts & Crafts'), :class => "category_label" %>
 
@@ -26,7 +27,7 @@
   </div>
 
   <div class="modal-footer">
-    <div class="btn btn-cancel">Cancel</div>
+    <button type="button" class="btn btn-cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
       <%= submit_tag 'Save', :class=> "btn btn-info", :style => "margin-top: 0px; margin-right: 0px" %>
     <% end %>
   </div>
@@ -35,23 +36,24 @@
 
 <script type="text/javascript">
   function resetEditCategoriesModal(){
-    if (<%= @project.categories.include?(Category.where(:name => 'Arts & Crafts').first) %>){
+    var project_categories = "<%= @project.categories.pluck(:name) %>";
+    if(project_categories.indexOf("Crafts") >=0){
       $(".arts_and_crafts_checkbox input").prop("checked", true);
     }
-    if (<%= @project.categories.include?(Category.where(:name => 'Cooking').first) %>){
-      $(".cooking_checkbox input").prop("checked", true);
+    if(project_categories.indexOf("Cooking") >=0){
+       $(".cooking_checkbox input").prop("checked", true);
     }
-    if (<%= @project.categories.include?(Category.where(:name => 'Clothing').first) %>){
-      $(".clothing_checkbox input").prop("checked", true);
+    if(project_categories.indexOf("Clothing") >=0){
+       $(".clothing_checkbox input").prop("checked", true);
     }
-    if (<%= @project.categories.include?(Category.where(:name => 'Electronics').first) %>){
-      $(".electronics_checkbox input").prop("checked", true);
+    if(project_categories.indexOf("Electronics") >=0){
+       $(".electronics_checkbox input").prop("checked", true);
     }
-    if (<%= @project.categories.include?(Category.where(:name => 'Mechanical').first) %>){
-      $(".mechanical_checkbox input").prop("checked", true);
+    if(project_categories.indexOf("Mechanical") >=0){
+       $(".mechanical_checkbox input").prop("checked", true);
     }
-    if (<%= @project.categories.include?(Category.where(:name => 'Other').first) %>){
-      $(".other_checkbox input").prop("checked", true);
+    if(project_categories.indexOf("Other") >=0){
+       $(".other_checkbox input").prop("checked", true);
     }
     $('#editCategoriesModal').modal('hide');
   }
@@ -59,4 +61,6 @@
   $(document).ready(function(){
     resetEditCategoriesModal(); 
   });
+
+
 </script>

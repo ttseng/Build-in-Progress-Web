@@ -237,7 +237,7 @@ module OkJson
 
 
   def strtok(s)
-    m = /"([^"\\]|\\["\/\\bfnrt]|\\u[0-9a-fa fa-F]{4})*"/.match(s)
+    m = /"([^"\\]|\\["\/\\bfnrt]|\\u[0-9a-fA-F]{4})*"/.match(s)
     if ! m
       raise Error, "invalid string literal at #{abbrev(s)}"
     end

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <style type='text/css'>
+    body{
+      font-family: 'arial';
+    }
+    table{
+      width: 600px;
+    }
+    .heading{
+      width: 100%;
+      height: 24px;
+      padding: 3px;
+      background-color: #A9E2F3;
+    }
+    a{
+      color: #08C;
+      text-decoration:none;
+      font-weight: bold;
+    }
+    .logo_icon{
+      height: 20px;
+      width: 20px;
+      border: none;
+    }
+    img{
+      width:50px;
+      border: 1px solid #ccc;
+    }
+    .notification_image{
+      width: 4em;
+    }
+    .notification_body{
+      color: #949494;
+      font-size:small;
+      margin-top: 5px;
+      margin-left: 10px;
+    }
+    .notification_button_container{
+      padding: 10px 0px;
+      border-top: 1px solid #ccc;
+    }
+    .notification_button{
+      background: #08c;
+      color: white;
+      padding: 5px;
+      border-radius: 2px;
+      font-size: 12px;
+      font-weight; bold;
+    }
+    .unsubscribe_container{
+      background-color: #F1F1F1;
+      padding: 5px;
+      margin-top: 5px;
+    }
+    a.edit_email_settings{
+      color: #808080;
+      font-weight:normal;
+      font-size: 11px;
+    }
+    </style>
+  </head>
+
+  <body>
+
+    <% notification_heading = "" %>
+    <% notification_image = "" %>
+    <% notification_body = "" %>
+    <% notification_link = ""%>
+    <% notification_link_text = "" %>
+
+    <% if @type != "featured" %>
+      <% if @activity.owner.avatar.present? %>
+        <% notification_image = image_tag(@activity.owner.avatar_url(:thumb)) %>
+      <% else %>
+        <% notification_image = image_tag("default_avatar.png") %>
+      <% end %>
+    <% end %>
+
+
+    <% # COMMENT %>
+    <% if @type == "comment" %>
+      <% notification_heading = ("#{link_to @activity.trackable.user.username, user_url(@activity.owner)}"+ " commented on " + "#{link_to @activity.trackable.commentable.project.title, project_steps_url(@activity.trackable.commentable.project)}").html_safe %>
+      
+      <% notification_body = @activity.trackable.body %>
+      <% notification_link = project_steps_url(@activity.trackable.commentable.project, :step => @activity.trackable.commentable.id, :comment_id => @activity.trackable.id, :notification_id => @activity.id) %>
+      <% notification_link_text = "View Comment" %>
+    
+    <% # FEATURED %>
+    <% elsif @type == "featured" %>
+      <% notification_heading = ("#{link_to @activity.trackable.title, root_url, :notification_id => @activity.id}" + " has been featured!").html_safe %> 
+      <% notification_image = image_tag(@activity.trackable.default_image.image_path_url(:square_thumb), :class=>"avatar") %>
+    
+    <% # COLLABORATOR %>
+    <% elsif @type == "collaborator" %>
+      <% notification_heading = ("#{link_to @activity.owner.username, user_url(@activity.owner)}" + " added you as a collaborator on " + "#{link_to @activity.trackable.title, project_url(@activity.trackable, :notification_id => @activity.id)}").html_safe%>
+
+    <% # FAVORITED %>
+    <% elsif @type == "favorited" %>
+      <% notification_heading = ("#{link_to @activity.owner.username, user_url(@activity.owner)}" + " favorited " + "#{link_to Project.find_by_id(FavoriteProject.find_by_id(@activity.trackable.id).project_id).title, project_steps_url( Project.find_by_id(FavoriteProject.find_by_id(@activity.trackable_id).project_id), :notification_id => @activity.id )}").html_safe %>
+      
+    <% # COLLECTION - RECIPIENT%>
+    <% elsif @type == "collectify_recipient" %>
+      <% notification_heading = ("#{link_to @activity.owner.username, user_url(@activity.owner)}" + " added " + "#{link_to Project.find(Collectify.find(@activity.trackable_id).project_id).title, project_steps_url(Project.find(Collectify.find(@activity.trackable_id).project_id))}" + " to the collection " + "#{link_to Collectify.find(@activity.trackable_id).collection.name, collection_url(Collectify.find(@activity.trackable_id).collection), :notification_id => @activity.id}").html_safe %>
+      <% notification_link = collection_url(Collectify.find(@activity.trackable_id).collection, :notification_id => @activity.id) %>
+      <% notification_link_text = "View Collection" %>
+
+    <% # COLLECTION - OWNER%>
+    <% elsif @type == "collectify_owner" %>
+      <% notification_heading = ("#{link_to @activity.owner.username, user_url(@activity.owner)}" + " updated the collection " + "#{link_to Collectify.find(@activity.trackable_id).collection.name, collection_url(Collectify.find(@activity.trackable_id).collection), :notification_id => @activity.id}" + " with the project " + "#{link_to Project.find(Collectify.find(@activity.trackable_id).project_id).title, project_steps_url(Project.find(Collectify.find(@activity.trackable_id).project_id))}" ).html_safe %>
+      <% notification_link = collection_url(Collectify.find(@activity.trackable_id).collection, :notification_id => @activity.id) %>
+      <% notification_link_text = "View Collection" %>
+
+    <% # FOLLOWED %>
+    <% elsif @type == "followed" %>
+      <% notification_heading = ("#{link_to @activity.owner.username, user_url(@activity.owner, :notification_id => @activity.id)}"  + " followed you").html_safe %>
+
+    <% # REMIXED %>
+    <% elsif @type == "remixed" %>
+      <% notification_heading = ("#{link_to @activity.owner.username, user_url(@activity.owner)}" + " remixed " + "#{link_to Project.find(@activity.trackable.root).title, project_steps_url(Project.find(@activity.trackable.root), :notification_id => @activity.id)}").html_safe%>
+      <% notification_link = project_steps_url(Project.find(@activity.trackable_id), :notification_id => @activity.id) %>
+      <% notification_link_text = "View Remix" %>
+    <% end %>
+      
+      <table>
+        <tr>
+          <td class="heading">
+             <%= image_tag("build_in_progress_logo.png", :class=>"logo_icon" ) %>
+           </td>
+         </tr>
+         <tr>
+      </table>
+
+      <table style="padding: 10px">
+        <tr>
+         <td class="notification_image" valign="top">
+             <%= notification_image %>
+         </td>
+         <td class="notification-content" valign="top">
+          <p class="notification_heading" style="margin-top: 0; margin-left: 10px;">
+            <%= notification_heading %>
+          </p>
+          <p class="notification_body">
+            <%= notification_body %>
+          </p>
+         </td>
+       </tr>
+    </table>
+
+    <% if notification_link.length > 0 %>
+      <table class="notification_button_container">
+        <tr>
+          <td style="padding-left: 90px">
+            <%= link_to notification_link_text, notification_link, :class=>"notification_button" %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+
+    <table class="unsubscribe_container">
+      <tr>
+        <td>
+          <%= link_to "Edit your email notification settings", edit_user_registration_url(:anchor => "email-tab"), :class=>"edit_email_settings" %>
+        </td>
+      </tr>
+    </table>
+
+  </body>
+</html>

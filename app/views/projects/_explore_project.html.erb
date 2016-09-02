@@ -1,8 +1,13 @@
 <div class ="project">
 	<% #show default image for project overview if the project has an image uploaded %>
 	<div class="exploreRibbon-wrapper">
-	<% if project.images.count > 0 %>
+	<% if project.images.count > 0 && project.default_image %>
+		<% if project.default_image.image_path.blank? %>
+			<%= link_to image_tag(project.default_image.s3_filepath, :width=>"100%"), project  %>
+		<% else %>
 			<%= link_to image_tag(project.default_image.image_path_url(:preview), :width=>"100%"), project  %>
+		<% end %>
+			
 	<% else %>
 		<%= link_to(project) do %>
 			<div class = "blankImage"></div>
@@ -11,8 +16,10 @@
 	<% if project.built %>
 		<div class='exploreRibbon'>built!</div>
 	<% end %>
-	<% if project.has_unanswered_question? %>
-		<%= link_to project_steps_path(project, :step=>project.step_with_question.id) do %>
+
+	<% step_with_question = project.step_with_question %>
+	<% if step_with_question != "" %>
+		<%= link_to project_steps_path(project, :step=>step_with_question) do %>
 				<div class="vert-ribbon">
 					<div class="container">
 						<div class="base">?</div>
@@ -31,11 +38,14 @@
 			<icon class="fa fa-comment"></icon>
 			<span class="exploreCommentCount"><%=project.comment_count%></span>
 		</div>
+		<div class="exploreSteps">
+			<icon class="fa fa-square"></icon>
+			<span class="exploreStepCount"><%=project.steps_count%></span>
+		</div>
 		<div class="exploreRemix">
 			<icon class="fa fa-code-fork"></icon>
 				<span class="exploreRemixCount"><%=project.remix_count%></span>
 		</div>
-
 	</div>
 	
 

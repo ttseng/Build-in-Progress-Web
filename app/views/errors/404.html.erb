@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Build in Progress</title>
+  <title><%= ENV["APP_NAME"] %></title>
 </head>
 
 <body>
     <div class ="navbar">
       <%= link_to image_tag("build_in_progress_logo.png"), home_index_path, :class=> "brand logo" %>
-      <ul class="nav">
-				<li><%=link_to "Explore", projects_path %></li>
-	  </ul>	
     </div>
     
   <div class="error_container">

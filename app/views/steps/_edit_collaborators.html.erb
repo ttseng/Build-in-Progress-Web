@@ -1,17 +1,18 @@
-<div id="editCollaboratorsModal" class="modal hide fade">
+<div id="editCollaboratorsModal" class="modal hide fade" style="z-index: 100000">
   
   <div class="modal-header">
     <h3>Edit Project Collaborators</h3>
   </div>
 
   <div class="modal-body">
+    <div id="current_collaborators">
       <b>Current Project Collaborators</b>
       <% @project.users.each_with_index do |user, index| %>
             <div class="user">
               <% if user.avatar.present? %>
-                <%= image_tag(user.avatar_url(:thumb), :class=>"img-polaroid user_avatar") %>
+                <%= image_tag(user.avatar_url(:thumb), :class=>"img-rounded user_avatar") %>
               <% else %>
-                <%= image_tag("default_avatar.png", :class=>"img-polaroid user_avatar") %>
+                <%= image_tag("default_avatar.png", :class=>"img-rounded user_avatar") %>
               <% end %>
               <%= user.username %>
               <% if @project.users.length > 1 %>
@@ -19,19 +20,20 @@
               <% end %>
             </div>
       <% end %>
+    </div>
       <div id="new_collaborators">
         <b>Add Additional Collaborators</b>
-        <div class="user add_user">
-          <form>
-            <input type="text" placeholder="username" id="new_username">
-          </form>
-          <div class="search_results">
-            <div class="dropdown">
-            <a class="search_results_toggle" data-toggle="dropdown" href="#"></a>
-              <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-              </ul>
-            </div>
+        <div class="user add_user" style="border: none;">
+        <form>
+          <input type="text" placeholder="username" id="new_username">
+        </form>
+        <div class="search_results">
+          <div class="dropdown">
+          <a class="search_results_toggle" data-toggle="dropdown" href="#"></a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            </ul>
           </div>
+        </div>
         </div>
       </div>
     </div>
@@ -96,8 +98,16 @@
     $('.btn-save').attr('disabled', true);
 
     $('#editCollaboratorsModal').on('hidden', function(){
-        console.log('closed modal');
+        // console.log('closed modal');
         resetEditCollaboratorsModal();
+    });
+
+    $('#editCollaboratorsModal').on('show', function(){
+      $(this).find('.modal-body').css({
+              width:'auto', //probably not needed
+              height:'auto', //probably not needed 
+              'max-height':'100%'
+       });
     });
 
     // select search result - replace the form with the added user (avatar and username)
@@ -124,9 +134,9 @@
               type: 'GET',
               data: {users: users_array, project_id: "<%=@project.id%>"},
               success: function(data, status, xhr){
-                console.log('data: ' + data);
+                // console.log('data: ' + data);
                 if($.trim(data) == "true"){
-                  console.log('refresh page');
+                  // console.log('refresh page');
                   // refresh the page
                   location.reload();
                 }
@@ -166,8 +176,14 @@ $(document.body).on('click', '.remove-user-button', function(){
           if($.trim(data) == "true"){
             // remove the user from the list of users
             user_element.fadeOut();
+            user_element.remove();
             $('.btn-save').attr('disabled', false);
             userRemoved = true;
+
+            // remove the 'remove' button from the last user if there's only one user associated with the project
+            if($('.remove-user-button').length == 1){
+              $('.remove-user-button').remove();
+            }
           }
         }
       });
@@ -215,7 +231,7 @@ $(document.body).on('input', '#new_username', function(e) {
                 if(!$('#'+data[i][0]).length>0){
                   if(firstTyped){
                     // loading for the first time, add the search results to the dropdown menu
-                    $('.search_results .dropdown-menu').append('<li class='+data[i][0]+'><a class="search_result" href="#">'+'<img src=' + data[i][1]+' class="img-polaroid"></img>' + data[i][0] +'</a></li>');
+                    $('.search_results .dropdown-menu').append('<li class='+data[i][0]+'><a class="search_result" href="#">'+'<img src=' + data[i][1]+' class="img-rounded"></img>' + data[i][0] +'</a></li>');
                   }else{
                     // only add search results if they don't already exist
                     if(!$('.search_results li').find('.'+data[i][0])){

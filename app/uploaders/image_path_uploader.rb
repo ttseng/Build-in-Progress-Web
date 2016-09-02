@@ -1,4 +1,5 @@
 require 'new_relic/agent/method_tracer'
+require 'mini_exiftool'
 
 class ImagePathUploader < CarrierWave::Uploader::Base
   include ::NewRelic::Agent::MethodTracer
@@ -16,6 +17,16 @@ class ImagePathUploader < CarrierWave::Uploader::Base
 
   include CarrierWave::MimeTypes
   process :set_content_type
+
+  process :fix_exif_rotation
+
+  def fix_exif_rotation #this is my attempted solution
+    manipulate! do |img|
+      img.tap(&:auto_orient)
+    end
+  end
+
+  # process :rotate_img
 
   # Override the directory where uploaded files will be stored.
   # This is a sensible default for uploaders that are meant to be mounted:
@@ -51,42 +62,54 @@ class ImagePathUploader < CarrierWave::Uploader::Base
      image[:width] >= 500 || image[:height] >= 500
    end
 
-   def add_square_thumb
-    recreate_versions!(:square_thumb)
-   end
-   add_method_tracer :add_square_thumb, 'Custom/add_square_thumb'
+ def add_square_thumb
+  recreate_versions!(:square_thumb)
+ end
+ add_method_tracer :add_square_thumb, 'Custom/add_square_thumb'
 
-   def add_preview_large
-    recreate_versions!(:preview_large)
-   end
-   add_method_tracer :add_preview_large, 'Custom/add_preview_large'
+ def add_preview_large
+  recreate_versions!(:preview_large)
+ end
+ add_method_tracer :add_preview_large, 'Custom/add_preview_large'
 
-  process :resize_to_limit => [667, 667] 
+# def rotate_img
+#   if model.rotation.present? && !model.rotated
+#     Rails.logger.debug("********IN ROTATE_IMG IN IMAGE_PATH_UPLOADER FOR #{model.id}")
+#       manipulate! do |img|
+#         img.rotate model.rotation
+#         img
+#       end
+#       model.update_column("rotated", nil)
+#       model.update_column("rotation", nil)
+#   end  
+# end
 
-  add_method_tracer :resize_to_limit, 'Custom/resize_to_limit'
+process :resize_to_limit => [900, 900] 
 
-  version :preview do
-    self.class.trace_execution_scoped(['Custom/create_preview']) do 
-      process :resize_to_fill => [380,285]
-    end
+add_method_tracer :resize_to_limit, 'Custom/resize_to_limit'
+
+version :preview do
+  self.class.trace_execution_scoped(['Custom/create_preview']) do 
+    process :resize_to_fill => [380,285]
   end
+end
 
-  version :preview_large do
-    self.class.trace_execution_scoped(['Custom/create_preview_large']) do 
-      process :resize_to_fill => [760,570]
-    end
+version :preview_large do
+  self.class.trace_execution_scoped(['Custom/create_preview_large']) do 
+    process :resize_to_fill => [760,570]
   end
+end
 
-  version :thumb do
-    self.class.trace_execution_scoped(['Custom/thumb']) do 
-      process :resize_to_limit => [105,158]
-    end
+version :thumb do
+  self.class.trace_execution_scoped(['Custom/thumb']) do 
+    process :resize_to_limit => [105,158]
   end
+end
 
-  version :square_thumb do
-    self.class.trace_execution_scoped(['Custom/square_thumb']) do 
-      process :resize_to_fill => [105, 105]
-    end
+version :square_thumb do
+  self.class.trace_execution_scoped(['Custom/square_thumb']) do 
+    process :resize_to_fill => [105, 105]
   end
+end
 
 end

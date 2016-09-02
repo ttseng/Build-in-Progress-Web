@@ -4,20 +4,25 @@
 	<div class ="userProject" >
 <% end %>
 
-	<div class="homeRibbon-wrapper">
+	<div style="max-height: 127px;">
 		<% if project.images.count > 0 && !project.default_image.nil? %>
-			<%= link_to image_tag(project.default_image.image_path_url(:preview), :width=>"100%"), project  %>
+			<% if project.default_image.image_path.blank? %>
+				<%= link_to image_tag(project.default_image.s3_filepath, :width=>"100%"), project  %>
+			<% else %>
+				<%= link_to image_tag(project.default_image.image_path_url(:preview), :width=>"100%"), project  %>
+			<% end %>
 		<% else %>
 			<%= link_to(project) do %>
 				<div class = "blankImage"></div>
 			<% end%>
 		<% end %>
 		<% if project.built %>
-				<div class='homeRibbon'>built!</div>
+				<div class='ribbon'>built!</div>
 		<% end %>
 
-		<% if project.has_unanswered_question? %>
-			<%= link_to project_steps_path(project, :step=>project.step_with_question.id) do %>
+		<% step_with_question = project.step_with_question %>
+		<% if step_with_question != "" %>
+			<%= link_to project_steps_path(project, :step=>step_with_question) do %>
 				<div class="vert-ribbon" id="<%=project.id%>">
 					<div class="container">
 						<div class="base">?</div>
@@ -44,6 +49,11 @@
 			<span class="count"><%=project.comment_count%></span>
 		</div>
 
+		<div class="userSteps">
+			<icon class="fa fa-square"></icon>
+			<span class="count"><%=project.steps_count%></span>
+		</div>
+
 		<div class="userRemix">
 			<icon class="fa fa-code-fork"></icon>
 			<span class="count"><%=project.remix_count%></span>
@@ -52,6 +62,16 @@
 	<% if user_signed_in? && project.users.include?(current_user) %>
 
 		<div class="delete"> <%=link_to raw('<i class="btn btn-danger fa fa-trash-o" style="display:block"></i>'), project, :method => :delete, :data=> {:confirm=>  "Are you sure you want to delete this project?"} %> </div>
+
+		<% if project.private? %>
+			<div class="privacy-icon">
+				<icon class="fa fa-lock"></icon>
+			</div>
+		<% elsif project.unlisted? || project.privacy.blank? %>
+			<div class="privacy-icon">
+				<icon class="fa fa-unlock-alt"></icon>
+			</div>
+		<% end %>
 
 	<% end %>
 <% end %>

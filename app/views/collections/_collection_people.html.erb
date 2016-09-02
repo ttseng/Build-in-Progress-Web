@@ -1,0 +1,12 @@
+<div class="label">Contributors (<%=@contributors.length%>)</div>
+<br>
+<% @contributors.each do |contributor| %>
+	<p class="notification-image">
+	<% if contributor.avatar.present? %>
+ 		<%= link_to image_tag(contributor.avatar_url(:thumb), :class=>"avatar img-rounded"), user_path(contributor), :title => contributor.username %>
+    <% else %>
+        <%= link_to image_tag("default_avatar.png", :class=>"avatar img-rounded"), user_path(contributor),  :title => contributor.username %>
+     <% end %>
+ </p>
+<% end %>
+<div style="clear: both;"></div>

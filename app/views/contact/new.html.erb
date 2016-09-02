@@ -1,4 +1,5 @@
-<div class="fullRow" style="margin-top:60px; width:940px">
+<% title "Contact | #{ENV["APP_NAME"] }" %>
+<div class="fullRow" style="width:940px">
 	<div class="centeredContainer">
 		<h3> Contact </h3>
 		
@@ -9,11 +10,6 @@
 			<%= form.select(:type, [['Select a topic'], ['Report a bug'],['Suggest a new feature'], ['General comments']]) %>
 			
 			<fieldset class="fields" style="display:none">
-			    
-			    <div class="field">
-			      <%= form.label :email %>
-			      <%= form.text_field :email, :style=>"width: 500px", :maxlength=>"40" %>
-			    </div>
 			    <div class="field">
 			      <%= form.label :subject %>
 			      <%= form.text_field :subject, :style=>"width: 500px", :maxlength=>"60" %>
@@ -23,6 +19,10 @@
 			      <%= form.label :body %>
 			      <%= form.text_area :body, :style=>"width: 500px; height: 150px", :maxlength=>"500" %>
 			    </div>
+
+			    <% if current_user %>
+			    	<%= form.hidden_field :user, :value => current_user.username %>
+			    <% end %>
 			  
 			  <fieldset class="actions">
 			    <%= form.submit "Send", :class=> "btn btn-primary send_button" %>
@@ -35,7 +35,6 @@
 </div>
 
 <script type="text/javascript">
-	var valid_email = false;
 	var valid_subject = false;
 	var valid_body = false;
 
@@ -58,7 +57,7 @@
 	}
 
 	function checkSignUpValid(){
-		if(valid_email && valid_subject && valid_body){
+		if(valid_subject && valid_body){
 			enableSend();
 		}else{
 			disableSend();
@@ -79,15 +78,6 @@
 			valid_subject = true;
 		}else{
 			valid_subject = false;
-		}
-		checkSignUpValid();
-	});
-
-	$('#message_email').bind("propertychange keyup input paste", function(event){
-		if($(this).val()!="" && $(this).val().indexOf('@')!=-1){
-			valid_email = true;
-		}else{
-			valid_email = false;
 		}
 		checkSignUpValid();
 	});

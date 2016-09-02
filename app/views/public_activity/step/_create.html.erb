@@ -7,7 +7,7 @@
 	<% project = activity.trackable.project %>
 	<% if project %>
 		<% if source == "navbar" %>
-			<%= link_to project_path(project) do %>
+			<%= link_to project_steps_path(project, :step_id => step.id) do %>
 				<icon class="fa fa-edit"></icon>
 				<p class="notification-image">
 					<%= render :partial=>"images/navbar_image", :locals=> {:activity => activity}  %>
@@ -22,9 +22,9 @@
 			<icon class="fa fa-edit"></icon>
 			<p class ="notification-image">
 				<% if activity.owner.avatar.present? %>
-					<%= link_to image_tag(activity.owner.avatar_url(:thumb), :class=>"img-polaroid"), user_path(activity.owner) %>
+					<%= link_to image_tag(activity.owner.avatar_url(:thumb), :class=>"img-rounded"), user_path(activity.owner) %>
 				<% else %>
-					<%= link_to image_tag("default_avatar.png", :class=>"img-polaroid"), user_path(activity.owner) %>
+					<%= link_to image_tag("default_avatar.png", :class=>"img-rounded"), user_path(activity.owner) %>
 				<% end %>
 			</p>
 			<p class="notification-heading">

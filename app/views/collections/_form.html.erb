@@ -1,27 +1,41 @@
-<%= form_for(@collection) do |f| %>
-  <% if @collection.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@collection.errors.count, "error") %> prohibited this collection from being saved:</h2>
+<%= semantic_form_for(@collection) do |f| %>
+    <% if @collection.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(@collection.errors.count, "error") %> prohibited this collection from being saved:</h2>
 
-      <ul>
-      <% @collection.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+        <ul>
+        <% @collection.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+     <% # edit name %>
+
+     <div class="formField"><%= f.label :name, :class=> "label label-info" %><br />
+          <%= f.text_field :name, :maxlength => 50 %>
+     </div>
+
+     <% # edit avatar %>
+    <div class="formField"><%= f.label :image, :class=>"label label-info" %><br />
+          <% if @collection.image.length > 0%>
+              <%= image_tag(@collection.image_url(:thumb))%>
+            <% else %>
+              <%= image_tag("default_collection.png", :class=>"avatar img-rounded")%>
+          <% end %>
+        <br>
+        <%= f.file_field :image, :onChange=>"javascript: readURL(this);" %></div>
+
+      <% # edit description %>
+
+     <div class="formField"><%= f.label :description, :class=> "label label-info" %><br />
+          <%= f.text_area :description, :maxlength=> 210 %>
+     </div>
+
+     <% # edit privacy %>
+
+    <div class="actions" style="position: inherit">
+      <%= f.submit :class=>"btn btn-info" %>
     </div>
   <% end %>
-
-  <div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= f.label :description %><br />
-    <%= f.text_field :description %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit :class=>"btn btn-primary" %>
-  </div>
-<% end %>

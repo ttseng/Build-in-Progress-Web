@@ -1,5 +1,7 @@
 class CommentsController < ApplicationController
 
+  before_filter :authenticate_user!
+  
   def create
     @project = Project.find(params[:project_id])
     @commentText = params[:comment][:body]
@@ -11,19 +13,23 @@ class CommentsController < ApplicationController
         # create an activity for each author of the project
         @project.users.each do |user|
           if user != current_user
-            @comment.create_activity :create, owner: current_user, recipient: user, primary: true 
+            @activity = @comment.create_activity :create, owner: current_user, recipient: user, primary: true 
+            # send an email to the user
+            Rails.logger.debug("attempting to send email notification to #{user.username}")
+            if user.settings(:email).comments == true
+              Rails.logger.debug("sending comment email notification")
+              NotificationEmailWorker.perform_async(@activity.id, user.id)
+            end
           end
         end
         
         # create an array containing all unique users that have previously commented on this step
         comment_users = Array.new
         @comment.commentable.comment_threads.each do |existing_comment|
-          if ((comment_users.include? existing_comment.user_id) == false) && (existing_comment.user_id != @comment.user_id) && (existing_comment.user_id != @project.user_id)
+          if ((comment_users.include? existing_comment.user_id) == false) && (existing_comment.user_id != @comment.user_id) && (!@project.users.include? existing_comment.user)
             comment_users.push(existing_comment.user_id)
           end
         end
-
-        Rails.logger.debug "comment_users: #{comment_users}"
 
         # create an activity for all other people that have commented on this step
         comment_users.each do |user_id|
@@ -33,7 +39,7 @@ class CommentsController < ApplicationController
         comments_id = "comments_" + @comment.commentable_id.to_s
         comment_id = "comment_" + @comment.id.to_s
         format.html {
-          redirect_to project_steps_path(@project, :anchor => comments_id, :comment_id=> comment_id)
+          redirect_to project_steps_path(@project, :step => @comment.commentable.id, :comment_id=> @comment.id.to_s)
         }
       else
         format.html { render :action => 'new' }
@@ -44,6 +50,7 @@ class CommentsController < ApplicationController
   def destroy
     @project = Project.find(params[:project_id])
     @comment = Comment.find(params[:id])
+    authorize! :destroy, @comment
       
     # destroy public activities associated with comment
     if @comment.activities

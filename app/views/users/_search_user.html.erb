@@ -1,0 +1,54 @@
+<div class ="user-search">
+	<% user = User.where(:username => user).first %>
+	<div class="user-search-heading">
+		<div class="name"><h5><%=link_to user.username, user_path(user) %><h5></div>
+		<div class="counts"><%= "#{user.projects.public_projects.count} #{pluralize_no_digits(user.projects.public_projects.count, "Project")}" %> &#9679; <%= "#{user.collections.published.count} #{pluralize_no_digits(user.collections.published.count, 'Collection')}" %></div>
+	</div>
+
+	<div class="user-search-images">
+		<div class="user-search-avatar">
+			<% if user.avatar.length > 0%>
+		        <%= link_to image_tag(user.avatar_url(:thumb)), user_path(user) %>
+		    <% else %>
+		        <%= link_to image_tag("default_avatar.png"), user_path(user) %>
+		    <% end %>
+		</div>
+
+	    <div class="user-search-projects">
+	    	<% num_projects = 0 %>
+		    <% user.projects.public_projects.each_with_index do |project, index| %>
+		    	<% if project.default_image!=nil%>
+					<%= link_to image_tag(project.default_image.image_path_url(:preview)), project %>
+
+					<% num_projects = index %>
+					<% num_projects += 1 %>
+
+					<% if index == 1 %>
+						</br>
+					<% elsif index == 3 %>
+						<% break %>
+					<% end %>
+				<% end %>
+			   <% end %>
+
+		    <% while num_projects < 4  do %>
+			   <%= image_tag("default_project.png") %>
+			   	<% if num_projects == 1 %>
+					</br>
+				<% end %>
+				<% num_projects +=1 %>
+			<% end %>
+		</div>
+	</div>
+
+	<div id="follow_form<%= user.id %>" class="users_follow_form search-follow-form">
+		<%= render :partial => 'users_follow_form', :locals=> {:user => user, :header => false} %>
+	</div>
+	
+	<div class="clear"></div>
+	<% if !user.about_me.blank? %>
+		<div class="textMatch"><%= truncate(@users_text[user.id.to_s], :length => 115).html_safe %> </div>
+	<% else %>
+		<div class="textMatch">(No User Description)</div>
+	<% end %>
+</div>

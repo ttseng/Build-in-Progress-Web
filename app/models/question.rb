@@ -1,5 +1,7 @@
 class Question < ActiveRecord::Base
-  attr_accessible :answered, :description, :step_id, :decision_attributes
+  include PublicActivity::Common
+  attr_accessible :answered, :description, :step_id, :decision_attributes, :featured
+
   belongs_to :step
   has_one :decision, :dependent => :destroy
 
@@ -7,6 +9,10 @@ class Question < ActiveRecord::Base
 
   after_create :touch_project
   after_update :check_blank
+
+  scope :unanswered, where(:answered=>false)
+  scope :featured, where(:featured => nil)
+  scope :answered, where(:answered=>true)
 
   def touch_project
   	step.project.touch
@@ -16,6 +22,10 @@ class Question < ActiveRecord::Base
   	if description.blank?
   		self.destroy
   	end
+  end
+
+  def answered?
+    return self.answered
   end
 
 end

@@ -108,6 +108,8 @@ $(document).ready(function(){
   $('.loadingIcon').hide(); // hide video loading animation
   $('#video_submit').attr('disabled', true); // disable submission button
 
+  // VIDEO EMBED STUFF
+
   $("#videoEmbedModal").on('shown', function(){
     // trigger focus
     $("#embedCode").focus();
@@ -115,6 +117,7 @@ $(document).ready(function(){
 
   var showPreviewTimeout = null;
 
+  // show Embed video preview (using YouTube / Vimeo URL)
   function showPreview(){
     var video_url = $("#video_embed_url").val();
     console.log("video_url: " + video_url);
@@ -128,8 +131,8 @@ $(document).ready(function(){
       $("form.video .embedPreview").html("<h5>Loading preview...</h5>");
 
         $.getJSON("/videos/embed_url.json", {video_url: video_url}, function(data){
-          console.log("data: " + data);
-          console.log("data.embed_code: " + data.embed_code);
+          // console.log("data: " + data);
+          // console.log("data.embed_code: " + data.embed_code);
         if (data.embed_code){
           $("form.video .embedPreview").html(data.embed_code);
           // enable the submit button
@@ -142,8 +145,6 @@ $(document).ready(function(){
     }
   }
 
-  /* ideally would express this as a binding, have the update happen
-  automatically */
   $("#video_embed_url").on('blur keyup', function(){
       window.clearTimeout(showPreviewTimeout);
       showPreviewTimeout = window.setTimeout(showPreview, 1000);    
@@ -152,6 +153,8 @@ $(document).ready(function(){
   $('#videoEmbedModal').submit(function(){
     $('.loadingIcon').show();
   });
+
+  // END VIDEO EMBED MODAL
 
   $('.modal_close_btn').click(function(){
     $('form.video .embedPreview').hide();

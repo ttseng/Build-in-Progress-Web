@@ -2,7 +2,7 @@ require 'httparty'
 
 class Video < ActiveRecord::Base
   # maybe we should add a title attribute to the video?
-  attr_accessible :position, :project_id, :step_id, :image_id, :saved, :embed_url, :thumbnail_url, :video_path, :user_id
+  attr_accessible :position, :project_id, :step_id, :image_id, :saved, :embed_url, :thumbnail_url, :video_path, :user_id, :rotation, :remote_video_path_url
   mount_uploader :video_path, VideoPathUploader
 
   # position videos before images...
@@ -40,6 +40,7 @@ class Video < ActiveRecord::Base
   # '<iframe src="http://www.youtube.com/embed/mZqGqE0D0n4" frameborder="0" allowfullscreen="allowfullscreen"></iframe>'"
   def embed_code
     if url_is_from_approved_site?
+      VideoInfo.provider_api_keys = {vimeo: '7219e68114dd5e1d0ecf20dbbffb06e1' }
       return VideoInfo.get(embed_url).embed_code
     else
       return false
@@ -55,6 +56,7 @@ class Video < ActiveRecord::Base
   end
 
   def vid_id
+      VideoInfo.provider_api_keys = {vimeo: '7219e68114dd5e1d0ecf20dbbffb06e1' }
       vid_id = VideoInfo.get(embed_url).video_id
     return vid_id
   end
@@ -65,7 +67,14 @@ class Video < ActiveRecord::Base
     if thumbnail_url
       return thumbnail_url
     else
-      thumbnail_url = VideoInfo.get(embed_url).thumbnail_large
+      Rails.logger.debug("embed_url: #{embed_url}")
+      if self.youtube?
+        thumbnail_url = "http://i1.ytimg.com/vi/"+self.vid_id+"/hqdefault.jpg"
+      elsif self.vimeo?
+        VideoInfo.provider_api_keys = {vimeo: '7219e68114dd5e1d0ecf20dbbffb06e1' }
+        Rails.logger.debug("thumbnail_url: #{VideoInfo.new(embed_url).thumbnail_large}")
+        thumbnail_url = VideoInfo.new(embed_url).thumbnail_large
+      end
     end
       
     # save the new thumbnail

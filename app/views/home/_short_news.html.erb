@@ -1,0 +1,17 @@
+<div class="newsContainer">
+	<% @newsItems.each do |news_item| %>
+		<% if news_item.news_type == "website" %>
+			<div class="website_news home_news_item">
+				<icon class="fa fa-desktop news_icon" style="font-size: 20px; font-weight: bold; margin-top: 8px; margin-right: 18px;"></icon>
+		<% elsif news_item.news_type == "mobile" %>
+			<div class="mobile_news home_news_item">
+				<icon class ="fa fa-mobile news_icon" style="font-size: 40px;"></icon>
+		<% end %>
+			<p class="news_headline"><%= link_to news_item.title, news_path(:anchor => news_item.id) %></p>
+			<% if news_item.description %>
+				<p class="news_description"><%= news_item.description.html_safe %></p>
+			<% end %>
+			<div class="clear"></div>
+			</div>
+	<% end %>
+</div>

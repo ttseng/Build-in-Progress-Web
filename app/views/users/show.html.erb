@@ -1,3 +1,5 @@
+<% title "#{@user.username} | #{ENV["APP_NAME"] }" %>
+
 <div class="fullRow" style="width:940px">
 
   <%= render :partial => "user_info" %>
@@ -5,24 +7,18 @@
   
   <div class="projectSideArea">
     <ul class="nav nav-tabs" id="myTab">
-      <% if user_signed_in? && current_user == @user %>
+      <% if @authorLoggedIn %>
         <li class="active"><a href="#projects">Projects (<%=@user.projects.count%>)</a></li>
         <li><a href="#favorites">Favorites (<%=@user.favorites.count%>)</a></li>
         <li><a href="#collections">Collections (<%=@user.collections.count%>)</a></li>
       <% else %>
-        <li class="active"><a href="#projects">Projects (<%=@user.projects.published.count%>)</a></li>
+        <li class="active"><a href="#projects">Projects (<%=@user.projects.public_projects.count%>)</a></li>
         <li><a href="#favorites">Favorites (<%=@user.favorites.count%>)</a></li>
-        <li><a href="#collections">Collections (<%=@user.collections.published.count%>)</a></li>
+        <li><a href="#collections">Collections (<%=@user.collections.public_collections.count%>)</a></li>
       <% end %>
     </ul>
     <div class="tab-content">
       <div class="tab-pane active" id="projects">
-        <% if false %>
-          <% if user_signed_in? && current_user == @user %>
-            <%= link_to '+ New Project', new_project_path, :class=> "btn btn-primary btn-small addProjectButton" %>
-          <% end %>
-        <% end %>
-
           <div class="clear"></div>
 
           <% if @projects.count == 0 %>
@@ -38,7 +34,7 @@
                   <%= render :partial => 'projects/projects', :locals=> {:project => project, :source => "user"} %>
                 <% end %>
               <% else %>
-                <% @projects.published.each_with_index do |project, index| %>
+                <% @projects.public_projects.each_with_index do |project, index| %>
                   <%= render :partial => 'projects/projects', :locals=> {:project => project, :source => "user"} %>
                 <% end %>
               <% end %>
@@ -49,7 +45,7 @@
                   <%= link_to 'View All Projects', projects_user_path %>
                 <% end %>
               <% else %>
-                <% if @user.projects.published.count > 9 %>
+                <% if @user.projects.public_projects.count > 9 %>
                   <%= link_to 'View All Projects', projects_user_path %>
                 <% end %>
               <% end %>
@@ -84,11 +80,6 @@
       </div>
 
       <div class="tab-pane" id="collections">
-        <% if false %>
-          <% if user_signed_in? && current_user == @user %>
-            <%= link_to '+ New Collection', new_collection_path, :class=> "btn btn-primary btn-small addCollectionButton" %>
-          <% end %>
-        <% end %>
 
           <div class="clear"></div>
 
@@ -100,12 +91,12 @@
 
           <div class="userProjects allProjects allProjectsCollections">
             <div class="userCollectionsContainer projectContainer">
-              <% if user_signed_in? && current_user == @user %>
+              <% if @authorLoggedIn %>
                 <% @collections.each_with_index do |collection, index| %>
                   <%= render :partial => 'collections/collections', :locals=> {:collection => collection, :source => "user_collections"} %>
                 <% end %>
               <% else %>
-                <% @collections.published.each_with_index do |collection, index| %>
+                <% @collections.public_collections.each_with_index do |collection, index| %>
                   <%= render :partial => 'collections/collections', :locals=> {:collection => collection, :source => "user_collections"} %>
                 <% end %>
               <% end %>
@@ -125,16 +116,6 @@
 
 <script type="text/javascript">
 
-  console.log($(window).height());
-
-  if ($(window).height() <= 816) {
-    $('.projectContainer').css("height", '358px');
-    $('.projectContainer').css("overflow", 'hidden');
-    $('.allProjectsProjects').append('<div class="pagination"><% if user_signed_in? && current_user == @user %><% if @user.projects.count > 6 %><%= link_to "View All Projects", projects_user_path %><% end %><% else %><% if @user.projects.published.count > 6 %><%= link_to "View All Projects", projects_user_path %><% end %><% end %></div>');
-    $('.allProjectsFavorites').append('<div class="pagination"><% if @user.favorites.count > 6 %><%= link_to "View All Favorites", favorites_user_path %><% end %></div>');
-    $('.allProjectsCollections').append('<div class="pagination"><% if @user.collections.count > 6 %><%= link_to "View All Collections", collections_user_path %><% end %></div>');
-  }
-
   var offset = 110;
 
 	$(window).load(function() {
@@ -142,6 +123,7 @@
       var height = $(window).height() - offset;
       $('.projectSideArea').css("height", height+20);
       $('.userProfile').css("height", height);
+
   });
 
     // Adjust the size of the detailView based on the browser window height
@@ -186,5 +168,6 @@
       $( this ).text( "Following" );
     }
   );
+
 
 </script>

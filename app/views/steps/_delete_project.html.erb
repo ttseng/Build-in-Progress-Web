@@ -1,0 +1,30 @@
+<div id="deleteProjectModal" class="modal hide fade" style="z-index: 10000">
+  
+  <div class="modal-header">
+    <h3>Delete Project</h3>
+  </div>
+  
+  <div class="modal-body">
+    <p>Are you sure you want to delete your project?  Enter your project title <span class="well well-small"><%= @project.title %></span> to permanently delete your project.</p>
+
+    <textarea class="delete_project_text_area" style="width: 97%; height: 20px;"></textarea>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-cancel" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button class="btn btn-danger delete_project_btn disabled">Delete Project</button>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+    $('.delete_project_text_area').bind('input propertychange', function(){
+      if($(this).val() == "<%=@project.title%>"){
+        $('.delete_project_btn').replaceWith('<%=link_to "Delete Project", @project, :method=> :delete, :class=>"btn btn-danger delete_project_btn"%>');
+      }else{
+        if(!$('.delete_project_btn').hasClass('disabled')){
+          $('.delete_project_btn').replaceWith('<button class="btn btn-danger delete_project_btn disabled">Delete Project</button>');
+        }
+      }
+    });
+</script>

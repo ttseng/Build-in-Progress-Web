@@ -1,0 +1,37 @@
+<div class="label label-warning">Questions</div><br>
+<% @questions.each do |question| %>
+	<span class="collection_question">
+		<%= link_to project_steps_path(question.step.project, :step => question.step.id) do %>
+			<%= question.description %>
+		<% end %>
+	</span><br>
+	<div class="byline">
+		from <%= link_to question.step.project.title, project_steps_path(question.step.project, :step => question.step.id) %>
+	</div>
+	<hr style="margin: 5px 0px;">
+<% end %>
+
+<div class="label label-info">Latest Updates</div>
+<br>
+<% @activities.each do |activity| %>
+	<% if activity.trackable %>
+		
+		<% step = activity.trackable %>
+		<% project = activity.trackable.project %>
+		<div class = "notification">
+			<p class ="notification-image">
+				<% if activity.owner.avatar.present? %>
+					<%= link_to image_tag(activity.owner.avatar_url(:thumb), :class=>"img-rounded"), user_path(activity.owner) %>
+				<% else %>
+					<%= link_to image_tag("default_avatar.png", :class=>"img-rounded"), user_path(activity.owner) %>
+				<% end %>
+			</p>
+			<p class="notification-text">
+				<%= link_to activity.owner.username, user_path(activity.owner) if activity.owner %> <%if activity.key == "step.create" %> created <% else %> updated <% end %> <%= link_to step.name, project_steps_path(project, :step => step.id) %> in <%= link_to project.title, project_path(project) %> 
+			</p>
+			<p class="notification-date"><%= time_ago_in_words(activity.created_at) %> ago</p>
+			<div class="clear"></div>
+			<hr style="margin: 5px;">
+		</div>
+	<% end %>
+<% end %>

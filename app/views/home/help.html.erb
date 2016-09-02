@@ -1,105 +1,233 @@
-<div class="fullRow" style="margin-top:60px; width:940px">
-	
-		<ul class="nav nav-list">
-			<li class="nav-header">Project Page</li>
-			<li><a href="#add_step">Add a Step</a></li>
-			<li><a href="#create_branch">Create a Branch</a></li>
-			<li><a href="#reorder_steps">Reorder Steps</a></li>
-			<li><a href="#edit_collaborators">Edit Collaborators</a></li>
-			<li class="nav-header">Collections</li>
-			<li><a href="#collection_add_project">Add a project</a></li>
-			<li class="nav-header">Remixing</li>
-			<li><a href="#create_remix">Create a remix</a></li>
-			<li class="nav-header">Following</li>
-			<li><a href="#create_remix">Follow a user</a></li>
-		</ul>
+<% title "Help | #{ENV["APP_NAME"]}" %>
+<div class="fullRow help">
+	<ul class="nav nav-list">
+		<li class="nav-header">PROJECTS</li>
+		<li><a href="#create_project">Create a Project</a></li>
+		<li><a href="#add_step">Add a Step</a></li>
+		<li><a href="#reorder_steps">Reorder Steps</a></li>
+		<li><a href="#create_branch">Create a Branch</a></li>
+		<li><a href="#create_branch_label">Create a Branch Label</a></li>
+		<li><a href="#edit_categories">Edit Categories</a></li>
+		<li><a href="#edit_collaborators">Edit Collaborators</a></li>
+		<li><a href="#add_design_files">Add Design Files</a></li>
+		<li><a href="#ask_a_question">Ask a Question</a></li>
+		<li><a href="#embed_project">Embed Your Project</a></li>
+		<li><a href="#export_project">Export Your Project</a></li>
+		<li><a href="#set_privacy">Set Privacy Settings</a></li>
+		<li><a href="#create_remix">Create a Remix</a></li>
 
-	<div class="centeredContainer helpPage instructionPage">
-		<h3>Help</h3>		
-		<hr style="margin: 5px 0">
+		<li class="nav-header">COLLECTIONS</li>
+		<li><a href="#create_collection">Create a Collection</a></li>
+		<li><a href="#add_project">Add a Project</a></li>
+		<li><a href="#set_privacy_collections">Set Privacy Settings</a></li>
+
+		<li class="nav-header">SOCIAL</li>
+		<li><a href="#follow_user">Follow a User</a></li>
+		<li><a href="#favorite">Favorite</a></li>
+		<li><a href="#comment">Comment</a></li>
+	</ul>
+
+	<div class="container">
+		<h3>Help</h3>	
+		<div class="clear"></div>
 		<div class="helpText">
-			<h3 class="instruction_category">Project Page</h3>
-			<h4><span id="add_step"></span>Add a Step</h4>
-			<p>To add a step, expand the "Add New Step" panel at the bottom left side of the project page.  Next, drag out the "Add New Step" container over a <i>parent step</i>, or the existing step that should precede the new step.  The new step will be added below the parent step.
-			</p>
-			<%= image_tag "help/create_step_static.png", :class=>"help_gif create_step_img" %>
-			<div class="clear"></div>
-			<hr>
+			<div class="tabbable">
+				<ul class="nav nav-tabs">
+					<li class="tab active"><a href="#projects" data-toggle="tab">Projects</a></li>
+					<li class="tab"><a href="#collections" data-toggle="tab">Collections</a></li>
+					<li class="tab"><a href="#social" data-toggle="tab">Social</a></li>
+				</ul>
+			</div>
+			<div class="tab-content">
+				<div class="tab-pane active" id="projects">
 
-			<h4><span id="create_branch"></span>Create a Branch</h4>
-			<p>To create a branch, drag out the "Add New Step" container over the step you want it to branch from.  If there are already steps following the parent step, the new step will be added to a new branch.
-			</p>
-			<%= image_tag "help/create_branch_static.png", :class=>"help_gif create_branch_img" %>
-			<div class="clear"></div>
-			<hr>
+					<div class="instructions" id="create_project">
+						<%= image_tag "help/create_project_static.png", :class=>"help_gif create_project_img" %>
+						<h4>Create a Project</h4>
+						<p>Click your username on the top of the page and click <i>Create Project</i>.</p>
+					</div>
 
-			<h4><span id="reorder_steps"></span>Reorder Steps</h4>
-			<p>To reorder any steps on the left-hand side of the project page, drag and drop steps on top of existing steps.</p>
-			<%= image_tag "help/reorder_step_static.png", :class=>"help_gif reorder_step_img" %>
-			<div class="clear"></div>	
+					<div class="instructions" id="add_step">
+						<%= image_tag "help/add_a_step_static.png", :class=>"help_gif add_a_step_img" %>
+						<h4>Add a Step</h4>
+						<p>Click the <i>+</i> button on the left side of the project page. You can add a name, description, and images and videos to your step. Click the <i>Create Step</i> button to save!
+						</p>
+					</div>
 
-			<p>To reorder steps on the right-hand side of the project page, you will need to edit the date the step was published (all steps on the right are ordered chronologically).  To change the date, click "edit" on the step that you wish to reorder and changed the "Published On" date on the bottom of the page.</p>
-			<%= image_tag "help/change_date_static.png", :class=>"help_gif change_date_img", :style=>"margin-top: 10px;" %>
-			<div class="clear"></div>			
-			<hr>
+					<div class="instructions" id="reorder_steps">
+						<%= image_tag "help/reorder_step_static.png", :class=>"help_gif reorder_step_img"%>
+						<h4>Reorder Steps</h4>
+						<p>Click and drag steps to rearrange. Places you can drop a step will be highlighted in blue.</p>
+					</div>
 
-			<h4><span id="edit_collaborators"></span>Edit Collaborators</h4>
-			<p>You can add collaborators to any projects that you have created or are listed as a collaborator on.  To add collaborators to a project, first go to the project page and click on the "Edit Collaborators" button in the byline for the project.  Type the username of the collaborator you would like to add, select the user from the dropdown menu, and click the "Save" button.  All collaborators can edit the project directly. </p>
-			<%= image_tag "help/edit_collaborators_static.png", :class=>"help_gif edit_collaborators_img" %>
-			<p>To remove collaborators, enter the "Edit Project Collaborators" window by clicking the "Edit Collaborators" button.  Click the "remove" button next to any user to remove the user from the project.</p>
+					<div class="instructions" id="create_branch">
+						<%= image_tag "help/create_branch_static.png", :class=>"help_gif create_branch_img" %>
+						<h4>Create a Branch</h4>
+						<p>Drag and drop a step over the step you want it to follow.  
+						</p>
+					</div>
 
-			<div class="clear"></div>			
-			<hr>
+					<div class="instructions" id="create_branch_label">
+						<%= image_tag "help/create_branch_label_static.png", :class=>"help_gif create_branch_label_img" %>
+						<h4>Create a Branch Label</h4>
+						<p>Branch labels help organize different branches in your project.</p>
+						<p>Click the <i>A</i> button on the left of the project page. Select a color for your label, give it a title, and click <i>Create Label</i>.
+						</p>
+					</div>
 
-			<h3 class="instruction_category">Collections</h3>
-			<h4><span id="collection_add_project"></span>Add a Project</h4>
-			<p>To add a project to a collection, enter the project URL and click the "+ Add project" button.  Anyone can add a project to a collection, but only the owner of the collection can remove projects.</p>
-			<%= image_tag "help/add_project_static.png", :class=>"help_gif add_project_img" %>
-			<div class="clear"></div>
-			<hr>
+					<div class="instructions" id="edit_categories">
+						<%= image_tag "help/edit_categories_static.png", :class=>"help_gif edit_categories_img" %>
+						<h4>Edit Categories</h4>
+						<p>Add categories to your project to make it easier for others to find. Click <i>Add Project Categories</i> on the project page to add categories.</p>
+					</div>
 
-			<h3 class="instruction_category">Remixing</h3>
-			<h4><span id="create_remix"></span>Create a Remix</h4>
-			<p>A remix is a new project inspired by an existing project on the site.</p>
-			<%= image_tag "help/remix_static.png", :class=>"help_gif remix_img" %>
-			<p>Within the title area of every project is a "Remix" button.  When you click the remix button, it will create a remix of the original project that you can edit however you'd like.  Your remix becomes public on Build in Progress once you've edited it.
-			<p>If your project is public, you should see your remix listed under the list of remixes on the original project page. </p>
+					<div class="instructions" id="edit_collaborators">
+						<%= image_tag "help/edit_collaborators_static.png", :class=>"help_gif edit_collaborators_img" %>
+						<h4>Edit Collaborators</h4>
+						<p>Click on the blue collaborators button on your project page. Type the username of the collaborator you would like to add, select the user from the dropdown menu, and click the <i>Save</i>. All collaborators can edit the project directly.</p>
+						<p>To remove collaborators, click the collaborators button and click <i>remove</i> next to any user you want to remove.</p>
+					</div>
 
-			<div class="clear"></div>
-			<hr>
+					<div class="instructions" id="add_design_files">
+						<%= image_tag "help/add_design_files_static.png", :class=>"help_gif add_design_files_img" %>
+						<h4>Add Design Files</h4>
+						<p>Edit a step and expand the <i>Manage Design Files</i> section, where you'll be able to add design files like CAD files or Arduino sketches to your project.</p>
+					</div>
 
-			<h3 class="instruction_category">Following</h3>
-			<h4><span id="create_remix"></span>Follow a User</h4>
-			<p>If you follow users on Build in Progress, you'll receive updates about what they're creating and doing on the site.</p>
-			<%= image_tag "help/follow_static.png", :class=>"help_gif follow_img" %>
-			<p>To follow a user, go to their profile page and click the "follow" button.  Their activity will now appear on your activity feed (which you can view on the homepage when you're logged in), and they will be listed under the users you're following on your profile.</p>
+					<div class="instructions" id="ask_a_question">
+						<%= image_tag "help/ask_a_question_static.png", :class=>"help_gif ask_a_question_img" %>
+						<h4>Ask a Question</h4>
+						<p>Ask for feedback on your project by asking a question.  Edit a step and expand the <i>Ask for Advice</i> section, where you can type in a question to ask. This will create a flag on your project, and your question may also appear directly on the homepage.</p>
+					</div>
 
-			<div class="clear"></div>
-			<hr>
+					<div class="instructions" id="ask_a_question">
+						<%= image_tag "help/mark_question_answered_static.png", :class=>"help_gif mark_question_answered_img" %>
+						<p style="margin-top: 38px;">Be sure to mark your question as answered when you've made a decision. Clicking the <i>answered</i> box near your question. You will then be directed to the step form, where you can describe what you decided to do.</p>
+					</div>
 
+					<div class="instructions" id="embed_project">
+						<%= image_tag "help/embed_project_static.png", :class=>"help_gif embed_project_img" %>
+						<h4>Embed Your Project</h4>
+						<p>Click the blue share button on the project page and copy the embed code to grab embed code to share your project on other sites.</p>		
+					</div>
+
+					<div class="instructions" id="export_project">
+						<%= image_tag "help/export_project_static.png", :class=>"help_gif export_project_img" %>
+						<h4>Export Your Project</h4>
+						<p>Click the black export button on your project page to download the images, text, and videos from your project,  This will download a zip file onto your computer with all your documentation.</p>
+					</div>
+
+					<div class="instructions" id="set_privacy">
+						<%= image_tag "help/set_privacy_static.png", :class=>"help_gif privacy_gif set_privacy_img" %>
+						<h4>Set Privacy Settings</h4>
+						<p>There are three possible privacy settings for your project:
+							<ul>
+								<li><strong>Public</strong>: Your project will be shared with everyone on <%= ENV["APP_NAME"] %></li>
+								<li><strong>Unlisted</strong>: Only users with a direct link to your project will be able to see the project.</li>
+								<li><strong>Private</strong>: Only you can view your project</li>
+							</ul>
+							<p>Select from the privacy dropdown menu on a project page to set the privacy for the project.</p>
+						</p>
+					</div>
+
+					<div class="instructions" id="create_remix">
+						<%= image_tag "help/remix_static.png", :class=>"help_gif remix_img" %>
+						<h4>Create a Remix</h4>
+						<p>A remix is a new project inspired by an existing project on the site.</p>
+						<p>Click on the green <i>remix</i> button on a project page to create a remix of the original project that you can edit however you'd like. Your remix becomes public on <%= ENV["APP_NAME"] %> once you've edited it.</p>
+					</div>
+				</div>
+
+				<div class="tab-pane" id="collections">
+		
+					<div class="instructions" id="create_collection">
+						<%= image_tag "help/create_collection_static.png", :class=>"help_gif create_collection_img" %>
+						<h4>Create a Collection</h4>
+						<p>Click your username at the top of the page and click <i>Create Collection</i>.</p>
+					</div>
+
+					<div class="instructions" id="add_project">
+						<%= image_tag "help/add_project_static.png", :class=>"help_gif add_project_img" %>
+						<h4>Add a Project</h4>
+						<p>Enter the project URL and click the <i>+ Add project</i> button to add a project to a collection. Anyone can add a project to a collection, but only the owner of the collection can remove projects.</p>
+					</div>
+
+					<div class="instructions" id="set_privacy_collections">
+						<%= image_tag "help/set_privacy_collections_static.png", :class=>"help_gif privacy_gif set_privacy_collections_img" %>
+						<h4>Set Privacy Settings</h4>
+						<p>There are three possible privacy settings for your collection:
+							<ul>
+								<li><strong>Public</strong>: Your collection will be shared with everyone on <%= ENV["APP_NAME"] %></li>
+								<li><strong>Unlisted</strong>: Only users with a direct link to your collection will be able to see the collection.</li>
+								<li><strong>Private</strong>: Only you can view your collection</li>
+							</ul>
+							<p>Select from the privacy dropdown menu at the left of your collections page to set the privacy for your collection.</p>
+						</p>
+					</div>
+				</div>
+
+				<div class="tab-pane" id="social">
+
+					<div class="instructions" id="follow_user">
+						<%= image_tag "help/follow_static.png", :class=>"help_gif follow_img" %>
+						<h4>Follow a User</h4>
+						<p>If you follow users on <%= ENV["APP_NAME"] %>, you'll be able to see their project updates on your activity feed (which you can view on the homepage).</p>
+						<p>To follow a user, go to their profile page and click the <i>follow</i> button.</p>
+					</div>
+
+					<div class="instructions" id="favorite">
+						<%= image_tag "help/favorite_static.png", :class=>"help_gif favorite_img" %>
+						<h4>Favorite</h4>
+						<p>Click the star button on a project page to favorite a project.</p>
+					</div>
+
+					<div class="instructions" id="comment">
+						<%= image_tag "help/comment_static.png", :class=>"help_gif comment_img" %>
+						<h4>Comment</h4>
+						<p>Click a step, type your comment in the comment section, and click the <i>Comment</i> button.</p>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
-	<div class="clear"></div>
 </div>
 
 <script type="text/javascript">
 // alternate between static image and gif for different help images
-$('.create_step_img').hover(function(){
-	$(this).attr('src', '<%= asset_path("help/create_step.gif") %>');
-}, function(){
-	$(this).attr('src', '<%= asset_path("help/create_step_static.png") %>');
-});
+$('.create_project_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/create_project.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/create_project_static.png") %>');
+	});
 
-$('.create_branch_img').hover(function(){
-	$(this).attr('src', '<%= asset_path("help/create_branch.gif") %>');
-}, function(){
-	$(this).attr('src', '<%= asset_path("help/create_branch_static.png") %>');	
-});
+$('.add_a_step_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/add_a_step.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/add_a_step_static.png") %>');
+	});
 
 $('.reorder_step_img').hover(function(){
 	$(this).attr('src', '<%= asset_path("help/reorder_step.gif") %>');
 	}, function(){
 		$(this).attr('src', '<%= asset_path("help/reorder_step_static.png") %>');	
+	});
+
+$('.create_branch_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/create_branch.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/create_branch_static.png") %>');	
+	});
+
+$('.create_branch_label_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/create_branch_label.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/create_branch_label_static.png") %>');	
+	});
+
+$('.edit_categories_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/edit_categories.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/edit_categories_static.png") %>');	
 	});
 
 $('.edit_collaborators_img').hover(function(){
@@ -108,16 +236,40 @@ $('.edit_collaborators_img').hover(function(){
 		$(this).attr('src', '<%= asset_path("help/edit_collaborators_static.png") %>');	
 	});
 
-$('.change_date_img').hover(function(){
-	$(this).attr('src', '<%= asset_path("help/change_date.gif") %>');
+$('.add_design_files_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/add_design_files.gif") %>');
 	}, function(){
-		$(this).attr('src', '<%= asset_path("help/change_date_static.png") %>');	
+		$(this).attr('src', '<%= asset_path("help/add_design_files_static.png") %>');	
 	});
 
-$('.add_project_img').hover(function(){
-	$(this).attr('src', '<%= asset_path("help/add_project.gif") %>');
+$('.ask_a_question_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/ask_a_question.gif") %>');
 	}, function(){
-		$(this).attr('src', '<%= asset_path("help/add_project_static.png") %>');	
+		$(this).attr('src', '<%= asset_path("help/ask_a_question_static.png") %>');	
+	});
+
+$('.mark_question_answered_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/mark_question_answered.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/mark_question_answered_static.png") %>');	
+	});
+
+$('.embed_project_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/embed_project.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/embed_project_static.png") %>');	
+	});
+
+$('.export_project_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/export_project.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/export_project_static.png") %>');	
+	});
+
+$('.set_privacy_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/set_privacy.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/set_privacy_static.png") %>');	
 	});
 
 $('.remix_img').hover(function(){
@@ -126,12 +278,58 @@ $('.remix_img').hover(function(){
 		$(this).attr('src', '<%= asset_path("help/remix_static.png") %>');	
 	});
 
+$('.create_collection_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/create_collection.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/create_collection_static.png") %>');
+	});
+
+$('.add_project_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/add_project.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/add_project_static.png") %>');	
+	});
+
+$('.set_privacy_collections_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/set_privacy_collections.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/set_privacy_collections_static.png") %>');
+	});
+
 $('.follow_img').hover(function(){
 	$(this).attr('src', '<%= asset_path("help/follow.gif") %>');
 	}, function(){
 		$(this).attr('src', '<%= asset_path("help/follow_static.png") %>');	
 	});
 
+$('.favorite_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/favorite.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/favorite_static.png") %>');
+	});
 
+$('.comment_img').hover(function(){
+	$(this).attr('src', '<%= asset_path("help/comment.gif") %>');
+	}, function(){
+		$(this).attr('src', '<%= asset_path("help/comment_static.png") %>');
+	});
 
+$('li a').click(function(){
+	$('li a').removeClass("active");
+	$(this).addClass("active");
+	var tab_name = $(this).parent().prevAll('.nav-header:first').html().toLowerCase();
+	$('.nav-tabs a[href="#'+tab_name+'"]').tab('show');
+	var id = $(this).attr('href');
+	$(id).animateHighlight('#d1e8ff', 3000);
+});
+
+function offsetAnchor() {
+    if(location.hash.length !== 0) {
+        window.scrollTo(window.scrollX, window.scrollY - 170);
+    }
+}
+
+$(window).on("hashchange", function () {
+    offsetAnchor();
+});
 </script>

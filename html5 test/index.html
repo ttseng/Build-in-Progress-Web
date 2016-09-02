@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>HTML5 Node Diagram</title>
+    <script src="lib/jquery-1.7.2.min.js"></script>
+    <script src="models.js"></script>
+    <script type="text/javascript">
+    var step_array = [];
+    var step_position_array = []; // holds the step positions ordered by published on date
+    var step_ancestry_array = []; // holds the corresponding step ancestries ordered by published on date
+
+      $(function(){
+        $.getJSON("steps1.json", function(data){
+          
+          // generate step_array
+          $.each(data.data.steps, function(i, step){
+            var step_object = [];
+            var step_ancestry_parsed = step.ancestry.substring(step.ancestry.lastIndexOf('/')+1, step.ancestry.length)
+
+            if(step.images.length > 0){
+                step_object.push({
+                    id: step.id,
+                    position: step.position, 
+                    name: step.name,
+                    image: step.images[0].image_path['url'],
+                    description: step.description,
+                    ancestry: step_ancestry_parsed
+                });
+            }else{
+                step_object.push({
+                    id: step.id,
+                    position: step.position, 
+                    name: step.name,
+                    description: step.description,
+                    ancestry: step_ancestry_parsed
+                });
+            }
+            step_array.push(step_object);
+            step_position_array.push(step.position);
+            step_ancestry_array.push(step_ancestry_parsed);
+          });
+
+          $.each(step_array, function(index, value){
+            var step_id = value[0].id;
+            var step_name = value[0].name;
+            var step_position = value[0].position;
+            var step_image = value[0].image;
+            var step_description = value[0].description;
+            var step_ancestry = value[0].ancestry;
+            
+            // create step node
+            createNode(step_name, step_position, step_image, step_description, step_ancestry, step_id);
+
+          });
+
+          // adjust position of elements
+          recenterMap();
+
+          $.each(step_array, function(index, value){
+            if(index > 0){
+              // create segment
+              createSegment(window['node_'+index], window['node_'+(index-1)]);
+            }
+          })
+
+        }).error(function(){
+          console.log('error loading json');
+        });
+      });
+
+    </script>
+    <link rel="stylesheet" href="diagram.css" type="text/css" media="screen, print">
+  </head>
+  <body>
+    <div id="stage">
+    </div>
+    <script src="diagram.js"></script>
+  </body>
+</html>

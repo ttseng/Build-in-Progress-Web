@@ -18,4 +18,9 @@
  *= require bootstrap-timepicker
  *= require_self
  *= require s3_direct_upload_progress_bars
+ *= require jquery.simplecolorpicker.css
+ *= require justifiedGallery.min.css
+ *= require highlight/styles/monokai_sublime.css
+ *= require bootstrap-tour
+ *= require mediaelement_rails
  */

@@ -1,29 +1,34 @@
 <% # Add the Project title bar%>
 
-<div id="projectNameContainer">
-  <% if @authorLoggedIn %>
-    <p id="projectName"><%= best_in_place project, :title, :type=>:textarea, :html_attrs => {:maxlength => 40}, :nil => "Project Title" %></p>
-  <% else %>
-     <p id="projectName"><%= project.title %></p>
-  <% end %>
+<% if source != "embed" %>
+<div class="projectInfoContainer">
 
-</div>
+  <div id="projectNameContainer">
+    <% if @authorLoggedIn %>
+      <p id="projectName"><%= best_in_place project, :title, :type=>:textarea, :html_attrs => {:maxlength => 40}, :nil => "Project Title", :classes=>"bip_title" %></p>
+      <% else %>
+        <p id="projectName"><%= project.title %></p>
+    <% end %>
+  </div><%# end project name container %>
+  <div class="clear"></div>
     
     <div id="projectAuthor">
-      <div class="authorAttribution">by <% project.users.order("username ASC").each do |author| %> <%= link_to author.username, user_path(author), :class=>"project_author_name" %><% end %> | <%= project.created_at.strftime "%m/%d/%Y"%> - 
-      <% if project.built %>
-        <%= project.built_step.published_on.strftime "%m/%d/%Y"%>
-      <% else %>
-        Current
-      <% end %>
+      <div class="authorAttribution">by <% project.users.order("username ASC").each do |author| %> <%= link_to author.username, user_path(author), :class=>"project_author_name" %><% end %> | updated <%= project.updated_at.strftime "%B %d, %Y"%> <br>
+        <% if @project.is_remix? %>
+            <% parent_users_count = @project.parent.users.count %>
+              based on <span class="remix_project_title"><%= link_to @project.parent.title, project_path(@project.parent) %> </span> <br>
+            <% if @project.depth > 1 %>
+                original project: <span class="remix_project_title"><%= link_to @project.root.title, project_path(@project.root) %></span> 
+            <% end %>
+        <% end %>
     </div>
      <% if @authorLoggedIn %> 
         <div class="btn btn-small btn-info edit_authors_button" data-toggle="modal" data-target="#editCollaboratorsModal" title="Edit Collaborators"><icon class="fa fa-group"></icon></div> 
-        <script type="text/javascript">
-          $('.authorAttribution').css('max-width', '250px');
-        </script>
       <% end %>
-    </div>
+    </div><%# end projectAuthor %>
+
+    <div class="clear"></div>
+  <% end %>
 
     <% # add any commas or 'ands' between usernames %>
     <% if project.users.length == 2 %>
@@ -37,123 +42,145 @@
         </script>
     <% end %>
 
-    <% # remix attributes %>
-    <% if @project.is_remix? %>
-      <div class="projectRemixAttribution">
-        <% parent_users_count = @project.parent.users.count %>
-        based on <span class="remix_project_title"><%= link_to @project.parent.title, project_path(@project.parent) %> by <%= render :partial => "projects/author_byline", :locals => {:project=>@project.parent, :source=>"remix"} %></span> 
-        <% if @project.depth > 1 %>
-            original project: <span class="remix_project_title"><%= link_to @project.root.title, project_path(@project.root) %></span> 
-            <% end %>
-          </div>
+    <% if source != "embed" %>
+      <div id="projectOverviewDescription">
+        <% if @authorLoggedIn %>
+          <p class="project_description">
+            <%= best_in_place @project, :description, :type => :textarea, :nil=> "Click to add a description for your project!", :sanitize => false, :classes =>"bip_description" %>
+          </p>
+        <% elsif @project.description && @project.description.length > 0%>
+          <p class="project_description">
+            <%= @project.description %>
+          </p>
+        <% else %>
+          <p style="padding-bottom: 25px;"></p>
+          <script type="text/javascript">
+            $('#projectOverviewDescription').css('background', 'none');
+          </script>
+        <% end %>
+        
+        <div class="category_icon_container">
+          <div class="category_icon arts_and_crafts_icon_div"><icon class="fa fa-cut" style="color:rgb(198, 0, 105);" title="Arts & Crafts"></icon></div>
+          
+          <div class="category_icon clothing_icon_div"><%= image_tag("icons/clothing_icon.png", :class=>"icon_clothing", :title=>"Clothing")%></div>
+          
+          <div class="category_icon cooking_icon_div"><icon class="fa fa-cutlery" style="color:rgb(237, 162, 10);" title="Cooking"></icon></div>
+
+          <div class="category_icon electronics_icon_div"><%= image_tag("icons/electronics_icon.png", :class=>"icon_electronics", :title=>"Electronics") %></div>
+          
+          <div class="category_icon mechanical_icon_div"><icon class="fa fa-gears" style="color:rgb(42, 171, 170);" title="Mechanical"></icon></div>
+          
+          <div class="category_icon other_icon_div"><icon class="fa fa-asterisk" style="color:rgb(170, 9, 253);" title="Other"></icon></div>
+
+          <% if @authorLoggedIn %>
+          <% if @project.categories.length > 0 %>
+              <div class="edit_categories" data-toggle="modal" data-target="#editCategoriesModal" title="Edit Categories"><a><icon class='fa fa-plus-circle' style="font-size: 25px;"></icon></a></div>  
+          <% else %>
+              <div class="edit_categories" data-toggle="modal" data-target="#editCategoriesModal" title="Edit Categories"><a style="color: #F5F54F; text-decoration: none;"><icon class='fa fa-plus-circle' style="font-size: 25px; vertical-align: middle; margin-right: 5px;"></icon><span class="category_text"> Add Project Categories</span></a></div>  
+          <% end %>
+        <% end %>
+
+        </div>
+
+      </div>
     <% end %>
 
+    <div class="project_buttons">
     <% #remix button %>
-    <%= link_to "Remix", remix_project_path(@project), :method=> :put, :class=> "btn btn-success remixButton"%>
+    <% if source == "index" || source == "edit" || source == "new" || source == "show"%>
+      <% if !@project.privacy.blank? && @project.public? %>
+        <%= link_to "Remix", remix_project_path(@project), :method=> :put, :class=> "btn btn-success btn-small remixButton"%>
+      <% end %>
 
-    <% #delete project button %>
-    <% if @authorLoggedIn %>
-       <%=link_to raw('<i class="btn btn-danger fa fa-trash-o"></i>'), project, :method=> :delete, :data=> {:confirm=>  "Are you sure you want to delete this project?"}, :class=>"deleteProjectButton"%>
-    <% end %>
+    <% if @authorLoggedIn || (current_user && current_user.admin?) %>
+      <% if !@project.privacy.blank? %>
+        <% #embed button %>
+         <div class="btn btn-small btn-primary shareButton" data-toggle="modal" data-target="#shareProjectModal" title="Share"><icon class="fa fa-share-square-o"></icon></div>
 
-    <div id="projectOverviewDescription">
-      <% if @authorLoggedIn %>
-        <p>
-          <%= best_in_place @project, :description, :type => :textarea, :nil=> "Add a description of your project here!", :sanitize => false %>
-        </p>
-      <% elsif @project.description && @project.description.length > 0%>
-        <p style="padding-bottom: 25px;">
-          <%= @project.description %>
-        </p>
-      <% else %>
-        <p style="padding-bottom: 25px;"></p>
+        <% #export button %>
+        <%= link_to raw('<div class="btn btn-small btn-inverse exportButton" title="Export"><icon class="fa fa-download"></icon></div>'), export_project_path(@project) %>
+        <% end %>
+        
+      <% #delete project button %>
+         <%=link_to raw('<i class="btn btn-small btn-danger fa fa-trash-o"></i>'), project, :method=> :delete, :data=> {:confirm=>  "Are you sure you want to delete this project?"}, :class=>"deleteProjectButton"%>
+
+      <% if !@project.public? %>
         <script type="text/javascript">
-          $('#projectOverviewDescription').css('background', 'none');
+          $('.projectOverviewPhoto .shareButton').css('margin-left', '20px');
         </script>
       <% end %>
-      
-      <div class="category_icon arts_and_crafts_icon_div"><icon class="fa fa-cut" style="color:rgb(198, 0, 105);" title="Arts & Crafts"></icon></div>
-      
-      <div class="category_icon clothing_icon_div"><%= image_tag("icons/clothing_icon.png", :class=>"icon_clothing", :title=>"Clothing")%></div>
-      
-      <div class="category_icon cooking_icon_div"><icon class="fa fa-cutlery" style="color:rgb(237, 162, 10);" title="Cooking"></icon></div>
-
-      <div class="category_icon electronics_icon_div"><%= image_tag("icons/electronics_icon.png", :class=>"icon_electronics", :title=>"Electronics") %></div>
-      
-      <div class="category_icon mechanical_icon_div"><icon class="fa fa-gears" style="color:rgb(42, 171, 170);" title="Mechanical"></icon></div>
-      
-      <div class="category_icon other_icon_div"><icon class="fa fa-asterisk" style="color:rgb(170, 9, 253);" title="Other"></icon></div>
-      
-      <div class="category_icon placeholder_icon_div"></div>
-
-      <% if @authorLoggedIn %>
-        <div class="edit_categories" data-toggle="modal" data-target="#editCategoriesModal" title="Edit Categories"><a><icon class='fa fa-plus-circle'></icon> Edit Project Categories</a></div>  
-      <% end %>
-
+    <% end %>
     </div>
 
+  <% end %>
 
-    <div class='projectInfo'>
-      <div class="projectFavorite projectInfoDiv">
-        <div class="favoriteCount">
-          <% if !authorLoggedIn && user_signed_in?%>
-            <% if current_user.favorites.include?(@project) %>
-              <%= link_to "", favorite_project_path(@project, type: "unfavorite"), method: :put, :class=> "favoriteStar fa fa-star", :title=>"Unfavorite", :rel=>"tooltip"%>
-              <script type="text/javascript"> userFavorited = true; </script>
-            <% else %>
-              <%= link_to "", favorite_project_path(@project, type: "favorite"), method: :put, :class=> "favoriteStar fa fa-star-o", :title=> "Favorite", :rel=>"tooltip", :style=> "color:#DFDF00" %> 
-              <script type="text/javascript"> userFavorited = false;</script>
-            <% end %>
-          <% else %>
-            <span class="favoriteStar fa fa-star" title="Favorites"/>
-          <% end %>
-        </div><p class="favoriteCounter"><%=@project.favorited_by.count%></p>
-      </div>
-
-        <% # comment counter %>
-        <% if @project.comment_count > 0 %>
-           <a id="dropdown-comment" role="button" data-toggle="dropdown" href="#" height="100%" >
-        <% end %>
-        <div class="projectComment dropdown projectInfoDiv">
-          <div class="commentCount">
-            <span class="commentIcon fa fa-comment" title="Comments"/>
-          </div>
-          <p class="commentCounter"><%=@project.comment_count%></p>
-
-          <% if @project.comment_count > 0 %>
-            </a>
-          <% end %>
-
-          <% if @project.comment_count > 0 %>
-          <ul class="comment-list dropdown-menu" role="menu" aria-labelledby="dropdown-comment">
-
-            <% @project.steps.each do |step| %>
-
-              <% if step.comment_threads.count >0 %>
-
-                <% step.comment_threads.each do |comment| %>
-                  <% if comment.body.length>0 %>
-                    <li class="comment-list-item step_id_<%=step.id%>" id="<%=comment.id%>">
-                        <div class="comment-list-image">
-                        <% if User.find(comment.user_id).avatar_url != nil %>
-                          <%= image_tag(User.find(comment.user_id).avatar_url(:thumb), :class=>"commentAvatar img-polaroid") %>
-                        <% else %>
-                          <%= image_tag("default_avatar.png", :class=>"commentAvatar img-polaroid") %>
-                        <% end %>
-                      </div>
-                      <div class="comment-list-title">
-                        <p><span class="notification-bold"><%= truncate(User.find(comment.user_id).username, length: 13) %></span> commented on <span class="notification-bold"><%= truncate(step.name, length: 20) %></span>: "<%=truncate(comment.body)%>"</p>
-                      </div>
-                    </li>
-                  <% end %>
+    <% if source != "embed" %>
+        <div class='projectInfo'>
+          <div class="projectFavorite projectInfoDiv">
+            <div class="favoriteCount">
+              <% if !authorLoggedIn && user_signed_in?%>
+                <% if current_user.favorites.include?(@project) %>
+                  <%= link_to "", favorite_project_path(@project, type: "unfavorite"), method: :put, :class=> "favoriteStar fa fa-star", :title=>"Unfavorite", :rel=>"tooltip"%>
+                  <script type="text/javascript"> userFavorited = true; </script>
+                <% else %>
+                  <%= link_to "", favorite_project_path(@project, type: "favorite"), method: :put, :class=> "favoriteStar fa fa-star-o", :title=> "Favorite", :rel=>"tooltip", :style=> "color:#DFDF00" %> 
+                  <script type="text/javascript"> userFavorited = false;</script>
                 <% end %>
+              <% else %>
+                <span class="favoriteStar fa fa-star" title="Favorites"/>
+              <% end %>
+            </div><p class="favoriteCounter"><%=@project.favorited_by.count%></p>
+          </div>
+
+            <% # comment counter %>
+            <% if @project.comment_count > 0 %>
+               <a id="dropdown-comment" role="button" data-toggle="dropdown" href="#" height="100%" >
+            <% end %>
+
+            <div class="projectComment dropdown projectInfoDiv">
+              <div class="commentCount">
+                <span class="commentIcon fa fa-comment" style="margin-top: -2px;" title="Comments"/>
+              </div>
+              <p class="commentCounter"><%=@project.comment_count%></p>
+
+              <% if @project.comment_count > 0 %>
+                </a>
               <% end %>
 
-            <% end %>
+              <% if @project.comment_count > 0 %>
+              
+                <ul class="comment-list dropdown-menu" role="menu" aria-labelledby="dropdown-comment">
 
-          </ul>
-          <% end %>
-        </div>
+                <% @project.steps.each do |step| %>
+
+                  <% if step.comment_threads.count >0 %>
+
+                    <% step.comment_threads.each do |comment| %>
+                      <% if comment.body.length>0 %>
+                        <li class="comment-list-item step_id_<%=step.id%>" id="<%=comment.id%>">
+                            <div class="comment-list-image">
+                            <% if User.where(:id => comment.user_id).present? %>
+                              <% if User.find(comment.user_id).avatar_url != nil %>
+                                <%= image_tag(User.find(comment.user_id).avatar_url(:thumb), :class=>"commentAvatar img-rounded") %>
+                              <% else %>
+                                <%= image_tag("default_avatar.png", :class=>"commentAvatar img-rounded") %>
+                              <% end %>
+                            <% end %>
+                            </div>
+                          <div class="comment-list-title">
+                            <% if User.where(:id=>comment.user_id).present? %>
+                              <p><span class="notification-bold"><%= truncate(User.find(comment.user_id).username, length: 13) %></span> commented on <span class="notification-bold"><%= truncate(step.name, length: 20) %></span>: "<%=truncate(comment.body)%>"</p>
+                            <% end %>
+                          </div>
+                        </li>
+                      <% end %><%# end comment body %>
+                    <% end %><%# end comment thread loop%>
+                  <% end %><%# end comment threads check %>
+                <% end %><%# end steps loop %>
+
+              </ul>
+              <% end %><%# end project comment count check %>
+            </div><%# end projectComment %>
 
         <% # remix counter %>
         <div class="projectRemix dropdown projectInfoDiv">
@@ -167,14 +194,14 @@
           </a>
           <% if @project.remix_count > 0 %>
           <ul class="dropdown-menu remix-list" role="menu">
-            <% @project.descendants.published.order(:created_at).each do |remix| %>
+            <% @project.descendants.public_projects.order(:created_at).each do |remix| %>
               <a href = "<%=project_path(remix)%>">
               <li class="remix-list-item">
                   <div class="remix-list-image">
                     <% if !remix.default_image.blank? %>
-                      <%=image_tag(remix.default_image.image_path_url(:preview), :class=>"img-polaroid")%>
+                      <%=image_tag(remix.default_image.image_path_url(:preview), :class=>"img-rounded")%>
                       <% else %>
-                        <span class="blankRemixImage img-polaroid"/>
+                        <span class="blankRemixImage img-rounded"/>
                       <% end %>
                     </div>
                   <div class="remix-list-title"><span class="notification-bold"><%= remix.title %></span> by <span class="notification-bold"><%= render :partial => "projects/author_byline_no_links", :locals => {:project => remix} %> </span></div>
@@ -183,17 +210,75 @@
             <% end %>
           </ul>
           <% end %>
-      </div>
+      </div> <%# end project remix %>
+  </div> <%# end project info %>
 
-    </div>
-
-    <!-- modal form for editing project collaborators -->
-    <%= render :partial => "steps/edit_collaborators" %>
-    <%= render :partial => "steps/edit_categories" %>
+  <div class="projectPrivacy">
+      <% if @authorLoggedIn %>
+        <div class="btn-group">
+           <% if @project.public? %>
+              <button type="button" class="btn btn-xs currentPrivacy"><icon class="fa fa-globe"></icon> Public</button>
+              <button type="button" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" style="border-top-right-radius: 4px;">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li>
+                  <%= link_to raw('<icon class="fa fa-unlock-alt"></icon> Unlisted'), update_privacy_project_url(@project, :privacy => "unlisted") %>
+                </li>
+                <li>
+                  <%= link_to raw('<icon class="fa fa-lock"></icon> Private'), update_privacy_project_url(@project, :privacy => "private") %>
+                </li>
+              </ul>          
+        <% elsif @project.unlisted? %>
+              <button type="button" class="btn btn-xs currentPrivacy"><icon class="fa fa-unlock-alt"></icon> Unlisted</button>
+              <button type="button" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" style="border-top-right-radius: 4px;">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li>
+                  <%= link_to raw('<icon class="fa fa-lock"></icon> Private'), update_privacy_project_url(@project, :privacy => "private") %>
+                </li>
+                <li>
+                   <%= link_to raw('<icon class="fa fa-globe"></icon> Public'), update_privacy_project_url(@project, :privacy => "public") %>
+                </li>
+              </ul>     
+        <% elsif @project.private? %>
+           <button type="button" class="btn btn-xs currentPrivacy"><icon class="fa fa-lock"></icon> Private</button>
+              <button type="button" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" style="border-top-right-radius: 4px;">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li>
+                  <%= link_to raw('<icon class="fa fa-unlock-alt"></icon> Unlisted'), update_privacy_project_url(@project, :privacy => "unlisted") %>
+                </li>
+                <% if @project.published? %>
+                  <li>
+                    <%= link_to raw('<icon class="fa fa-globe"></icon> Public'), update_privacy_project_url(@project, :privacy => "public") %>
+                  </li>
+                <% end %>
+              </ul>  
+        <% else %>  <%# project is not yet published %>
+          <button type="button" class="btn btn-xs currentPrivacy"><icon class="fa fa-unlock-alt"></icon> Unlisted</button>
+              <button type="button" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" style="border-top-right-radius: 4px;">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li>
+                  <%= link_to raw('<icon class="fa fa-lock"></icon> Private'), update_privacy_project_url(@project, :privacy => "private") %>
+                </li>
+              </ul>     
+        <% end %>
+        </div>
+      <% end %>
+  </div><%# end project privacy%>
+</div><%# end project info container %>
+<% end %>
 
     <script type="text/javascript">
 
+
      function resetCategoriesForm() {
+
       if (<%= @project.categories.include?(Category.where(:name => 'Arts & Crafts').first) %>){
         $(".arts_and_crafts_checkbox input").prop("checked", true);
         $(".arts_and_crafts_icon_div").show();
@@ -214,7 +299,7 @@
 
       if (<%= @project.categories.include?(Category.where(:name => 'Cooking').first) %>){
         $(".cooking_checkbox input").prop("checked", true);
-        $(".cooking_icon_div").show();
+        $(".cooking_icon_div").show();        
       }
       else{
         $(".cooking_checkbox input").prop("checked", false);
@@ -250,9 +335,20 @@
     }
 
     $(function() {
-      //$('.category_icon icon').tooltip();
       resetCategoriesForm();
     });
+
+    $(window).load(function(){
+      // dynamically set max height of project_description 
+      var projectDescriptionMaxHeight = ($('.projectInfoContainer').height()-$('#projectNameContainer').height()-$('.authorAttribution').height()-$('.category_icon_container').height()-$('.projectInfo').height()-$('.project_buttons').height()-60).toString();
+
+      // console.log('projectDescriptionMaxHeight ' + projectDescriptionMaxHeight);
+
+        $('.project_description').css('max-height', projectDescriptionMaxHeight+'px');
+    });
+
+    var title_grey = 'rgba(56, 56, 56, 0.8)';
+    var title_grey_highlight = 'rgba(70, 70, 70, 0.8)'
 
     $('.btn-cancel').click(function(){
       $('#editCategoriesModal').modal('hide');
@@ -262,8 +358,25 @@
       resetCategoriesForm();
     });
 
-    var title_grey = 'rgba(56, 56, 56, 0.8)';
-    var title_grey_highlight = 'rgba(70, 70, 70, 0.8)'
+    $('#projectName').hover(function(){
+      if("<%=@authorLoggedIn%>" == "true"){
+        $(this).css('background', title_grey);
+      }
+    }, function(){
+      if("<%=@authorLoggedIn%>" == "true"){
+        $(this).css('background', 'none');
+      }
+    });
+
+    $('.project_description').hover(function(){
+      if("<%=@authorLoggedIn%>" == "true"){
+        $(this).css('background', title_grey);
+        }
+      }, function(){
+      if("<%=@authorLoggedIn%>" == "true"){
+        $(this).css('background', 'none');
+      }
+    });
 
     $('.projectRemix').hover(function(){
       if($('.remixCounter').html()>0){
@@ -343,12 +456,6 @@
         var step_id_label = "step_id_";
         var step_id = element_class.substring(element_class.indexOf(step_id_label)+step_id_label.length, element_class.length);
         goToStepComment(step_id, $(this).attr('id'));
-      });
-
-      $('#projectOverviewDescription').hover(function(){
-        $(this).fadeTo('fast', 1);
-      }, function(){
-        $(this).fadeTo('fast', 0.7);
       });
 
       $('.best_in_place').keydown(function(e){

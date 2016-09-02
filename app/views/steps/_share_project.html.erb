@@ -1,0 +1,35 @@
+<div id="shareProjectModal" class="modal hide fade" style="width: 620px !important;">
+  
+  <div class="modal-header">
+    <h3>Share <%=@project.title %></h3>
+  </div>
+
+  <div class="modal-body" style="max-height: 600px !important;">
+    <div class="label" style="margin-bottom: 10px;">Project URL</div>
+      <textarea rows="1" style="width: 515px;"><%=project_url(@project)%></textarea>
+
+    <div class="label" style="margin-bottom: 10px;">Embed Code</div>
+    
+    <textarea class="form-control" rows="2" style="width: 515px"><iframe src="<%=embed_project_url(@project)%>" width='555' height='490' style="border: none;"></iframe></textarea>
+    
+    <br>
+
+<!--     <div class="label" style="margin-bottom: 10px;">Preview</div>
+    
+    <iframe src="<%=embed_project_url(@project)%>" width='555' height='490' style="border: none; margin-bottom: 10px;"></iframe> -->
+    
+  </div>
+
+  <div class="modal-footer">
+   <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+
+</div>
+
+  <script type="text/javascript">
+
+    $('.btn-cancel').click(function(){
+     
+    });
+
+  </script>
