@@ -43,8 +43,7 @@ Build::Application.configure do
   # Default URL option for devise
   config.action_mailer.default_url_options = { :host => ENV['DEV_HOST_URL'] }
 
-  config.action_controller.asset_host = "http://" + ENV['DEV_HOST_URL']
-  config.action_mailer.asset_host = config.action_controller.asset_host
+  config.asset_host = ENV['DEV_HOST_URL']
 
   config.action_mailer.perform_deliveries = true
   

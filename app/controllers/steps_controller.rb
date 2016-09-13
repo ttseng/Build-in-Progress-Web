@@ -181,7 +181,7 @@ class StepsController < ApplicationController
         end
 
         # log the creation of a new step
-        @project.log
+        @project.delay.log
 
         format.html { 
 
@@ -376,7 +376,7 @@ class StepsController < ApplicationController
       # check and set built attribute of project
       @project.set_built
 
-      @project.log
+      @project.delay.log
 
       respond_to do |format|
         format.html { redirect_to project_steps_url }
@@ -479,31 +479,20 @@ class StepsController < ApplicationController
   def update_ancestry
     Step.record_timestamps = false
     steps = params[:stepMapArray]
-
-    broken_project = false
     
     # Rails.logger.debug("steps: #{steps}")
     steps.each do |step|
-      id = step[0]
-      position = step[1][0]
+      id = step[0].to_i
+      position = step[1][0].to_i
       ancestry = step[1][1]      
 
       # Rails.logger.debug("id: #{step[0]} position: #{step[1][0]} ancestry: #{step[1][1]}")
       if Step.exists?(:id => id)
-        if position != "0" && ancestry == "0"
-          broken_project = true
-        end
           Step.find(id).update_attributes(:position => position)
           Step.find(id).update_attributes(:ancestry => ancestry)
       end
     end
 
-    if broken_project
-       # email tiff about this problem
-          Rails.logger.debug('SENDING MESSAGE ABOUT ERROR')
-          @message = Message.new(:body => "broken ancestry on project " + project_steps_url(@project) + " with params " + params[:stepMapArray].to_s, :user => "scientiffic", :type=> "):", :subject =>"broken project " + @project.id.to_s)
-          ContactMailer.new_message(@message).deliver
-    end
     Step.record_timestamps = true
     respond_to do |format|
       format.js {render :nothing => true}

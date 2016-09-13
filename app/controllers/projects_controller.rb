@@ -65,6 +65,7 @@ class ProjectsController < ApplicationController
   # GET /projects/new.json
   def new
     @project = Project.new
+    @project.description = nil
 
     respond_to do |format|
       format.html { create }
@@ -265,7 +266,7 @@ class ProjectsController < ApplicationController
         @activity = @project.favorite_projects.last.create_activity :create, owner: current_user, recipient: user, primary: true
         # create email notification
         if user.settings(:email).favorited == true
-          NotificationEmailWorker.perform_async(@activity.id, user.id)
+          NotificationMailer.delay.notification_message(@activity, user)
         end
 
       end
@@ -335,7 +336,7 @@ class ProjectsController < ApplicationController
           @activity = project.create_activity :author_add, owner: current_user, recipient: new_user, primary: true
           # create mailer
           if new_user.settings(:email).collaborator == true
-            NotificationEmailWorker.perform_async(@activity.id, new_user.id)
+            NotificationMailer.delay.notification_message(@activity, new_user)
           end
         end
       end

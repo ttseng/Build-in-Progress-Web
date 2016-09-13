@@ -135,7 +135,7 @@ class UsersController < ApplicationController
 	  	@activity = @user.create_activity :follow, owner: current_user, recipient: @user, primary: true
 	  	# create email notification
 	  	if @user.settings(:email).followed == true
-	  		NotificationEmailWorker.perform_async(@activity.id, @user.id)
+	  		NotificationMailer.delay.notification_message(@activity, @user)
 	  	end
 	  end
 

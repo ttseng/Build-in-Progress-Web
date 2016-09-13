@@ -754,6 +754,9 @@ input#collection_image {
   height: 127px;
   border-bottom: 1px solid #ccc;
   background-color: rgb(162, 162, 162);
+  img{
+    width: 100%;
+  }
 }
 
 .exploreImage-wrapper {

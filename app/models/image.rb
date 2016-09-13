@@ -39,6 +39,13 @@ class Image < ActiveRecord::Base
     return !original_id.blank?
   end
 
+  # upload image to AWS for delayed job
+  def upload_image
+    self.remote_image_path_url = self.s3_filepath
+    self.update_column(:rotation, nil)
+    self.save!
+  end
+
   def author
     if Image.find(original_id).user
       Image.find(original_id).user.username

@@ -7,12 +7,12 @@
 			<% if collection.projects.public_projects.length != 0 && !collection.image.blank? %>
 				<%= link_to image_tag(collection.image_url(:preview), :width=>"30%", :class=>"img-polaroid mini-col-avatar"), collection %>
 			<% else %>
-				<%= link_to image_tag("default_collection_large.png", :width=>"30%", :class=>"limg-polaroid mini-col-avatar"), collection %>
+				<%= link_to image_tag("default_collection.png", :width=>"30%", :class=>"limg-polaroid mini-col-avatar"), collection %>
 			<% end %>
 		<% elsif collection.projects.public_projects.length != 0 && !collection.image.blank? %>
 			<%= link_to image_tag(collection.image_url(:preview), :width=>"100%", :class=>"largeImage"), collection %>
 		<% else %>
-			<%= link_to image_tag("default_collection_large.png", :width=>"100%", :class=>"largeImage"), collection %>
+			<%= link_to image_tag("default_collection.png", :width=>"100%", :class=>"largeImage"), collection %>
 		<% end %>
 
 		<% if collection.challenge==true %>

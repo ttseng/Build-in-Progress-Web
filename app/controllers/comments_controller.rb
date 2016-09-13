@@ -18,7 +18,7 @@ class CommentsController < ApplicationController
             Rails.logger.debug("attempting to send email notification to #{user.username}")
             if user.settings(:email).comments == true
               Rails.logger.debug("sending comment email notification")
-              NotificationEmailWorker.perform_async(@activity.id, user.id)
+              NotificationMailer.delay.notification_message(@activity, user)
             end
           end
         end

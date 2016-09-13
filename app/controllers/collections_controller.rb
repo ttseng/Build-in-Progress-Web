@@ -193,7 +193,8 @@ class CollectionsController < ApplicationController
               @activity = @collection.collectifies.last.create_activity :create, owner: current_user, recipient: user, primary: true
               # create email notifications
               if user.settings(:email).collectify_recipient == true || ( (user.settings(:email).collectify_recipient == false) && (@collection.user == user) )
-                NotificationEmailWorker.perform_async(@activity.id, user.id)
+                Rails.logger.debug("notifying user that their project has been added to a collection")
+                NotificationMailer.delay.notification_message(@activity, user)
               end
             end
           end
@@ -203,7 +204,8 @@ class CollectionsController < ApplicationController
             @activity = @collection.collectifies.last.create_activity :owner_create, owner: current_user, recipient: @collection.user, primary: true
             # create email notifications
             if @collection.user.settings(:email).collectify_recipient == true
-              NotificationEmailWorker.perform_async(@activity.id, @collection.user.id)
+              Rails.logger.debug("notifying collection owner than a project was added to their collection")
+              NotificationMailer.delay.notification_message(@activity, @collection.user)
             end
           end
 

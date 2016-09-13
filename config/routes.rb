@@ -1,5 +1,3 @@
-require 'sidekiq/web'
-
 Build::Application.routes.draw do
 
   devise_for :admins
@@ -135,8 +133,6 @@ Build::Application.routes.draw do
     get :comments, on: :collection
     get :comments_by_month, on: :collection
   end
-
-  mount Sidekiq::Web, at: "/sidekiq"
 
   get "videos/embed_url" => "videos#embed_url", :as => :video_embed_url
   

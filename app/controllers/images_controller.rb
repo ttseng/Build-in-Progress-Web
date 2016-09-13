@@ -34,9 +34,8 @@ class ImagesController < ApplicationController
       @image = Image.new(imageObj)
       authorize! :create, @image
       @image.save
-      Rails.logger.debug("STARTING IMAGE UPLOADER WORKER FOR #{@image.id}")
-      # do this task in the background with sidekiq
-      CarrierwaveImageUploaderWorker.perform_async(@image.id, s3_image_url)
+      # now that the temp image is saved, set the image path url
+      @image.delay.upload_image
     else # image sent from android app
       imageObj = Hash.new
       imageObj["project_id"]=params[:project_id]
@@ -187,5 +186,6 @@ class ImagesController < ApplicationController
     image = Image.find(:params[:id])
     send_file(image.image_path_url, :type => 'image/jpeg')
   end
+
 
 end

@@ -12,8 +12,8 @@ gem 'pg'
 
 gem 'json'
 
-gem 'sunspot_rails'
-gem 'sunspot_solr'
+gem 'sunspot_rails', '=2.2.0'
+gem 'sunspot_solr', '=2.2.0'
 
 #gem 'rmagick'
 gem 'mini_magick', '~>3.6.0'
@@ -70,11 +70,8 @@ gem 'hirb'
 
 gem 'will_paginate'
 
-gem 'paper_trail'
-
 gem "fog", :git => 'https://github.com/fog/fog.git'
 
-gem 'sidekiq', '~>2.15.2'
 gem 'sinatra'
 gem 'slim'
 
@@ -91,15 +88,13 @@ gem 'httparty'
 
 gem 'deep_cloneable', '=1.5.5'
 
-gem 'carrierwave_backgrounder'
-
 gem 'unicorn'
 
 gem 'bootstrap-timepicker-rails'
 
-gem 'video_info'
+gem 'video_info', '=2.5.0'
 
-gem 'streamio-ffmpeg'
+gem 'streamio-ffmpeg', '1.0.0'
 
 gem 'carrierwave-video'
 
@@ -109,7 +104,7 @@ gem 'soundcloud'
 
 gem 'mime-types'
 
-gem 'best_in_place'
+gem 'best_in_place', '3.0.3'
 gem 'textilize'
 gem 'rest_in_place'
 
@@ -161,6 +156,9 @@ gem 'chart-js-rails'
 
 gem 'groupdate'
 gem 'chartkick'
+
+gem 'delayed_job_active_record'
+gem "daemons"
 
 # Use unicorn as the app server
 # gem 'unicorn'
