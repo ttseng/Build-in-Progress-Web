@@ -13,4 +13,4 @@ Other features built into Build in Progress include:
 * Project Collections
 * Multiple viewing modes for project pages, including an image gallery and blog mode
 
-To get started, please refer to the documentation at https://github.com/LLK/Build-In-Progress-Website/wiki
+To get started, please refer to the documentation at https://github.com/ttseng/Build-in-Progress-Web/wiki
