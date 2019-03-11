@@ -1,6 +1,6 @@
 class ContactMailer < ActionMailer::Base
   default from: "noreply@buildinprogress.com"
-  default to: "buildinprogressllk@gmail.com"
+  default to: ""
 
   def new_message(message)
   	if message.user
